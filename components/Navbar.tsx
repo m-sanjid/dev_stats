@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Button } from "./ui/button";
 import SigninButton from "./Buttons/SigninButton";
+import { useRouter } from "next/navigation";
 
 const navItems = [
   { id: 1, name: "Home", href: "/" },
@@ -17,6 +18,7 @@ const commonNavItems = [
 
 function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
 
   return (
     <div className="flex justify-between items-center p-6 shadow-md">
@@ -32,6 +34,10 @@ function Navbar() {
         <SigninButton
           isLoggedIn={isLoggedIn}
           onClick={() => setIsLoggedIn(!isLoggedIn)}
+        />
+        <SigninButton
+          isLoggedIn={isLoggedIn}
+          onClick={() => router.push("/signup")}
         />
       </div>
     </div>

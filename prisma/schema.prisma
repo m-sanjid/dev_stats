@@ -40,15 +40,18 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String         @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?        @unique
   password      String?
-  role          Role      @default(user)
+  role          Role           @default(user)
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
+  githubToken   GithubToken?
+  repositories  Repository[]
+  commits       GithubCommit[]
 }
 
 model VerificationToken {
@@ -57,6 +60,63 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+//Github analytics
+model GithubToken {
+  id          String   @id @default(cuid())
+  accessToken String   @db.Text
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId])
+}
+
+model Repository {
+  id         String         @id @default(cuid())
+  name       String
+  userId     String
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  commits    GithubCommit[]
+  lastSynced DateTime?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  @@unique([userId, name])
+}
+
+model GithubCommit {
+  id            String       @id @default(cuid())
+  sha           String
+  author        String
+  message       String
+  timestamp     DateTime
+  repositoryId  String
+  repository    Repository   @relation(fields: [repositoryId], references: [id], onDelete: Cascade)
+  User          User         @relation(fields: [userId], references: [id])
+  userId        String
+  files         CommitFIle[]
+  estimatedTime Float
+  createdAt     DateTime     @default(now())
+
+  @@unique([sha, repositoryId])
+  @@index([userId])
+  @@index([timestamp])
+}
+
+model CommitFIle {
+  id        String       @id @default(cuid())
+  commitId  String
+  commit    GithubCommit @relation(fields: [commitId], references: [id])
+  filename  String
+  additions Int
+  deletions Int
+  changes   Int
+  status    String
+
+  @@index([commitId])
 }
 
 enum Role {

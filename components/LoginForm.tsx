@@ -36,8 +36,8 @@ export function LoginForm() {
       if (result?.error) {
         setError("root", { message: result.error });
       } else {
-        router.refresh();
-        router.push("/dashboard");
+        router.push("/dashboard"); // Redirect after successful login
+        router.refresh(); // Ensure session updates
       }
     } catch (error) {
       setError("root", { message: "Something went wrong. Please try again." });
@@ -45,74 +45,101 @@ export function LoginForm() {
   };
 
   return (
-    <main className="h-svh flex justify-center items-center">
-      <div className="flex flex-col justify-center items-center border-white rounded-xl px-8 shadow-md border-2 bg-red-400 ">
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4 bg-blue-200 p-4"
-        >
-          <div className="bg-blue-200 w-full my-4">DEVSTATS</div>
-          <div className="text-xs">
-            <h4 className="text-center text-gray-400">
-              Welcome back! Please sign in to continue
-            </h4>
-          </div>
+    <main className="h-screen flex justify-center items-center bg-gray-100">
+      <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-6">
+        <h2 className="text-center text-xl font-bold">DEVSTATS</h2>
+        <p className="text-center text-gray-500 text-sm mb-4">
+          Welcome back! Please sign in to continue.
+        </p>
 
-          <div className="space-y-2">
-            <OAuthButton provider="google">
-              <GoogleIcon className="w-4 h-4" />
-              Sign up with Google
-            </OAuthButton>
+        {/* OAuth Buttons */}
+        <div className="space-y-2">
+          <OAuthButton provider="google">
+            <GoogleIcon className="w-5 h-5" />
+            Sign in with Google
+          </OAuthButton>
 
-            <OAuthButton provider="github">
-              <GitHubIcon className="w-4 h-4" />
-              Sign up with GitHub
-            </OAuthButton>
-          </div>
+          <OAuthButton provider="github">
+            <GitHubIcon className="w-5 h-5" />
+            Sign in with GitHub
+          </OAuthButton>
+        </div>
 
-          <div className="text-xs">
-            <h4 className="text-center">Or continue with</h4>
-          </div>
+        <div className="text-center text-gray-400 my-3 text-sm">Or</div>
 
-          <div>
-            <label htmlFor="email">Email</label>
-            <input
-              {...register("email")}
-              id="email"
-              type="email"
-              className="w-full p-2 border rounded"
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email.message}</p>
-            )}
-          </div>
+        {/* Login Form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <InputField
+            id="email"
+            label="Email"
+            type="email"
+            register={register}
+            error={errors.email?.message}
+          />
 
-          <div>
-            <label htmlFor="password">Password</label>
-            <input
-              {...register("password")}
-              id="password"
-              type="password"
-              className="w-full p-2 border rounded"
-            />
-            {errors.password && (
-              <p className="text-red-500 text-sm">{errors.password.message}</p>
-            )}
-          </div>
+          <InputField
+            id="password"
+            label="Password"
+            type="password"
+            register={register}
+            error={errors.password?.message}
+          />
 
-          {errors.root && (
-            <p className="text-red-500 text-sm">{errors.root.message}</p>
+          {errors.root?.message && (
+            <p className="text-red-500 text-sm text-center" aria-live="polite">
+              {errors.root.message}
+            </p>
           )}
 
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
+            className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 disabled:bg-gray-400"
           >
             {isSubmitting ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>
     </main>
+  );
+}
+
+/** Reusable Input Field Component */
+function InputField({
+  id,
+  label,
+  type,
+  register,
+  error,
+}: {
+  id: string;
+  label: string;
+  type: string;
+  register: any;
+  error?: string;
+}) {
+  return (
+    <div>
+      <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+        {label}
+      </label>
+      <input
+        {...register(id)}
+        id={id}
+        type={type}
+        className="w-full p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-200"
+        aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : undefined}
+      />
+      {error && (
+        <p
+          id={`${id}-error`}
+          className="text-red-500 text-sm mt-1"
+          aria-live="polite"
+        >
+          {error}
+        </p>
+      )}
+    </div>
   );
 }

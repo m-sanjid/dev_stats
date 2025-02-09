@@ -1,18 +1,27 @@
-import React from "react";
+"use client";
+
+import { useSession, signIn, signOut } from "next-auth/react";
 import { Button } from "../ui/button";
 
-function SigninButton({
-  isLoggedIn,
-  onClick,
-}: {
-  isLoggedIn: boolean;
-  onClick: () => void;
-}) {
+export default function SigninButton() {
+  const { data: session, status } = useSession();
+  const isAuthenticated = status === "authenticated";
+
+  const handleAuthAction = () => {
+    if (isAuthenticated) {
+      signOut({ callbackUrl: "/" }); // Redirects to homepage after sign out
+    } else {
+      signIn();
+    }
+  };
+
   return (
-    <Button onClick={onClick} className="bg-blue-600">
-      {isLoggedIn ? "Log Out" : "Log in"}
+    <Button
+      onClick={handleAuthAction}
+      className="bg-blue-600 text-white px-4 py-2 rounded-md"
+      aria-label={isAuthenticated ? "Sign out" : "Sign in"}
+    >
+      {isAuthenticated ? "Log Out" : "Log In"}
     </Button>
   );
 }
-
-export default SigninButton;

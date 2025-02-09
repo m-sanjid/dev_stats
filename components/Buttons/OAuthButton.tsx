@@ -17,6 +17,7 @@ export function OAuthButton({
       variant="outline"
       className="w-full flex items-center justify-center gap-2"
       onClick={handleSignIn}
+      aria-label={`Sign in with ${provider}`}
     >
       {children}
     </Button>

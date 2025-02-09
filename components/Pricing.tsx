@@ -35,7 +35,7 @@ const Price = [
 
 function Pricing() {
   return (
-    <section className="px-4 py-10 my-32">
+    <section id="pricing" className="px-4 py-10 my-32">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-20">
           Simple, Transparent Pricing

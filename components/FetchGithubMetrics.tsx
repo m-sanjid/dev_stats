@@ -197,7 +197,6 @@ export async function fetchGitHubMetrics(userId: string) {
     const repoStats = [];
     let totalCommits = 0;
     let totalLines = 0;
-    let totalCodingHours = 0;
     let filesChanged = 0;
 
     for (const repo of repos) {
@@ -209,7 +208,6 @@ export async function fetchGitHubMetrics(userId: string) {
 
         let repoLines = 0;
         let repoFilesChanged = 0;
-        let lastCommitTime: Date | null = null;
 
         for (const commit of commits) {
           try {
@@ -235,17 +233,6 @@ export async function fetchGitHubMetrics(userId: string) {
               repoLines += commitDetails.stats.total;
               repoFilesChanged += commitDetails.files.length;
             }
-            // Esitmate coding hours
-            const commitTime = new Date(commit.commit.author.date);
-            if (lastCommitTime) {
-              const diffHours =
-                (commitTime.getTime() - lastCommitTime.getTime()) /
-                (1000 * 60 * 60);
-              if (diffHours <= 5) {
-                totalCodingHours += diffHours;
-              }
-            }
-            lastCommitTime = commitTime;
           } catch (error) {
             console.error(`Error processing commit in ${repo.name}:`, error);
             continue;
@@ -288,10 +275,14 @@ export async function fetchGitHubMetrics(userId: string) {
       );
     }
 
+    // Calculate time : 1 hour per 50 lines changes
+    // TODO: improve the logic here
+    const totalCodingHours = Math.round(totalLines / 50);
+
     return {
       totalCommits,
       totalLines,
-      totalCodingHours: Math.round(totalCodingHours),
+      totalCodingHours,
       filesChanged,
       repositories: repoStats,
       githubProfile: {

@@ -1,95 +1,28 @@
 "use client";
-
 import React from "react";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import { Line } from "react-chartjs-2";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { GitCommit, Clock, FileCode, BarChart3 } from "lucide-react";
+import { GitCommit, Code } from "lucide-react";
+import WeeklyCommitsChart from "./Github/Chart";
+import CommitChart from "./Github/CommitsChart";
 
 interface DashboardProps {
-  metrics: {
+  metrics?: {
     totalCommits?: number;
     totalCodingHours?: number;
     filesChanged?: number;
-    repositories?: Record<string, number>;
+    totalLines?: number;
+    repositories?: { name: string; commits: number; linesChanged: number }[];
     dailyActivity?: Record<string, number>;
-    languages?: Record<string, number>;
+    language?: Record<string, number>;
     githubProfile?: {
       username: string;
       avatarUrl: string;
     } | null;
+    weeklyCommits?: { [date: string]: number };
   };
 }
 
-// Register Chart.js components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-);
-
 export const GitHubDashboard: React.FC<DashboardProps> = ({ metrics }) => {
-  // Transform daily activity data for Chart.js
-  const dailyActivity = metrics?.dailyActivity ?? {};
-  const activityLabels = Object.keys(dailyActivity);
-  const activityValues = Object.values(dailyActivity);
-
-  // Chart.js data format
-  const activityData = {
-    labels: activityLabels.map((date) => new Date(date).toLocaleDateString()),
-    datasets: [
-      {
-        label: "Commits",
-        data: activityValues,
-        borderColor: "#8884d8",
-        backgroundColor: "rgba(136, 132, 216, 0.2)",
-        borderWidth: 2,
-        pointRadius: 4,
-      },
-    ],
-  };
-
-  // Chart.js options
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: true,
-        position: "top" as const,
-      },
-    },
-    scales: {
-      x: {
-        ticks: {
-          font: {
-            size: 12,
-          },
-        },
-      },
-      y: {
-        ticks: {
-          font: {
-            size: 12,
-          },
-        },
-      },
-    },
-  };
-
   return (
     <div className="space-y-6">
       {/* GitHub Profile Section */}
@@ -110,7 +43,7 @@ export const GitHubDashboard: React.FC<DashboardProps> = ({ metrics }) => {
       )}
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Commits</CardTitle>
@@ -125,52 +58,42 @@ export const GitHubDashboard: React.FC<DashboardProps> = ({ metrics }) => {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Coding Hours</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">
+              Total Lines Changed
+            </CardTitle>
+            <Code className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {metrics?.totalCodingHours?.toFixed(1) ?? "0.0"}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Files Changed</CardTitle>
-            <FileCode className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {metrics?.filesChanged ?? 0}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Repos</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {Object.keys(metrics?.repositories ?? {}).length}
-            </div>
+            <div className="text-2xl font-bold">{metrics?.totalLines ?? 0}</div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Activity Chart */}
+      {/* Repository Stats */}
       <Card>
         <CardHeader>
-          <CardTitle>Commit Activity</CardTitle>
+          <CardTitle>Repositories</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[300px] w-full">
-            <Line data={activityData} options={chartOptions} />
-          </div>
+          {metrics?.repositories?.map((repo) => (
+            <div
+              key={repo.name}
+              className="flex justify-between items-center border-b py-2"
+            >
+              <span className="font-medium">{repo.name}</span>
+              <div className="text-right">
+                <p className="text-sm text-gray-600">{repo.commits} commits</p>
+                <p className="text-sm text-gray-600">
+                  {repo.linesChanged} lines changed
+                </p>
+              </div>
+            </div>
+          ))}
         </CardContent>
       </Card>
+      {metrics?.weeklyCommits && (
+        <CommitChart weeklyCommits={metrics.weeklyCommits} />
+      )}
     </div>
   );
 };

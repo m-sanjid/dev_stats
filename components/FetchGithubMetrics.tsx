@@ -132,6 +132,10 @@ export async function fetchGitHubMetrics(userId: string) {
     repositories: [],
     githubProfile: null,
     weeklyCommits: {},
+    totalCodingHours: 0,
+    filesChanged: 0,
+    dailyActivity: {},
+    language: {},
   };
 
   try {
@@ -146,9 +150,15 @@ export async function fetchGitHubMetrics(userId: string) {
 
     // Initialize weekly commits
     const weeklyCommits: { [date: string]: number } = {};
+    // Initialize dailyActivity
+    const dailyActivity: { [date: string]: number } = {};
+    // Initialize languageUsage
+    const languageUsage: Record<string, number> = {};
+    //Iterate for activiy upto 4 weeks
     for (let i = 0; i < 28; i++) {
       const date = format(subDays(new Date(), i), "yyyy-MM-dd");
       weeklyCommits[date] = 0;
+      dailyActivity[date] = 0;
     }
 
     // Fetch GitHub profile with retry logic
@@ -187,6 +197,8 @@ export async function fetchGitHubMetrics(userId: string) {
     const repoStats = [];
     let totalCommits = 0;
     let totalLines = 0;
+    let totalCodingHours = 0;
+    let filesChanged = 0;
 
     for (const repo of repos) {
       try {
@@ -196,6 +208,9 @@ export async function fetchGitHubMetrics(userId: string) {
         );
 
         let repoLines = 0;
+        let repoFilesChanged = 0;
+        let lastCommitTime: Date | null = null;
+
         for (const commit of commits) {
           try {
             const commitDate = format(
@@ -207,6 +222,10 @@ export async function fetchGitHubMetrics(userId: string) {
               weeklyCommits[commitDate]++;
             }
 
+            if (commitDate in dailyActivity) {
+              dailyActivity[commitDate]++;
+            }
+
             const commitDetails = await fetchWithRetry(
               `https://api.github.com/repos/${username}/${repo.name}/commits/${commit.sha}`,
               token.accessToken,
@@ -214,7 +233,19 @@ export async function fetchGitHubMetrics(userId: string) {
 
             if (commitDetails.stats) {
               repoLines += commitDetails.stats.total;
+              repoFilesChanged += commitDetails.files.length;
             }
+            // Esitmate coding hours
+            const commitTime = new Date(commit.commit.author.date);
+            if (lastCommitTime) {
+              const diffHours =
+                (commitTime.getTime() - lastCommitTime.getTime()) /
+                (1000 * 60 * 60);
+              if (diffHours <= 5) {
+                totalCodingHours += diffHours;
+              }
+            }
+            lastCommitTime = commitTime;
           } catch (error) {
             console.error(`Error processing commit in ${repo.name}:`, error);
             continue;
@@ -223,6 +254,17 @@ export async function fetchGitHubMetrics(userId: string) {
 
         totalCommits += commits.length;
         totalLines += repoLines;
+        filesChanged += repoFilesChanged;
+
+        //fetch repo languages
+        const repolanguages = await fetchWithRetry(
+          `https://api.github.com/repos/${username}/${repo.name}/languages`,
+          token.accessToken,
+        );
+
+        for (const [language, bytes] of Object.entries(repolanguages)) {
+          languageUsage[language] = (languageUsage[language] || 0) + bytes;
+        }
 
         repoStats.push({
           name: repo.name,
@@ -235,15 +277,30 @@ export async function fetchGitHubMetrics(userId: string) {
       }
     }
 
+    // language in percentage
+    const totalBytes = Object.values(languageUsage).reduce(
+      (sum, val) => sum + val,
+      0,
+    );
+    for (const lang in languageUsage) {
+      languageUsage[lang] = Math.round(
+        (languageUsage[lang] / totalBytes) * 100,
+      );
+    }
+
     return {
       totalCommits,
       totalLines,
+      totalCodingHours: Math.round(totalCodingHours),
+      filesChanged,
       repositories: repoStats,
       githubProfile: {
         username,
         avatarUrl: profileData.avatar_url,
       },
       weeklyCommits,
+      dailyActivity,
+      language: languageUsage,
     };
   } catch (error) {
     console.error("Error fetching GitHub metrics:", error);

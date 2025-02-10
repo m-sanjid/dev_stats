@@ -117,45 +117,53 @@ export async function fetchGitHubMetrics(userId: string) {
 
     // GraphQL query to fetch user data and repositories
     const query = `
-      query ($after: String) {
-        viewer {
-          login
-          avatarUrl
-          repositories(first: 100, after: $after, ownerAffiliations: [OWNER]) {
-            pageInfo {
-              hasNextPage
-              endCursor
-            }
-            nodes {
-              name
-              defaultBranchRef {
-                target {
-                  ... on Commit {
-                    history(first: 100) {
-                      totalCount
-                      nodes {
-                        committedDate
-                        additions
-                        deletions
-                        changedFiles
-                      }
-                    }
-                  }
-                }
-              }
-              languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
-                edges {
-                  size
-                  node {
-                    name
+  query ($after: String) {
+    viewer {
+      login
+      avatarUrl
+      repositories(first: 100, after: $after, ownerAffiliations: [OWNER]) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        nodes {
+          name
+          description
+          url
+          stargazerCount
+          forkCount
+          pushedAt
+          defaultBranchRef {
+            target {
+              ... on Commit {
+                history(first: 100) {
+                  totalCount
+                  nodes {
+                    committedDate
+                    additions
+                    deletions
+                    changedFiles
                   }
                 }
               }
             }
           }
+          languages(first: 10, orderBy: { field: SIZE, direction: DESC }) {
+            edges {
+              size
+              node {
+                name
+              }
+            }
+          }
+          refs(refPrefix: "refs/heads/", first: 100) {
+            totalCount
+          }
         }
       }
-    `;
+    }
+  }
+`;
 
     let hasNextPage = true;
     let endCursor = null;
@@ -222,8 +230,18 @@ export async function fetchGitHubMetrics(userId: string) {
 
         repoStats.push({
           name: repo.name,
+          description: repo.description,
+          url: repo.url,
+          stars: repo.stargazerCount,
+          forks: repo.forkCount,
+          branches: repo.refs.totalCount, // New field for branch count
+          lastUpdated: repo.pushedAt, // New field for last update timestamp
           commits: repoCommits,
           linesChanged: repoLines,
+          language:
+            repo.languages.edges.length > 0
+              ? repo.languages.edges[0].node.name
+              : "Unknown",
         });
       }
     }

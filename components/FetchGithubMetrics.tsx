@@ -4,12 +4,11 @@ import { format, subDays } from "date-fns";
 // Configuration for retry mechanism
 const RETRY_CONFIG = {
   maxRetries: 3,
-  baseDelay: 1000, // Start with 1 second delay
-  maxDelay: 5000, // Maximum delay of 5 seconds
-  timeout: 15000, // 15 second timeout
+  baseDelay: 1000,
+  maxDelay: 5000,
+  timeout: 15000,
 };
 
-// Custom error class for better error handling
 class GitHubAPIError extends Error {
   constructor(
     message: string,
@@ -21,96 +20,56 @@ class GitHubAPIError extends Error {
   }
 }
 
-// Exponential backoff calculation
 function calculateBackoff(attempt: number): number {
   const delay = Math.min(
     RETRY_CONFIG.maxDelay,
     RETRY_CONFIG.baseDelay * Math.pow(2, attempt),
   );
-  // Add some jitter to prevent thundering herd
   return delay + Math.random() * 1000;
 }
 
-// Enhanced fetch with timeout
-
-function fetchWithTimeout(
-  url: string,
-  options: RequestInit,
-  timeout: number,
-): Promise<Response> {
-  return new Promise((resolve, reject) => {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => {
-      controller.abort();
-      reject(new Error(`Request timeout after ${timeout}ms for URL: ${url}`));
-    }, timeout);
-
-    fetch(url, {
-      ...options,
-      signal: controller.signal,
-    })
-      .then(resolve)
-      .catch(reject)
-      .finally(() => clearTimeout(timeoutId));
-  });
-}
-
-// Enhanced fetch with retry logic
-async function fetchWithRetry(url: string, token: string): Promise<any> {
+async function executeGraphQLQuery(
+  query: string,
+  token: string,
+  variables = {},
+) {
   let lastError: Error | null = null;
 
   for (let attempt = 0; attempt < RETRY_CONFIG.maxRetries; attempt++) {
     try {
-      const response = await fetchWithTimeout(
-        url,
-        {
-          headers: {
-            Authorization: `token ${token}`,
-            Accept: "application/vnd.github.v3+json",
-            // Add user agent to comply with GitHub API requirements
-            "User-Agent": "GitHub-Metrics-Dashboard",
-          },
+      const response = await fetch("https://api.github.com/graphql", {
+        method: "POST",
+        headers: {
+          Authorization: `bearer ${token}`,
+          "Content-Type": "application/json",
+          "User-Agent": "GitHub-Metrics-Dashboard",
         },
-        RETRY_CONFIG.timeout,
-      );
-
-      // Handle rate limiting
-      if (
-        response.status === 403 &&
-        response.headers.get("X-RateLimit-Remaining") === "0"
-      ) {
-        const resetTime = response.headers.get("X-RateLimit-Reset");
-        if (resetTime) {
-          const waitTime = parseInt(resetTime) * 1000 - Date.now();
-          if (waitTime > 0 && waitTime < RETRY_CONFIG.maxDelay) {
-            await new Promise((resolve) => setTimeout(resolve, waitTime));
-            continue;
-          }
-        }
-      }
+        body: JSON.stringify({ query, variables }),
+      });
 
       if (!response.ok) {
         throw new GitHubAPIError(
           `GitHub API error: ${response.status}`,
           response.status,
-          url,
+          "GraphQL API",
         );
       }
 
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      lastError = error as Error;
+      const result = await response.json();
 
-      // Don't retry on certain errors
-      if (error instanceof GitHubAPIError && error.status === 404) {
-        throw error;
+      if (result.errors) {
+        throw new GitHubAPIError(
+          `GraphQL Error: ${result.errors[0].message}`,
+          400,
+          "GraphQL API",
+        );
       }
 
-      // Log the error with attempt information
-      console.error(`Attempt ${attempt + 1} failed for ${url}:`, error);
+      return result.data;
+    } catch (error) {
+      lastError = error as Error;
+      console.error(`Attempt ${attempt + 1} failed:`, error);
 
-      // If we have more retries, wait before trying again
       if (attempt < RETRY_CONFIG.maxRetries - 1) {
         const backoffTime = calculateBackoff(attempt);
         console.log(`Retrying in ${backoffTime}ms...`);
@@ -119,7 +78,6 @@ async function fetchWithRetry(url: string, token: string): Promise<any> {
     }
   }
 
-  // If we get here, all retries failed
   throw new Error(
     `Failed after ${RETRY_CONFIG.maxRetries} attempts. Last error: ${lastError?.message}`,
   );
@@ -148,135 +106,140 @@ export async function fetchGitHubMetrics(userId: string) {
       return DEFAULT_METRICS;
     }
 
-    // Initialize weekly commits
+    // Initialize date-based metrics
     const weeklyCommits: { [date: string]: number } = {};
-    // Initialize dailyActivity
     const dailyActivity: { [date: string]: number } = {};
-    // Initialize languageUsage
-    const languageUsage: Record<string, number> = {};
-    //Iterate for activiy upto 4 weeks
     for (let i = 0; i < 28; i++) {
       const date = format(subDays(new Date(), i), "yyyy-MM-dd");
       weeklyCommits[date] = 0;
       dailyActivity[date] = 0;
     }
 
-    // Fetch GitHub profile with retry logic
-    const profileData = await fetchWithRetry(
-      "https://api.github.com/user",
-      token.accessToken,
-    );
-
-    const username = profileData.login;
-
-    // Fetch repositories with pagination and retry logic
-    const repos: any[] = [];
-    let page = 1;
-    let hasMore = true;
-
-    while (hasMore) {
-      try {
-        const pageRepos = await fetchWithRetry(
-          `https://api.github.com/users/${username}/repos?page=${page}&per_page=100`,
-          token.accessToken,
-        );
-
-        if (pageRepos.length === 0) {
-          hasMore = false;
-        } else {
-          repos.push(...pageRepos);
-          page++;
+    // GraphQL query to fetch user data and repositories
+    const query = `
+      query ($after: String) {
+        viewer {
+          login
+          avatarUrl
+          repositories(first: 100, after: $after, ownerAffiliations: [OWNER]) {
+            pageInfo {
+              hasNextPage
+              endCursor
+            }
+            nodes {
+              name
+              defaultBranchRef {
+                target {
+                  ... on Commit {
+                    history(first: 100) {
+                      totalCount
+                      nodes {
+                        committedDate
+                        additions
+                        deletions
+                        changedFiles
+                      }
+                    }
+                  }
+                }
+              }
+              languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
+                edges {
+                  size
+                  node {
+                    name
+                  }
+                }
+              }
+            }
+          }
         }
-      } catch (error) {
-        console.error(`Error fetching page ${page} of repositories:`, error);
-        hasMore = false;
       }
-    }
+    `;
 
-    // Process repositories with improved error handling
-    const repoStats = [];
+    let hasNextPage = true;
+    let endCursor = null;
     let totalCommits = 0;
     let totalLines = 0;
     let filesChanged = 0;
+    const repoStats = [];
+    const languageBytes: Record<string, number> = {};
 
-    for (const repo of repos) {
-      try {
-        const commits = await fetchWithRetry(
-          `https://api.github.com/repos/${username}/${repo.name}/commits?per_page=100`,
-          token.accessToken,
-        );
+    // Store user profile data
+    let userProfile = null;
 
+    while (hasNextPage) {
+      const data = await executeGraphQLQuery(query, token.accessToken, {
+        after: endCursor,
+      });
+
+      // Store user profile data on first iteration
+      if (!userProfile) {
+        userProfile = {
+          username: data.viewer.login,
+          avatarUrl: data.viewer.avatarUrl,
+        };
+      }
+
+      const { repositories } = data.viewer;
+
+      hasNextPage = repositories.pageInfo.hasNextPage;
+      endCursor = repositories.pageInfo.endCursor;
+
+      for (const repo of repositories.nodes) {
+        if (!repo.defaultBranchRef) continue;
+
+        const commits = repo.defaultBranchRef.target.history;
+        const repoCommits = commits.totalCount;
         let repoLines = 0;
         let repoFilesChanged = 0;
 
-        for (const commit of commits) {
-          try {
-            const commitDate = format(
-              new Date(commit.commit.author.date),
-              "yyyy-MM-dd",
-            );
-
-            if (commitDate in weeklyCommits) {
-              weeklyCommits[commitDate]++;
-            }
-
-            if (commitDate in dailyActivity) {
-              dailyActivity[commitDate]++;
-            }
-
-            const commitDetails = await fetchWithRetry(
-              `https://api.github.com/repos/${username}/${repo.name}/commits/${commit.sha}`,
-              token.accessToken,
-            );
-
-            if (commitDetails.stats) {
-              repoLines += commitDetails.stats.total;
-              repoFilesChanged += commitDetails.files.length;
-            }
-          } catch (error) {
-            console.error(`Error processing commit in ${repo.name}:`, error);
-            continue;
+        for (const commit of commits.nodes) {
+          const commitDate = format(
+            new Date(commit.committedDate),
+            "yyyy-MM-dd",
+          );
+          if (commitDate in weeklyCommits) {
+            weeklyCommits[commitDate]++;
+            dailyActivity[commitDate]++;
           }
+
+          repoLines += commit.additions + commit.deletions;
+          repoFilesChanged += commit.changedFiles;
         }
 
-        totalCommits += commits.length;
+        // Process languages
+        for (const {
+          node: { name },
+          size,
+        } of repo.languages.edges) {
+          languageBytes[name] = (languageBytes[name] || 0) + size;
+        }
+
+        totalCommits += repoCommits;
         totalLines += repoLines;
         filesChanged += repoFilesChanged;
 
-        //fetch repo languages
-        const repolanguages = await fetchWithRetry(
-          `https://api.github.com/repos/${username}/${repo.name}/languages`,
-          token.accessToken,
-        );
-
-        for (const [language, bytes] of Object.entries(repolanguages)) {
-          languageUsage[language] = (languageUsage[language] || 0) + bytes;
-        }
-
         repoStats.push({
           name: repo.name,
-          commits: commits.length,
+          commits: repoCommits,
           linesChanged: repoLines,
         });
-      } catch (error) {
-        console.error(`Error processing repository ${repo.name}:`, error);
-        continue;
       }
     }
 
-    // language in percentage
-    const totalBytes = Object.values(languageUsage).reduce(
+    // Calculate language percentages
+    const totalBytes = Object.values(languageBytes).reduce(
       (sum, val) => sum + val,
       0,
     );
-    for (const lang in languageUsage) {
-      languageUsage[lang] = Math.round(
-        (languageUsage[lang] / totalBytes) * 100,
+    const languagePercentages: Record<string, number> = {};
+    for (const lang in languageBytes) {
+      languagePercentages[lang] = Math.round(
+        (languageBytes[lang] / totalBytes) * 100,
       );
     }
 
-    // Calculate time : 1 hour per 50 lines changes
-    // TODO: improve the logic here
     const totalCodingHours = Math.round(totalLines / 50);
 
     return {
@@ -285,13 +248,10 @@ export async function fetchGitHubMetrics(userId: string) {
       totalCodingHours,
       filesChanged,
       repositories: repoStats,
-      githubProfile: {
-        username,
-        avatarUrl: profileData.avatar_url,
-      },
+      githubProfile: userProfile,
       weeklyCommits,
       dailyActivity,
-      language: languageUsage,
+      language: languagePercentages,
     };
   } catch (error) {
     console.error("Error fetching GitHub metrics:", error);

@@ -2,7 +2,6 @@
 import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { GitCommit, Code } from "lucide-react";
-import WeeklyCommitsChart from "./Github/Chart";
 import CommitChart from "./Github/CommitsChart";
 
 interface DashboardProps {

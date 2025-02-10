@@ -3,36 +3,9 @@ import { PrismaClient } from "@prisma/client";
 import { GitHubDashboard } from "@/components/GithubDashboard";
 import { GithubConnect } from "@/components/GithubConnect";
 import { redirect } from "next/navigation"; // For redirection
+import fetchGitHubMetrics from "@/components/FetchGithubMetrics";
 
 const prisma = new PrismaClient();
-
-const fetchGitHubMetrics = async (userId: string) => {
-  const token = await prisma.githubToken.findUnique({
-    where: { userId },
-  });
-
-  if (!token)
-    return { dailyActivity: {}, totalCommits: 0, githubProfile: null };
-
-  // Fetch user's GitHub profile
-  const profileResponse = await fetch("https://api.github.com/user", {
-    headers: { Authorization: `token ${token.accessToken}` },
-  });
-
-  if (!profileResponse.ok)
-    return { dailyActivity: {}, totalCommits: 0, githubProfile: null };
-
-  const profileData = await profileResponse.json();
-
-  return {
-    dailyActivity: {}, // Fetch daily activity data separately if needed
-    totalCommits: 0,
-    githubProfile: {
-      username: profileData.login, // GitHub username
-      avatarUrl: profileData.avatar_url, // Profile picture
-    },
-  };
-};
 
 export default async function DashboardPage() {
   // Use auth() from your NextAuth v5 setup to get the session
@@ -57,7 +30,6 @@ export default async function DashboardPage() {
   return (
     <div className="container mx-auto py-8 space-y-6">
       <GithubConnect hasGithubToken={!!githubToken} />
-      <h1>{githubToken?.id}</h1>
       {hasGitHubToken && metrics && <GitHubDashboard metrics={metrics} />}
     </div>
   );

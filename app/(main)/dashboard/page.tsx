@@ -1,11 +1,9 @@
 import { auth } from "@/auth"; // Import the auth() function you exported in your NextAuth setup
-import { PrismaClient } from "@prisma/client";
 import { GitHubDashboard } from "@/components/GithubDashboard";
 import { GithubConnect } from "@/components/GithubConnect";
 import { redirect } from "next/navigation"; // For redirection
 import fetchGitHubMetrics from "@/components/FetchGithubMetrics";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export default async function DashboardPage() {
   // Use auth() from your NextAuth v5 setup to get the session

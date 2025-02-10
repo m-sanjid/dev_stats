@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { format, subDays } from "date-fns";
-
-const prisma = new PrismaClient();
 
 // Configuration for retry mechanism
 const RETRY_CONFIG = {

@@ -1,10 +1,8 @@
 "use server";
 
 import bcrypt from "bcrypt";
-import { PrismaClient } from "@prisma/client";
 import { signIn } from "@/auth";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export async function signUp(data: {
   name: string;
@@ -44,4 +42,21 @@ export async function signUp(data: {
     console.error("Signup error:", error);
     return { error: "Failed to create account" };
   }
+}
+
+export async function handleOAuthLogin(provider: string, providerAccountId: string) {
+  const existingAccount = await prisma.account.findUnique({
+    where: {
+      provider_providerAccountId: {
+        provider,
+        providerAccountId,
+      },
+    },
+  });
+
+  if (existingAccount) {
+    return { error: "This account is already linked to another user." };
+  }
+
+  // Proceed with linking or creating a new account
 }

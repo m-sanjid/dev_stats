@@ -1,12 +1,11 @@
 import NextAuth, { Account, NextAuthConfig, User } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
 import Google from "next-auth/providers/google";
 import GitHub from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
-
-const prisma = new PrismaClient();
+import { registerGitHubWebhook } from "./lib/githubWebhook";
+import { prisma } from "./lib/prisma";
 
 const authConfig: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
@@ -45,11 +44,11 @@ const authConfig: NextAuthConfig = {
 
         return isValid
           ? {
-              id: user.id.toString(), // Convert numeric ID to string
-              email: user.email,
-              role: user.role ?? "user", // Ensure role exists
-              name: user.name,
-            }
+            id: user.id.toString(), // Convert numeric ID to string
+            email: user.email,
+            role: user.role ?? "user", // Ensure role exists
+            name: user.name,
+          }
           : null;
       },
     }),
@@ -59,43 +58,69 @@ const authConfig: NextAuthConfig = {
     async jwt({ token, user, account }) {
       if (user) {
         token.sub = user.id;
-        token.role = user.role ?? "user"; // Fallback to "user" if undefined
+        token.role = user.role ?? "user";
 
-        // If this is a GitHub sign-in, store the access token
+        if (!token.sub) {
+          console.error("Missing userId in JWT callback.");
+          return token;
+        }
+
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.sub },
+          select: { subscription: true, useWebhook: true },
+        });
+
+        token.subscription = dbUser?.subscription ?? "free";
+        token.useWebhook = dbUser?.useWebhook ?? false;
+
         if (account?.provider === "github") {
           try {
-            // At this point, the user record should exist.
             await prisma.githubToken.upsert({
-              where: { userId: user.id },
-              create: {
-                userId: user.id,
-                accessToken: account.access_token!,
-              },
-              update: {
-                accessToken: account.access_token!,
-              },
+              where: { userId: token.sub },
+              create: { userId: token.sub, accessToken: account.access_token! },
+              update: { accessToken: account.access_token! },
             });
+
+            if (dbUser?.subscription === "pro" && dbUser?.useWebhook) {
+              const githubUser = await fetch("https://api.github.com/user", {
+                headers: { Authorization: `token ${account.access_token}` },
+              }).then((res) => res.json());
+
+              const repos = await fetch(githubUser.repos_url, {
+                headers: { Authorization: `token ${account.access_token}` },
+              }).then((res) => res.json());
+
+              for (const repo of repos) {
+                await registerGitHubWebhook(
+                  token.sub,
+                  githubUser.login,
+                  repo.name,
+                  account.access_token!,
+                );
+              }
+            }
           } catch (error) {
-            console.error(
-              "Error storing GitHub token in jwt callback: ",
-              error,
-            );
+            console.error("Error storing GitHub token:", error);
           }
         }
       }
       return token;
     },
+
     async session({ session, token }) {
-      const githubToken = await prisma.githubToken.findUnique({
-        where: { userId: token.sub },
-      });
+      if (!token.sub) return session;
+
       return {
         ...session,
         user: {
           ...session.user,
-          id: token.sub,
-          role: token.role, // Now guaranteed to be a string
-          hasGithubToken: !!githubToken,
+          id: token.sub as string,
+          role: token.role,
+          hasGithubToken: !!(await prisma.githubToken.findUnique({
+            where: { userId: token.sub as string },
+          })),
+          subscription: token.subscription ?? "free",
+          useWebhook: token.useWebhook ?? false,
         },
       };
     },

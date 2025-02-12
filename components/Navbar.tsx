@@ -31,29 +31,14 @@ import SignoutButton from "./Buttons/SignoutButton";
 
 const navItems = [
   {
-    title: "Home",
-    href: "/home",
-    icon: Home,
-  },
-  {
     title: "Dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
   },
   {
-    title: "Repositories",
-    href: "/dashboard/repos",
+    title: "Pro",
+    href: "/pricing",
     icon: GitFork,
-  },
-  {
-    title: "Activity",
-    href: "/dashboard/activity",
-    icon: Activity,
-  },
-  {
-    title: "Languages",
-    href: "/dashboard/languages",
-    icon: Code,
   },
   {
     title: "Portfolio",
@@ -186,22 +171,24 @@ export default function Navbar() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <div className="hidden md:flex space-x-1">
-                {outNavItems.map((item) => {
-                  const isActive = pathname === item.href;
-                  return (
-                    <Button
-                      key={item.href}
-                      variant={isActive ? "secondary" : "ghost"}
-                      size="sm"
-                      className="gap-2"
-                      asChild
-                    >
-                      <Link href={item.href}>{item.title}</Link>
-                    </Button>
-                  );
-                })}
-                <SignoutButton />
+              <div className="flex justify-between">
+                <div className="hidden md:flex space-x-2">
+                  {outNavItems.map((item) => {
+                    const isActive = pathname === item.href;
+                    return (
+                      <Button
+                        key={item.href}
+                        variant={isActive ? "secondary" : "ghost"}
+                        size="sm"
+                        className="gap-2"
+                        asChild
+                      >
+                        <Link href={item.href}>{item.title}</Link>
+                      </Button>
+                    );
+                  })}
+                  <SignoutButton />
+                </div>
               </div>
             )}
 

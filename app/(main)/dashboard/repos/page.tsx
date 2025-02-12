@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card";
 import { fetchGitHubMetrics } from "@/components/FetchGithubMetrics";
 import { auth } from "@/auth";
 import { ArrowLeft, Search, Filter } from "lucide-react";

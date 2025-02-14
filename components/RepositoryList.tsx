@@ -77,7 +77,11 @@ export function RepositoryList({ repositories }: RepositoryListProps) {
                     <StatBadge icon={Star} value={repo.stars} label="Stars" />
                   )}
                   {repo.forks !== undefined && (
-                    <StatBadge icon={GitFork} value={repo.forks} label="Forks" />
+                    <StatBadge
+                      icon={GitFork}
+                      value={repo.forks}
+                      label="Forks"
+                    />
                   )}
                   {repo.branches !== undefined && (
                     <StatBadge
@@ -116,4 +120,4 @@ export function RepositoryList({ repositories }: RepositoryListProps) {
       ))}
     </motion.div>
   );
-} 
+}

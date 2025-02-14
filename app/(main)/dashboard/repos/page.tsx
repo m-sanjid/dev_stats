@@ -1,4 +1,3 @@
-import { fetchGitHubMetrics } from "@/components/FetchGithubMetrics";
 import { auth } from "@/auth";
 import { ArrowLeft, Search, Filter } from "lucide-react";
 import Link from "next/link";
@@ -12,11 +11,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RepositoryList } from "@/components/RepositoryList";
+import { fetchGitHubMetrics } from "@/lib/github";
 
 export default async function RepoPage() {
   const session = await auth();
 
-  if (!session?.user?.id) {
+  if (!session?.user) {
+    console.error("No user found in session!");
+    return null;
+  }
+
+  if (!session.user.id) {
+    console.error("User ID is missing in session:", session.user);
     return null;
   }
 

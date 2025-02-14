@@ -44,11 +44,11 @@ const authConfig: NextAuthConfig = {
 
         return isValid
           ? {
-            id: user.id.toString(), // Convert numeric ID to string
-            email: user.email,
-            role: user.role ?? "user", // Ensure role exists
-            name: user.name,
-          }
+              id: user.id.toString(), // Convert numeric ID to string
+              email: user.email,
+              role: user.role ?? "user", // Ensure role exists
+              name: user.name,
+            }
           : null;
       },
     }),

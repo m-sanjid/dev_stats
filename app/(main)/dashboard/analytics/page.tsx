@@ -15,6 +15,8 @@ import {
 } from "recharts";
 import { useSession } from "next-auth/react";
 import { fetchGitHubMetrics } from "@/lib/github";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface AnalyticsData {
   weeklyCommits: Record<string, number>;
@@ -116,6 +118,18 @@ export default function AnalyticsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  if (!session) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <h1 className="text-xl p-6">Please sign in to view access this page</h1>
+
+        <Button className="px-8">
+          <Link href="/signup">Sign In</Link>
+        </Button>
+      </div>
+    );
+  }
 
   useEffect(() => {
     async function fetchData() {

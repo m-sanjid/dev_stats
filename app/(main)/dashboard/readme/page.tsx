@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { generateReadme, improveReadme } from "@/lib/ai";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader } from "@/components/Loader";
@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { commitReadmeToGitHub, fetchGitHubMetrics } from "@/lib/github";
+import Link from "next/link";
 
 const defaultSections = [
   { id: "features", label: "Key Features", enabled: true },
@@ -51,6 +52,18 @@ export default function ReadmeGenerator() {
   const [previewMode, setPreviewMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
+
+  if (!session) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <h1 className="text-xl p-6">Please sign in to view access this page</h1>
+
+        <Button className="px-8">
+          <Link href="/signup">Sign In</Link>
+        </Button>
+      </div>
+    );
+  }
 
   useEffect(() => {
     const loadRepos = async () => {

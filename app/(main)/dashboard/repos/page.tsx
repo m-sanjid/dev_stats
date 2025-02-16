@@ -15,6 +15,17 @@ import { fetchGitHubMetrics } from "@/lib/github";
 
 export default async function RepoPage() {
   const session = await auth();
+  if (!session) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <h1 className="text-xl p-6">Please sign in to view access this page</h1>
+
+        <Button className="px-8">
+          <Link href="/signup">Sign In</Link>
+        </Button>
+      </div>
+    );
+  }
 
   if (!session?.user) {
     console.error("No user found in session!");

@@ -10,13 +10,12 @@ export default async function DashboardPage() {
 
   // If no session, redirect to the signin page
   if (!session) {
-    redirect("/auth/signin");
+    redirect("/signup");
   }
 
   const githubToken = await prisma.githubToken.findUnique({
     where: { userId: session.user.id },
   });
-  console.log(githubToken);
 
   return (
     <>

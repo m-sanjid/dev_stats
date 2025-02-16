@@ -3,10 +3,11 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { signUp } from "@/actions/auth";
 import { useRouter } from "next/navigation";
 import { OAuthButton } from "./Buttons/OAuthButton";
 import { GitHubIcon, GoogleIcon } from "./icons";
+import { signUp } from "@/actions/auth";
+import { Button } from "./ui/button";
 
 const signUpSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -33,7 +34,7 @@ export function SignUpForm() {
       if (result?.error) {
         setError("root", { message: result.error });
       } else {
-        router.push("/dashboard");
+        router.push("/home");
       }
     } catch (error) {
       console.error("Sign-up error:", error);
@@ -42,10 +43,12 @@ export function SignUpForm() {
   };
 
   return (
-    <main className="h-screen flex justify-center items-center">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-6">
-        <h2 className="text-center text-lg font-bold mb-4">DEVSTATS</h2>
-        <p className="text-center text-gray-500 text-sm mb-4">
+    <main className="h-screen w-[50%] flex justify-center items-center">
+      <div className="w-full max-w-md bg-white dark:bg-black dark:border dark:border-neutral-700 shadow-lg rounded-lg p-8">
+        <h2 className="font-bold text-xl text-center py-4 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+          DevStats
+        </h2>
+        <p className="text-center text-gray-500 dark:text-neutral-500 text-sm mb-4">
           Welcome! Please sign up to continue.
         </p>
 
@@ -61,7 +64,9 @@ export function SignUpForm() {
           </OAuthButton>
         </div>
 
-        <div className="text-center text-gray-400 my-3 text-sm">Or</div>
+        <div className="text-center text-gray-400 dark:text-neutral-500 my-3 text-sm">
+          Or
+        </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <InputField
@@ -94,13 +99,14 @@ export function SignUpForm() {
             </p>
           )}
 
-          <button
+          <Button
+            variant="default"
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 disabled:bg-gray-400"
+            className="w-full dark:bg-neutral-600 text-white p-2 mt-4 rounded-md hover:bg-purple-600 disabled:bg-gray-400"
           >
             {isSubmitting ? "Creating account..." : "Sign Up"}
-          </button>
+          </Button>
         </form>
       </div>
     </main>
@@ -122,7 +128,10 @@ function InputField({
 }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+      <label
+        htmlFor={id}
+        className="block text-sm font-medium text-gray-700 dark:text-neutral-400"
+      >
         {label}
       </label>
       <input

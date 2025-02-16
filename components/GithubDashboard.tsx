@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { GitCommit, Code, Clock, Loader2, Github, Boxes } from "lucide-react";
+import { GitCommit, Code, Clock, Github, Boxes } from "lucide-react";
 import CommitChart from "./Github/CommitsChart";
 import { StatCard } from "./ui/stat-card";
 import { motion } from "framer-motion";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { fetchGitHubMetrics } from "@/lib/github";
 import { useSession, signIn } from "next-auth/react";
 import Link from "next/link";
+import { Skeleton } from "./ui/skeleton";
 
 interface GitHubMetrics {
   totalCommits: number;
@@ -24,28 +25,13 @@ interface GitHubMetrics {
   } | null;
   weeklyCommits: { [date: string]: number };
 }
-interface Repository {
-  id: number;
-  name: string;
-  description: string | null;
-  url: string;
-  stars: number;
-  forks: number;
-  language: string;
-  lastUpdated: string;
-}
-
-interface GitHubData {
-  repositories: Repository[];
-}
 
 export const GithubDashboard: React.FC = () => {
   const { data: session, status } = useSession();
-  const userId = session?.user?.id || session?.user?.email; // ✅ Try using email as fallback
+  const userId = session?.user?.id || session?.user?.email;
   const [metrics, setMetrics] = useState<GitHubMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<GitHubData | null>(null);
 
   const loadMetrics = async () => {
     if (!userId) {
@@ -93,7 +79,7 @@ export const GithubDashboard: React.FC = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin" />
+        <LoadingSkeleton />
       </div>
     );
   }
@@ -122,7 +108,7 @@ export const GithubDashboard: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="lg:col-span-1"
+            className="lg:col-span-1 md:mr-4"
           >
             <Card className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
               <CardContent className="flex items-center gap-4 p-6">
@@ -146,7 +132,6 @@ export const GithubDashboard: React.FC = () => {
             </Card>
           </motion.div>
         )}
-
         {/* Statistics */}
         <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <StatCard
@@ -169,7 +154,6 @@ export const GithubDashboard: React.FC = () => {
           />
         </div>
       </div>
-
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {metrics?.weeklyCommits && (
@@ -230,7 +214,7 @@ export const GithubDashboard: React.FC = () => {
         )}
       </div>
       {/* Repository Preview Section */}
-      {data?.repositories && data.repositories.length > 0 && (
+      {metrics?.repositories && metrics.repositories.length > 0 && (
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Recent Repositories</CardTitle>
@@ -242,21 +226,58 @@ export const GithubDashboard: React.FC = () => {
             </Link>
           </CardHeader>
           <CardContent>
-            {data.repositories.slice(0, 3).map((repo) => (
-              <div
-                key={repo.id}
-                className="flex justify-between items-center border-b py-2 last:border-b-0"
-              >
-                <span className="font-medium">{repo.name}</span>
-                <div className="text-right">
-                  <p className="text-sm text-gray-600">{repo.stars} stars</p>
-                  <p className="text-sm text-gray-600">{repo.forks} forks</p>
+            <div className="space-y-4">
+              {metrics.repositories.slice(0, 3).map((repo, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+                >
+                  <div className="flex flex-col">
+                    <span className="font-medium">{repo.name}</span>
+                    <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <GitCommit className="h-4 w-4" />
+                        {repo.commits} commits
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Code className="h-4 w-4" />
+                        {repo.linesChanged} lines changed
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </CardContent>
         </Card>
       )}
     </div>
   );
 };
+
+const LoadingSkeleton = () => (
+  <div className="grid gap-6 mx-auto max-w-4xl p-4 mt-8">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      {[1, 2, 3, 4].map((i) => (
+        <Card key={i}>
+          <CardContent className="p-6">
+            <Skeleton className="h-4 w-24 mb-4" />
+            <Skeleton className="h-8 w-32 mb-2" />
+            <Skeleton className="h-4 w-40" />
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+    <Card>
+      <CardContent className="p-6 flex gap-6">
+        <Skeleton className="h-[300px] w-[70%]" />
+        <Skeleton className="h-[300px] w-[30%]" />
+      </CardContent>
+    </Card>
+    <Card>
+      <CardContent className="p-6">
+        <Skeleton className="h-[300px] w-full" />
+      </CardContent>
+    </Card>
+  </div>
+);

@@ -16,14 +16,16 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     <PageWrapper>
       <div className="min-h-screen bg-background">
         <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
-        <div className={cn(
-          "flex min-h-screen flex-col",
-          isCollapsed ? "md:pl-16" : "md:pl-64",
-          "transition-all duration-300"
-        )}>
+        <div
+          className={cn(
+            "flex min-h-screen flex-col",
+            isCollapsed ? "md:pl-16" : "md:pl-64",
+            "transition-all duration-300",
+          )}
+        >
           {children}
         </div>
       </div>
     </PageWrapper>
   );
-} 
+}

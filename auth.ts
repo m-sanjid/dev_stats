@@ -3,7 +3,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import Google from "next-auth/providers/google";
 import GitHub from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { registerGitHubWebhook } from "./lib/githubWebhook";
 import { prisma } from "./lib/prisma";
 
@@ -99,6 +99,10 @@ const authConfig: NextAuthConfig = {
                 );
               }
             }
+            console.log(
+              "GitHub token stored successfully:",
+              account.access_token,
+            );
           } catch (error) {
             console.error("Error storing GitHub token:", error);
           }
@@ -109,6 +113,10 @@ const authConfig: NextAuthConfig = {
 
     async session({ session, token }) {
       if (!token.sub) return session;
+      const githubToken = await prisma.account.findFirst({
+        where: { userId: token.sub, provider: "github" },
+        select: { access_token: true },
+      });
 
       return {
         ...session,
@@ -119,6 +127,7 @@ const authConfig: NextAuthConfig = {
           hasGithubToken: !!(await prisma.githubToken.findUnique({
             where: { userId: token.sub as string },
           })),
+          githubAccessToken: githubToken?.access_token || null,
           subscription: token.subscription ?? "free",
           useWebhook: token.useWebhook ?? false,
         },

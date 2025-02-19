@@ -17,7 +17,7 @@ export default async function RepoPage() {
   const session = await auth();
   if (!session) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen">
+      <div className="flex max-w-4xl flex-col items-center justify-center h-screen">
         <h1 className="text-xl p-6">Please sign in to view access this page</h1>
 
         <Button className="px-8">
@@ -41,7 +41,7 @@ export default async function RepoPage() {
 
   if (!metrics?.repositories?.length) {
     return (
-      <div className="container mx-auto py-8 px-4">
+      <div className="container mx-auto max-w-4xl py-8 px-4">
         <Button variant="ghost" asChild className="mb-4">
           <Link
             href="/dashboard"

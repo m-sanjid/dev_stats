@@ -192,8 +192,8 @@ export default function ReadmeGenerator() {
   };
 
   return (
-    <div className="p-6 bg-white shadow-md rounded-lg">
-      <h1 className="text-2xl font-semibold">AI-Generated README</h1>
+    <div className="p-6 bg-white shadow-md rounded-lg max-w-4xl mx-auto w-full h-screen">
+      <h1 className="text-2xl font-semibold my-6">AI-Generated README</h1>
 
       <p className="text-gray-600 mt-2">
         Select a repository and customize your README.
@@ -267,7 +267,7 @@ export default function ReadmeGenerator() {
           </div>
 
           {previewMode ? (
-            <div className="border p-4 rounded bg-gray-100 mt-2">
+            <div className="border p-4 rounded bg-gray-100 mt-2 max-w-4xl">
               <ReactMarkdown>{readmeContent}</ReactMarkdown>
             </div>
           ) : (

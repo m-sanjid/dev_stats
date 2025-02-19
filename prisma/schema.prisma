@@ -40,18 +40,24 @@ model Session {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  name          String?
-  email         String?        @unique
-  password      String?
-  role          Role           @default(user)
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  githubToken   GithubToken?
-  repositories  Repository[]
-  commits       GithubCommit[]
+  id             String           @id @default(cuid())
+  name           String?
+  email          String?          @unique
+  githubUsername String?          @unique
+  password       String?
+  role           Role             @default(user)
+  emailVerified  DateTime?
+  image          String?
+  subscription   SubscriptionType @default(free)
+  useWebhook     Boolean          @default(false)
+  accounts       Account[]
+  sessions       Session[]
+  githubToken    GithubToken?
+  repositories   Repository[]
+  commits        GithubCommit[]
+  webhooks       GitHubWebhook[]
+  GitHubMetrics  GitHubMetrics?
+  Portfolio      Portfolio?
 }
 
 model VerificationToken {
@@ -75,16 +81,37 @@ model GithubToken {
 }
 
 model Repository {
-  id         String         @id @default(cuid())
-  name       String
-  userId     String
-  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  commits    GithubCommit[]
-  lastSynced DateTime?
-  createdAt  DateTime       @default(now())
-  updatedAt  DateTime       @updatedAt
+  id              String         @id @default(cuid())
+  name            String
+  description     String?        @db.Text
+  url             String?
+  isPrivate       Boolean        @default(false)
+  language        String?
+  stars           Int            @default(0)
+  forks           Int            @default(0)
+  branches        Int            @default(0)
+  defaultBranch   String         @default("main")
+  lastPushed      DateTime?
+  userId          String
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  commits         GithubCommit[]
+  lastSynced      DateTime?
+  webhookId       String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  GitHubMetrics   GitHubMetrics? @relation(fields: [gitHubMetricsId], references: [id])
+  gitHubMetricsId String?
+  topics          String[]       @default([])
+  size            Int            @default(0)
+  openIssues      Int            @default(0)
+  watchers        Int            @default(0)
+  license         String?
+  visibility      String         @default("public")
 
   @@unique([userId, name])
+  @@index([language])
+  @@index([lastPushed])
+  @@index([stars])
 }
 
 model GithubCommit {
@@ -119,7 +146,54 @@ model CommitFIle {
   @@index([commitId])
 }
 
+//added webhook
+model GitHubWebhook {
+  id        String   @id @default(cuid())
+  userId    String
+  repoName  String
+  webhookId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, repoName], name: "userId_repoName")
+}
+
+model GitHubMetrics {
+  id               String       @id @default(cuid())
+  userId           String       @unique
+  totalCommits     Int          @default(0)
+  totalLines       Int          @default(0)
+  mergedPRs        Int          @default(0)
+  repoStars        Int          @default(0)
+  repositories     Repository[]
+  weeklyCommits    Json         @default("{}")
+  githubProfile    Json         @default("{}")
+  languages        Json         @default("{}") // Store language statistics
+  dailyActivity    Json         @default("{}") // Store daily coding activity
+  contributedRepos Int          @default(0)
+  totalPRs         Int          @default(0)
+  totalIssues      Int          @default(0)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Portfolio {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  bio       String?
+  projects  Json
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 enum Role {
   user
   admin
+}
+
+enum SubscriptionType {
+  free
+  pro
 }

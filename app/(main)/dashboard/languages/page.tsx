@@ -23,7 +23,7 @@ export default async function LanguagesPage() {
   const metrics = await fetchGitHubMetrics(session.user.id);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-4xl mx-auto">
       <PageHeader
         title="Languages"
         description="Analysis of your programming languages"

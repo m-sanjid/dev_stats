@@ -2,12 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { generateReadme, improveReadme } from "@/lib/ai";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader } from "@/components/Loader";
 import ReactMarkdown from "react-markdown";
-import { Search } from "lucide-react";
+import { Search, AlertCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -18,14 +17,9 @@ import {
 } from "@/components/ui/select";
 import { commitReadmeToGitHub, fetchGitHubMetrics } from "@/lib/github";
 import Link from "next/link";
-
-const defaultSections = [
-  { id: "features", label: "Key Features", enabled: true },
-  { id: "installation", label: "Installation Guide", enabled: true },
-  { id: "usage", label: "Usage Instructions", enabled: true },
-  { id: "contributing", label: "Contribution Guide", enabled: true },
-  { id: "license", label: "License Details", enabled: true },
-];
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { toast } from "sonner";
 
 interface Repository {
   id: number;
@@ -41,7 +35,47 @@ interface Repository {
   language: string;
 }
 
-export default function ReadmeGenerator() {
+interface Section {
+  id: string;
+  label: string;
+  enabled: boolean;
+  description: string;
+}
+
+const defaultSections: Section[] = [
+  {
+    id: "features",
+    label: "Key Features",
+    enabled: true,
+    description: "Highlight main functionality and capabilities",
+  },
+  {
+    id: "installation",
+    label: "Installation Guide",
+    enabled: true,
+    description: "Step-by-step setup instructions",
+  },
+  {
+    id: "usage",
+    label: "Usage Instructions",
+    enabled: true,
+    description: "How to use the project with examples",
+  },
+  {
+    id: "contributing",
+    label: "Contribution Guide",
+    enabled: true,
+    description: "Guidelines for contributors",
+  },
+  {
+    id: "license",
+    label: "License Details",
+    enabled: true,
+    description: "Project licensing information",
+  },
+];
+
+const ReadmeGenerator = () => {
   const { data: session, status } = useSession();
   const [repos, setRepos] = useState<Repository[]>([]);
   const [selectedRepo, setSelectedRepo] = useState("");
@@ -53,54 +87,44 @@ export default function ReadmeGenerator() {
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  if (!session) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <h1 className="text-xl p-6">Please sign in to view access this page</h1>
-
-        <Button className="px-8">
-          <Link href="/signup">Sign In</Link>
-        </Button>
-      </div>
-    );
-  }
-
   useEffect(() => {
     const loadRepos = async () => {
+      if (status !== "authenticated" || !session?.user?.id) return;
+
       setLoading(true);
-      setError(null); // Reset error before fetching
+      setError(null);
 
       try {
-        if (status === "authenticated" && session?.user?.id) {
-          console.log("Fetching repos for user:", session.user.id);
+        const metricsData = await fetchGitHubMetrics(session.user.id);
 
-          const metricsData = await fetchGitHubMetrics(session.user.id);
-          console.log("Fetched metrics data:", metricsData);
-
-          if (metricsData?.repositories?.length) {
-            const formattedRepos: Repository[] = metricsData.repositories.map(
-              (repo, index) => ({
-                id: index,
-                name: repo.name,
-                description: repo.description || "",
-                html_url: repo.url,
-                stargazers_count: repo.stars || 0,
-                forks_count: repo.forks || 0,
-                branches: repo.branches || 0,
-                lastUpdated: repo.lastUpdated || new Date().toISOString(),
-                commits: repo.commits || 0,
-                linesChanged: repo.linesChanged || 0,
-                language: repo.language || "Unknown",
-              }),
-            );
-            setRepos(formattedRepos);
-          } else {
-            setError("No repositories found");
-          }
+        if (!metricsData?.repositories?.length) {
+          setError("No repositories found");
+          return;
         }
+
+        const formattedRepos: Repository[] = metricsData.repositories.map(
+          (repo, index) => ({
+            id: index,
+            name: repo.name,
+            description: repo.description || "",
+            html_url: repo.url,
+            stargazers_count: repo.stars || 0,
+            forks_count: repo.forks || 0,
+            branches: repo.branches || 0,
+            lastUpdated: repo.lastUpdated || new Date().toISOString(),
+            commits: repo.commits || 0,
+            linesChanged: repo.linesChanged || 0,
+            language: repo.language || "Unknown",
+          }),
+        );
+
+        setRepos(formattedRepos);
       } catch (err) {
         console.error("Error loading repos:", err);
         setError("Failed to load repositories");
+        toast.error("Failed to load repositories", {
+          description: "Please try again later",
+        });
       } finally {
         setLoading(false);
       }
@@ -109,11 +133,15 @@ export default function ReadmeGenerator() {
     loadRepos();
   }, [session, status]);
 
-  // Show loading state
-  if (loading) {
+  if (!session) {
     return (
-      <div className="p-6 flex justify-center items-center">
-        <Loader />
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <h1 className="text-2xl font-semibold mb-6">
+          Sign in to Generate READMEs
+        </h1>
+        <Button asChild>
+          <Link href="/signup">Sign In with GitHub</Link>
+        </Button>
       </div>
     );
   }
@@ -122,7 +150,7 @@ export default function ReadmeGenerator() {
     repo.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  const handleSectionToggle = (id: any) => {
+  const handleSectionToggle = (id: string) => {
     setSections((prev) =>
       prev.map((section) =>
         section.id === id ? { ...section, enabled: !section.enabled } : section,
@@ -130,163 +158,250 @@ export default function ReadmeGenerator() {
     );
   };
 
+  const LoadingSkeleton = () => {
+    return (
+      <div className="grid grid-cols-1 gap-4">
+        {[1, 2, 3, 4].map((i) => (
+          <div className="p-4 border-neutral-300 border rounded-lg" key={i}>
+            <Skeleton className="w-full h-[300px]" />
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const handleGenerateReadme = async () => {
-    if (!selectedRepo) return alert("Please select a repository!");
+    if (!selectedRepo) {
+      toast.warning("Selection Required", {
+        description: "Please select a repository first",
+      });
+      return;
+    }
 
     setLoading(true);
     try {
       const repoData = repos.find((repo) => repo.name === selectedRepo);
-      if (!repoData) {
-        return alert("Repository data not found.");
-      }
+      if (!repoData) throw new Error("Repository data not found");
 
       const enabledSections = sections
         .filter((s) => s.enabled)
         .map((s) => s.label);
+
       const generatedReadme = await generateReadme(
         repoData.name,
-        repoData.description || "No description provided",
+        repoData.description,
         enabledSections,
       );
+
       setReadmeContent(generatedReadme);
+      toast.success("README Generated", {
+        description: "Your README has been generated successfully",
+      });
     } catch (error) {
       console.error(error);
+      toast.error("Generation Failed", {
+        description: "Failed to generate README. Please try again",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   const handleImproveReadme = async () => {
+    if (!readmeContent) return;
+
     setLoading(true);
     try {
       const improvedReadme = await improveReadme(readmeContent);
       setReadmeContent(improvedReadme);
+      toast.success("README Improved", {
+        description: "Your README has been enhanced with AI suggestions",
+      });
     } catch (error) {
       console.error(error);
+      toast.error("Improvement Failed", {
+        description: "Failed to improve README. Please try again",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  //TODO: improve functionality
   const handleCommitReadme = async () => {
-    if (!session?.user?.githubAccessToken || !readmeContent) return;
+    if (!session?.user?.githubAccessToken || !readmeContent || !selectedRepo) {
+      toast.error("Unable to Commit", {
+        description: "Missing required information to commit README",
+      });
+      return;
+    }
 
     setCommitting(true);
-    try {
-      const owner = session.user.name || "your-github-username"; // Ensure correct GitHub owner
-      await commitReadmeToGitHub(
-        owner,
-        selectedRepo,
-        readmeContent,
-        session.user.githubAccessToken,
-      );
 
-      alert("README successfully committed to GitHub!");
-    } catch (error) {
-      console.error(error);
-      alert("Failed to commit README.");
-    } finally {
-      setCommitting(false);
-    }
+    const promise = new Promise(async (resolve, reject) => {
+      try {
+        const owner = session.user.name || session.user.id;
+        await commitReadmeToGitHub(
+          owner,
+          selectedRepo,
+          readmeContent,
+          session.user.githubAccessToken,
+        );
+        resolve("README successfully committed to GitHub");
+      } catch (error) {
+        reject(error);
+      }
+    });
+
+    toast.promise(promise, {
+      loading: "Committing README to GitHub...",
+      success: "README successfully committed",
+      error: "Failed to commit README",
+    });
+
+    promise.finally(() => setCommitting(false));
   };
 
+  if (loading) {
+    <LoadingSkeleton />;
+  }
+
   return (
-    <div className="p-6 bg-white shadow-md rounded-lg max-w-4xl mx-auto w-full h-screen">
-      <h1 className="text-2xl font-semibold my-6">AI-Generated README</h1>
+    <div className="max-w-4xl mx-auto p-6 space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">AI-Generated README</h1>
+        <p className="text-gray-600 mt-2">
+          Select a repository and customize your README sections.
+        </p>
+      </div>
 
-      <p className="text-gray-600 mt-2">
-        Select a repository and customize your README.
-      </p>
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
 
-      {/* Repository Selection */}
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Select Repository</h2>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search repositories..."
+              className="pl-10"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
 
-      <div className="mt-4">
-        <h2 className="text-lg font-semibold">Select a Repository:</h2>
-        <div className="relative flex items-center mt-2">
-          <Search className="absolute left-3 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder="Search repositories..."
-            className="pl-10"
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+          <Select value={selectedRepo} onValueChange={setSelectedRepo}>
+            <SelectTrigger className="mt-2">
+              <SelectValue placeholder="Select a Repository" />
+            </SelectTrigger>
+            <SelectContent>
+              {filteredRepos.map((repo) => (
+                <SelectItem key={repo.id} value={repo.name}>
+                  <div className="flex items-center space-x-2">
+                    <span>{repo.name}</span>
+                    <span className="text-gray-400">
+                      ⭐ {repo.stargazers_count}
+                    </span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
-        <Select onValueChange={setSelectedRepo}>
-          <SelectTrigger className="mt-2">
-            <SelectValue placeholder="Select a Repository" />
-          </SelectTrigger>
-          <SelectContent>
-            {filteredRepos.map((repo) => (
-              <SelectItem key={repo.id} value={repo.name}>
-                {repo.name} ⭐ {repo.stargazers_count}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Section Selection */}
-      <h2 className="text-lg font-semibold mt-4">Select README Sections:</h2>
-      <div className="mt-2 space-y-2">
-        {sections.map((section) => (
-          <label key={section.id} className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              checked={section.enabled}
-              onChange={() => handleSectionToggle(section.id)}
-              className="form-checkbox"
-            />
-            <span>{section.label}</span>
-          </label>
-        ))}
-      </div>
-
-      {/* Generate Button */}
-      <Button onClick={handleGenerateReadme} className="mt-4">
-        {loading ? "Generating..." : "Generate README"}
-      </Button>
-
-      {loading && <Loader />}
-
-      {readmeContent && (
-        <div className="mt-4">
-          <div className="flex justify-between">
-            <h2 className="text-lg font-semibold">Generated README</h2>
-            <div className="space-x-2">
-              <Button onClick={handleImproveReadme} variant="outline">
-                Improve with AI
-              </Button>
-              <Button
-                onClick={() => setPreviewMode(!previewMode)}
-                variant="outline"
+        <div>
+          <h2 className="text-xl font-semibold mb-2">README Sections</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {sections.map((section) => (
+              <div
+                key={section.id}
+                className="flex items-start space-x-2 p-3 border rounded-lg hover:bg-gray-50"
               >
-                {previewMode ? "Edit Markdown" : "Preview"}
+                <input
+                  type="checkbox"
+                  id={section.id}
+                  checked={section.enabled}
+                  onChange={() => handleSectionToggle(section.id)}
+                  className="mt-1"
+                />
+                <label htmlFor={section.id} className="cursor-pointer flex-1">
+                  <div className="font-medium">{section.label}</div>
+                  <div className="text-sm text-gray-500">
+                    {section.description}
+                  </div>
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex space-x-4">
+          <Button
+            onClick={handleGenerateReadme}
+            disabled={loading || !selectedRepo}
+            className="flex-1"
+          >
+            {loading ? "Generating..." : "Generate README"}
+          </Button>
+        </div>
+        {loading ? <LoadingSkeleton /> : ""}
+
+        {readmeContent && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Generated README</h2>
+              <div className="space-x-2">
+                <Button
+                  onClick={handleImproveReadme}
+                  variant="outline"
+                  disabled={loading}
+                >
+                  Improve with AI
+                </Button>
+                <Button
+                  onClick={() => setPreviewMode(!previewMode)}
+                  variant="outline"
+                >
+                  {previewMode ? "Edit" : "Preview"}
+                </Button>
+              </div>
+            </div>
+
+            {previewMode ? (
+              <div className="border rounded-lg p-6 overflow-hidden">
+                <ReactMarkdown>{readmeContent}</ReactMarkdown>
+              </div>
+            ) : (
+              <Textarea
+                value={readmeContent}
+                onChange={(e) => setReadmeContent(e.target.value)}
+                className="min-h-[400px] font-mono"
+                placeholder="README content will appear here..."
+              />
+            )}
+
+            <div className="relative">
+              <div className="absolute text-white left-1/4 z-20">
+                Comming soon
+              </div>
+              <Button
+                onClick={handleCommitReadme}
+                disabled
+                // disabled={committing || !readmeContent}
+                className="w-full blur-[2px]"
+              >
+                {committing ? "Committing to GitHub..." : "Commit to GitHub"}
               </Button>
             </div>
           </div>
-
-          {previewMode ? (
-            <div className="border p-4 rounded bg-gray-100 mt-2 max-w-4xl">
-              <ReactMarkdown>{readmeContent}</ReactMarkdown>
-            </div>
-          ) : (
-            <Textarea
-              value={readmeContent}
-              className="w-full h-40 mt-2"
-              onChange={(e) => setReadmeContent(e.target.value)}
-            />
-          )}
-
-          <Button
-            onClick={handleCommitReadme}
-            className="mt-4"
-            disabled={committing}
-          >
-            {committing ? "Committing..." : "Commit to GitHub"}
-          </Button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
-}
+};
+
+export default ReadmeGenerator;

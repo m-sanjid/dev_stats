@@ -4,6 +4,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { PageWrapper } from "@/components/PageWrapper";
+import { Toaster } from "@/components/ui/sonner";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -26,6 +27,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           {children}
         </div>
       </div>
+      <Toaster />
     </PageWrapper>
   );
 }

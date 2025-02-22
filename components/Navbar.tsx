@@ -7,16 +7,14 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   GitFork,
-  Activity,
-  Code,
   User,
   LogOut,
   ChevronDown,
   Sun,
   Moon,
-  Home,
   FileText,
   Settings,
+  Menu,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -30,34 +28,16 @@ import { useEffect, useState } from "react";
 import SignoutButton from "./Buttons/SignoutButton";
 
 const navItems = [
-  {
-    title: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Pro",
-    href: "/pricing",
-    icon: GitFork,
-  },
-  {
-    title: "Portfolio",
-    href: "/portfolio",
-    icon: FileText,
-  },
-  {
-    title: "Settings",
-    href: "/settings",
-    icon: Settings,
-  },
+  { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { title: "Pro", href: "/pricing", icon: GitFork },
+  { title: "Settings", href: "/settings", icon: Settings },
 ];
 
 const outNavItems = [
-  { title: "Pricing", href: "#pricing" },
-  { title: "Try Demo", href: "/demo" },
+  { title: "Pricing", href: "/pricing" },
+  { title: "Preview", href: "/preview" },
   { title: "Contact", href: "/contact" },
   { title: "About Us", href: "/about" },
-  { title: "Help", href: "/help" },
   { title: "Blog", href: "/blog" },
 ];
 
@@ -80,18 +60,7 @@ export default function Navbar() {
 
   if (!mounted) {
     return (
-      <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="max-w-7xl mx-auto flex h-14 items-center">
-          <div className="flex flex-1 items-center justify-between">
-            {/* Minimal content for SSR */}
-            <div className="flex items-center gap-6 md:gap-8">
-              <span className="font-bold text-xl bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                DevStats
-              </span>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur" />
     );
   }
 
@@ -106,108 +75,124 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="max-w-7xl mx-auto flex h-14 items-center">
-        <div className="flex flex-1 items-center justify-between px-16">
-          {/* Logo and Navigation */}
-          <div className="flex items-center gap-6 md:gap-8">
-            <Link href="/" className="flex items-center space-x-2">
-              <span className="font-bold text-xl bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                DevStats
-              </span>
-            </Link>
+      <div className="max-w-7xl mx-auto flex h-14 items-center px-4 md:px-16 justify-between">
+        {/* Logo */}
+        <Link
+          href={`${isAuthenticated ? "/home" : "/"}`}
+          className="font-bold text-xl bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent"
+        >
+          DevStats
+        </Link>
 
-            {isAuthenticated && (
-              <div className="hidden md:flex space-x-1">
-                {navItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = pathname === item.href;
-                  return (
-                    <Button
-                      key={item.href}
-                      variant={isActive ? "secondary" : "ghost"}
-                      size="sm"
-                      className="gap-2"
-                      asChild
-                    >
-                      <Link href={item.href}>
-                        <Icon className="h-4 w-4" />
-                        {item.title}
-                      </Link>
-                    </Button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* Auth Section */}
-          <div className="flex items-center gap-2">
-            {isAuthenticated ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="gap-2">
-                    <img
-                      src={session.user?.image || "/default-avatar.png"}
-                      alt="Avatar"
-                      className="h-6 w-6 rounded-full"
-                    />
-                    <span className="hidden md:inline-block">
-                      {session.user?.name}
-                    </span>
-                    <ChevronDown className="h-4 w-4 opacity-50" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-[200px]">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <User className="mr-2 h-4 w-4" />
-                    Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => signOut()}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Sign out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <div className="flex justify-between">
-                <div className="hidden md:flex space-x-2">
-                  {outNavItems.map((item) => {
-                    const isActive = pathname === item.href;
-                    return (
-                      <Button
-                        key={item.href}
-                        variant={isActive ? "secondary" : "ghost"}
-                        size="sm"
-                        className="gap-2"
-                        asChild
-                      >
-                        <Link href={item.href}>{item.title}</Link>
-                      </Button>
-                    );
-                  })}
-                  <SignoutButton />
-                </div>
-              </div>
-            )}
-
-            {/* Theme Toggle on the right side */}
-            {isDarkMode !== undefined && (
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex space-x-2">
+          {isAuthenticated &&
+            navItems.map(({ title, href, icon: Icon }) => (
               <Button
-                variant="ghost"
+                key={href}
+                variant={pathname === href ? "secondary" : "ghost"}
                 size="sm"
-                onClick={toggleTheme}
-                className="flex items-center"
+                className="gap-2"
+                asChild
               >
-                {isDarkMode ? (
-                  <Sun className="h-4 w-4" />
-                ) : (
-                  <Moon className="h-4 w-4" />
-                )}
+                <Link href={href}>
+                  <Icon className="h-4 w-4" /> {title}
+                </Link>
               </Button>
+            ))}
+
+          {/* AI Portfolio link visible only when authenticated */}
+          {isAuthenticated && (
+            <Button variant="ghost" size="sm" className="gap-2" asChild>
+              <Link
+                href={`/profile/${session.user.username || session.user.id}`}
+              >
+                <FileText className="h-4 w-4" />
+                AI Portfolio
+              </Link>
+            </Button>
+          )}
+
+          {/* For unauthenticated users, show outNavItems */}
+          {!isAuthenticated &&
+            outNavItems.map(({ title, href }) => (
+              <Button
+                key={href}
+                variant={pathname === href ? "secondary" : "ghost"}
+                size="sm"
+                asChild
+              >
+                <Link href={href}>{title}</Link>
+              </Button>
+            ))}
+        </div>
+
+        {/* Mobile Navigation Dropdown */}
+        <div className="md:hidden">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              {isAuthenticated
+                ? navItems.map(({ title, href, icon: Icon }) => (
+                  <DropdownMenuItem key={href} asChild>
+                    <Link href={href} className="flex items-center gap-2">
+                      <Icon className="h-4 w-4" /> {title}
+                    </Link>
+                  </DropdownMenuItem>
+                ))
+                : outNavItems.map(({ title, href }) => (
+                  <DropdownMenuItem key={href} asChild>
+                    <Link href={href}>{title}</Link>
+                  </DropdownMenuItem>
+                ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        {/* Auth Section */}
+        <div className="flex items-center gap-2">
+          {isAuthenticated ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <img
+                    src={session.user?.image || "/default-avatar.png"}
+                    alt="Avatar"
+                    className="h-6 w-6 rounded-full"
+                  />
+                  <span className="hidden md:inline-block">
+                    {session.user?.name}
+                  </span>
+                  <ChevronDown className="h-4 w-4 opacity-50" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <User className="mr-2 h-4 w-4" /> Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => signOut()}>
+                  <LogOut className="mr-2 h-4 w-4" /> Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <SignoutButton />
+          )}
+
+          {/* Theme Toggle */}
+          <Button variant="ghost" size="sm" onClick={toggleTheme}>
+            {isDarkMode ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
             )}
-          </div>
+          </Button>
         </div>
       </div>
     </nav>

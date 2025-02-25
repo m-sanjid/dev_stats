@@ -8,6 +8,7 @@ import { z } from "zod";
 import { OAuthButton } from "./Buttons/OAuthButton";
 import { GitHubIcon, GoogleIcon } from "./icons";
 import { Button } from "./ui/button";
+import Link from "next/link";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -52,7 +53,10 @@ export function LoginForm() {
           DevStats
         </h2>
         <p className="text-center text-gray-500 dark:text-neutral-500 text-sm mb-4">
-          Please sign in to continue.
+          Please sign in to continue. <strong>|</strong>
+          <Link className="ml-0" href={"/signup"}>
+            <Button variant={"link"}>signup?</Button>
+          </Link>
         </p>
 
         {/* OAuth Buttons */}

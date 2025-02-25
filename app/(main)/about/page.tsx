@@ -13,7 +13,7 @@ export default function AboutPage() {
   return (
     <div className="container mx-auto py-8 px-4">
       <PageHeader
-        title="About GitMetrics"
+        title="About DevStats"
         description="Your personal GitHub analytics and productivity dashboard"
       />
 
@@ -26,7 +26,7 @@ export default function AboutPage() {
           </CardHeader>
           <CardContent className="prose dark:prose-invert">
             <p className="text-lg text-muted-foreground">
-              GitMetrics is designed to help developers understand their coding
+              DevStats is designed to help developers understand their coding
               patterns, track productivity, and gain insights into their GitHub
               activity. We believe in making development metrics accessible and
               actionable.

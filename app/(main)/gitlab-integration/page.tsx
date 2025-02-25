@@ -12,7 +12,7 @@ export default function GitLabIntegration() {
 
   const handleConnectGitLab = async () => {
     // Redirect to GitLab OAuth URL
-    window.location.href = "/api/auth/signin/gitlab"; // Adjust this URL based on your auth setup
+    window.location.href = "/api/auth/signin/gitlab";
   };
 
   const fetchGitLabData = async () => {
@@ -23,7 +23,7 @@ export default function GitLabIntegration() {
         const response = await fetch("/api/gitlab/data", {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${session.accessToken}`, // Use the access token from the session
+            Authorization: `Bearer ${session.accessToken}`,
           },
         });
         if (!response.ok) {
@@ -47,11 +47,17 @@ export default function GitLabIntegration() {
     <div className="min-h-screen bg-background flex flex-col items-center justify-center">
       <h1 className="text-4xl font-bold mb-8">GitLab Integration</h1>
       <p className="text-lg mb-4">
-        Connect your GitLab account to fetch your repositories and contributions.
+        Connect your GitLab account to fetch your repositories and
+        contributions.
       </p>
-      <Button onClick={handleConnectGitLab} className="bg-purple-600 hover:bg-purple-700 text-white">
+      <Button
+        disabled
+        onClick={handleConnectGitLab}
+        className="bg-purple-600 hover:bg-purple-700 text-white"
+      >
         Connect to GitLab
       </Button>
+      <div className="shadow-md mt-4 p-4 rounded-md">Comming Soon...</div>
 
       {loading && <p className="mt-4">Loading your GitLab data...</p>}
       {error && <p className="mt-4 text-red-500">{error}</p>}
@@ -63,8 +69,15 @@ export default function GitLabIntegration() {
             {gitlabData.map((repo) => (
               <li key={repo.id} className="p-4 border rounded-md shadow-md">
                 <h3 className="text-lg font-semibold">{repo.name}</h3>
-                <p className="text-gray-600">{repo.description || "No description available"}</p>
-                <a href={repo.web_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                <p className="text-gray-600">
+                  {repo.description || "No description available"}
+                </p>
+                <a
+                  href={repo.web_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:underline"
+                >
                   View Repository
                 </a>
               </li>
@@ -74,4 +87,4 @@ export default function GitLabIntegration() {
       )}
     </div>
   );
-} 
+}

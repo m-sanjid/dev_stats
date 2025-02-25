@@ -90,7 +90,7 @@ export async function fetchGitHubMetrics(userId: string) {
     weeklyCommits: {},
     totalCodingHours: 0,
     filesChanged: 0,
-    dailyActivity: {}, // ✅ Fixed: Ensure it's an object
+    dailyActivity: {},
     language: {},
   };
 
@@ -111,7 +111,6 @@ export async function fetchGitHubMetrics(userId: string) {
       throw new Error("GitHub token is invalid or expired.");
     }
 
-    // ✅ Initialize Data Structures
     const weeklyCommits: Record<string, number> = {};
     const dailyActivity: Record<number, number> = {};
     for (let i = 0; i < 28; i++) {
@@ -208,7 +207,7 @@ export async function fetchGitHubMetrics(userId: string) {
             new Date(commit.committedDate),
             "yyyy-MM-dd",
           );
-          const commitHour = new Date(commit.committedDate).getHours(); // ✅ Extract hour (0-23)
+          const commitHour = new Date(commit.committedDate).getHours();
 
           if (weeklyCommits[commitDate] !== undefined) {
             weeklyCommits[commitDate]++;

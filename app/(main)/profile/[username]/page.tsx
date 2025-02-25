@@ -22,6 +22,7 @@ import { format } from "date-fns";
 import SocialShareDropdown from "@/components/SocialShare";
 import EditableBio from "@/components/EditableBio";
 import SnapshotCapture from "@/components/SnapShotCapture";
+import ProOnlyComponent from "@/components/ProOnlyComponent";
 
 interface Repository {
   name: string;
@@ -157,6 +158,7 @@ export default function PortfolioPage() {
   const portfolioRef = useRef<HTMLDivElement>(null);
   const [userBio, setUserBio] = useState<string>(bio); // Store updated bio
   const ref = useRef(null);
+  const isPro = session?.user?.subscription === "pro";
 
   const handleBioSave = (newBio: string) => {
     setUserBio(newBio);
@@ -215,174 +217,190 @@ export default function PortfolioPage() {
 
   return (
     <div className="container mx-auto p-6 max-w-4xl flex flex-col">
-      <div ref={portfolioRef} className="border p-6 rounded-lg my-4 shadow-2xl">
-        <h1 className="text-4xl font-bold mb-6">
-          {session?.user?.name}'s
-          <span className="text-3xl font-medium">
-            {" "}
-            Developer Portfolio
-          </span>{" "}
-        </h1>
+      {isPro ? (
+        <>
+          <div
+            ref={portfolioRef}
+            className="border p-6 rounded-lg my-4 shadow-2xl"
+          >
+            <h1 className="text-4xl font-bold mb-6">
+              {session?.user?.name}'s
+              <span className="text-3xl font-medium">
+                {" "}
+                Developer Portfolio
+              </span>{" "}
+            </h1>
 
-        <EditableBio initialBio={bio} onSave={handleBioSave} />
+            <EditableBio initialBio={bio} onSave={handleBioSave} />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>GitHub Stats</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CardContent>
-                <dl className="space-y-2">
-                  <div>
-                    <dt className="text-sm text-gray-500">Total Commits</dt>
-                    <dd className="text-2xl font-bold">
-                      {metrics?.totalCommits.toLocaleString()}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-sm text-gray-500">
-                      Lines of Code Changed
-                    </dt>
-                    <dd className="text-2xl font-bold">
-                      {metrics?.totalLines.toLocaleString()}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-sm text-gray-500">Files Modified</dt>
-                    <dd className="text-2xl font-bold">
-                      {metrics?.filesChanged.toLocaleString()}
-                    </dd>
-                  </div>
-                </dl>
-              </CardContent>{" "}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Programming Languages</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {metrics?.language && (
-                <LanguageStats languages={metrics.language} />
-              )}
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Repository Metrics</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <dl className="space-y-2">
-                <div>
-                  <dt className="text-sm text-gray-500">Active Repositories</dt>
-                  <dd className="text-2xl font-bold">
-                    {metrics?.repositories.length.toLocaleString()}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-sm text-gray-500">Total Stars</dt>
-                  <dd className="text-2xl font-bold">
-                    {metrics?.repositories
-                      .reduce((acc, repo) => acc + repo.stars, 0)
-                      .toLocaleString()}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-sm text-gray-500">Coding Hours</dt>
-                  <dd className="text-2xl font-bold">
-                    {metrics?.totalCodingHours.toLocaleString()}
-                  </dd>
-                </div>
-              </dl>
-            </CardContent>
-          </Card>
-        </div>
-        <section className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">Featured Projects</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {metrics?.repositories
-              .sort(
-                (a, b) =>
-                  new Date(b.lastUpdated).getTime() -
-                  new Date(a.lastUpdated).getTime(),
-              )
-              .slice(0, 4)
-              .map((repo) => (
-                <Card key={repo.name} className="flex flex-col">
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <span>{repo.name}</span>
-                      <Badge variant="secondary">{repo.language}</Badge>
-                    </CardTitle>
-                    <CardDescription>
-                      {repo.description || "No description available."}
-                    </CardDescription>
-                  </CardHeader>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>GitHub Stats</CardTitle>
+                </CardHeader>
+                <CardContent>
                   <CardContent>
-                    <div className="flex items-center space-x-4">
-                      <span className="text-sm">
-                        ⭐ {repo.stars.toLocaleString()}
-                      </span>
-                      <span className="text-sm">
-                        🔀 {repo.forks.toLocaleString()}
-                      </span>
-                      <span className="text-sm">
-                        📅 {format(new Date(repo.lastUpdated), "MMM d, yyyy")}
-                      </span>
+                    <dl className="space-y-2">
+                      <div>
+                        <dt className="text-sm text-gray-500">Total Commits</dt>
+                        <dd className="text-2xl font-bold">
+                          {metrics?.totalCommits.toLocaleString()}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-sm text-gray-500">
+                          Lines of Code Changed
+                        </dt>
+                        <dd className="text-2xl font-bold">
+                          {metrics?.totalLines.toLocaleString()}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-sm text-gray-500">
+                          Files Modified
+                        </dt>
+                        <dd className="text-2xl font-bold">
+                          {metrics?.filesChanged.toLocaleString()}
+                        </dd>
+                      </div>
+                    </dl>
+                  </CardContent>{" "}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Programming Languages</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {metrics?.language && (
+                    <LanguageStats languages={metrics.language} />
+                  )}
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Repository Metrics</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <dl className="space-y-2">
+                    <div>
+                      <dt className="text-sm text-gray-500">
+                        Active Repositories
+                      </dt>
+                      <dd className="text-2xl font-bold">
+                        {metrics?.repositories.length.toLocaleString()}
+                      </dd>
                     </div>
-                  </CardContent>
-                  <CardFooter className="mt-auto">
-                    <Button
-                      variant="outline"
-                      onClick={() => window.open(repo.url, "_blank")}
-                      className="w-full"
-                    >
-                      View Project
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
+                    <div>
+                      <dt className="text-sm text-gray-500">Total Stars</dt>
+                      <dd className="text-2xl font-bold">
+                        {metrics?.repositories
+                          .reduce((acc, repo) => acc + repo.stars, 0)
+                          .toLocaleString()}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-sm text-gray-500">Coding Hours</dt>
+                      <dd className="text-2xl font-bold">
+                        {metrics?.totalCodingHours.toLocaleString()}
+                      </dd>
+                    </div>
+                  </dl>
+                </CardContent>
+              </Card>
+            </div>
+            <section className="mb-8">
+              <h2 className="text-2xl font-bold mb-4">Featured Projects</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {metrics?.repositories
+                  .sort(
+                    (a, b) =>
+                      new Date(b.lastUpdated).getTime() -
+                      new Date(a.lastUpdated).getTime(),
+                  )
+                  .slice(0, 4)
+                  .map((repo) => (
+                    <Card key={repo.name} className="flex flex-col">
+                      <CardHeader>
+                        <CardTitle className="flex items-center justify-between">
+                          <span>{repo.name}</span>
+                          <Badge variant="secondary">{repo.language}</Badge>
+                        </CardTitle>
+                        <CardDescription>
+                          {repo.description || "No description available."}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center space-x-4">
+                          <span className="text-sm">
+                            ⭐ {repo.stars.toLocaleString()}
+                          </span>
+                          <span className="text-sm">
+                            🔀 {repo.forks.toLocaleString()}
+                          </span>
+                          <span className="text-sm">
+                            📅{" "}
+                            {format(new Date(repo.lastUpdated), "MMM d, yyyy")}
+                          </span>
+                        </div>
+                      </CardContent>
+                      <CardFooter className="mt-auto">
+                        <Button
+                          variant="outline"
+                          onClick={() => window.open(repo.url, "_blank")}
+                          className="w-full"
+                        >
+                          View Project
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  ))}
+              </div>
+            </section>
           </div>
-        </section>
-      </div>
 
-      <div className="flex justify-between">
-        <PDFDownloadLink
-          document={
-            <ResumePDF
-              profile={session?.user?.name || "Developer"}
-              bio={bio}
-              userBio={userBio}
-              projects={metrics?.repositories.map((repo) => repo.name) || []}
-            // careerAdvice="AI-powered career insights"
+          <div className="flex justify-between">
+            <PDFDownloadLink
+              document={
+                <ResumePDF
+                  profile={session?.user?.name || "Developer"}
+                  bio={bio}
+                  userBio={userBio}
+                  projects={
+                    metrics?.repositories.map((repo) => repo.name) || []
+                  }
+                // careerAdvice="AI-powered career insights"
+                />
+              }
+              fileName={`${session?.user?.name}_profilesummary.pdf`}
+            >
+              {({ loading: pdfLoading }) => (
+                <Button disabled={pdfLoading} size="lg">
+                  {pdfLoading
+                    ? "Generating PDF..."
+                    : "Download Profile Summary (PDF)"}
+                </Button>
+              )}
+            </PDFDownloadLink>
+
+            <SnapshotCapture
+              targetRef={portfolioRef}
+              fileName="portfolio_snapshot"
+              onCapture={setSnapshotUrl}
             />
-          }
-          fileName={`${session?.user?.name}_profilesummary.pdf`}
-        >
-          {({ loading: pdfLoading }) => (
-            <Button disabled={pdfLoading} size="lg">
-              {pdfLoading
-                ? "Generating PDF..."
-                : "Download Profile Summary (PDF)"}
-            </Button>
-          )}
-        </PDFDownloadLink>
 
-        <SnapshotCapture
-          targetRef={portfolioRef}
-          fileName="portfolio_snapshot"
-          onCapture={setSnapshotUrl}
-        />
-
-        <SocialShareDropdown
-          //TODO:replace with original url improve snapshot
-          url={`http://localhost:3000/profile/${session?.user.username || session?.user.id}`}
-          image={snapshotUrl || ""}
-          text="Check out my GitHub portfolio snapshot! 🚀"
-        />
-      </div>
+            <SocialShareDropdown
+              //TODO:replace with original url improve snapshot
+              url={`http://localhost:3000/profile/${session?.user.username || session?.user.id}`}
+              image={snapshotUrl || ""}
+              text="Check out my GitHub portfolio snapshot! 🚀"
+            />
+          </div>
+        </>
+      ) : (
+        <ProOnlyComponent />
+      )}
     </div>
   );
 }

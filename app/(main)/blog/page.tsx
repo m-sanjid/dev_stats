@@ -7,38 +7,41 @@ const blogPosts = [
   {
     id: 1,
     title: "Getting Started with GitHub Analytics",
-    excerpt: "Learn how to leverage GitHub metrics to improve your development workflow and showcase your skills.",
+    excerpt:
+      "Learn how to leverage GitHub metrics to improve your development workflow and showcase your skills.",
     author: "DevStats Team",
     date: "2024-03-15",
     readTime: "5 min read",
     category: "Tutorial",
-    image: "/blog/github-analytics.jpg"
+    image: "/blog/github-analytics.jpg",
   },
   {
     id: 2,
     title: "Maximizing Your Developer Portfolio",
-    excerpt: "Tips and strategies for creating an impressive developer portfolio that stands out to employers.",
+    excerpt:
+      "Tips and strategies for creating an impressive developer portfolio that stands out to employers.",
     author: "Sarah Johnson",
     date: "2024-03-10",
     readTime: "8 min read",
     category: "Career Growth",
-    image: "/blog/portfolio.jpg"
+    image: "/blog/portfolio.jpg",
   },
   {
     id: 3,
     title: "Understanding Your Coding Metrics",
-    excerpt: "Deep dive into what different coding metrics mean and how to use them for personal growth.",
+    excerpt:
+      "Deep dive into what different coding metrics mean and how to use them for personal growth.",
     author: "Michael Chen",
     date: "2024-03-05",
     readTime: "6 min read",
     category: "Analytics",
-    image: "/blog/metrics.jpg"
-  }
+    image: "/blog/metrics.jpg",
+  },
 ];
 
 export default function BlogPage() {
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container max-w-5xl mx-auto py-8 px-4">
       <PageHeader
         title="DevStats Blog"
         description="Insights, tutorials, and updates from the DevStats team"

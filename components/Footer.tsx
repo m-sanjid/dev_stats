@@ -5,12 +5,12 @@ const footerLinks = {
   product: [
     { name: "Features", href: "#features" },
     { name: "Pricing", href: "#pricing" },
-    { name: "Demo", href: "/demo" },
+    { name: "Preview", href: "/preview" },
   ],
   resources: [
     { name: "Documentation", href: "/docs" },
     { name: "Blog", href: "/blog" },
-    { name: "Support", href: "/support" },
+    { name: "Support", href: "/help" },
   ],
   company: [
     { name: "About", href: "/about" },
@@ -24,9 +24,17 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { name: "GitHub", icon: Github, href: "https://github.com" },
-  { name: "Twitter", icon: Twitter, href: "https://twitter.com" },
-  { name: "LinkedIn", icon: Linkedin, href: "https://linkedin.com" },
+  {
+    name: "GitHub",
+    icon: Github,
+    href: "https://github.com/m-sanjid/dev_stats",
+  },
+  { name: "Twitter", icon: Twitter, href: "https://x.com/sanjid357" },
+  {
+    name: "LinkedIn",
+    icon: Linkedin,
+    href: "https://www.linkedin.com/in/muhammedsanjid1/",
+  },
 ];
 
 export function Footer() {
@@ -36,11 +44,13 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           {/* Product Links */}
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Product</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
+              Product
+            </h3>
             <ul className="space-y-2">
               {footerLinks.product.map((link) => (
                 <li key={link.name}>
-                  <Link 
+                  <Link
                     href={link.href}
                     className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                   >
@@ -53,11 +63,13 @@ export function Footer() {
 
           {/* Resources Links */}
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Resources</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
+              Resources
+            </h3>
             <ul className="space-y-2">
               {footerLinks.resources.map((link) => (
                 <li key={link.name}>
-                  <Link 
+                  <Link
                     href={link.href}
                     className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                   >
@@ -70,11 +82,13 @@ export function Footer() {
 
           {/* Company Links */}
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Company</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
+              Company
+            </h3>
             <ul className="space-y-2">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
-                  <Link 
+                  <Link
                     href={link.href}
                     className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                   >
@@ -87,11 +101,13 @@ export function Footer() {
 
           {/* Legal Links */}
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Legal</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
+              Legal
+            </h3>
             <ul className="space-y-2">
               {footerLinks.legal.map((link) => (
                 <li key={link.name}>
-                  <Link 
+                  <Link
                     href={link.href}
                     className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                   >
@@ -139,4 +155,4 @@ export function Footer() {
       </div>
     </footer>
   );
-} 
+}

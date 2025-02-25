@@ -30,11 +30,9 @@ export default function RootLayout({
       <body className="transition-colors duration-200 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
         <ThemeProvider>
           <Providers>
-
-          <Navbar />
-          {children}
+            <Navbar />
+            {children}
           </Providers>
-
         </ThemeProvider>
       </body>
     </html>

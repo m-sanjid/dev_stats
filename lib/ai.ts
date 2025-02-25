@@ -76,33 +76,17 @@ function formatOtherDetails(otherDetails: { [key: string]: any }): string {
 }
 
 export async function improveReadme(currentReadme: string) {
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "gpt-4",
-      messages: [
-        {
-          role: "system",
-          content: "You are an expert in improving GitHub README files.",
-        },
-        {
-          role: "user",
-          content: `Improve this README by suggesting missing sections, fixing formatting, and enhancing clarity:\n\n${currentReadme}`,
-        },
-      ],
-    }),
+  const prompt = `You are an expert in improving GitHub README files. Please enhance this README by suggesting missing sections, fixing formatting, and improving clarity:\n\n${currentReadme}`;
+
+  const result = await model.generateContent({
+    contents: [{ role: "user", parts: [{ text: prompt }] }],
+    generationConfig,
   });
 
-  if (!response.ok) {
-    throw new Error("AI failed to improve README.");
-  }
+  const textResponse = result.response?.text?.();
+  if (!textResponse) throw new Error("AI failed to generate README.");
 
-  const data = await response.json();
-  return data.choices[0].message.content;
+  return textResponse;
 }
 
 export async function generateProjectSummary(
@@ -128,7 +112,7 @@ export async function generateProjectSummary(
   if (!textResponse) throw new Error("AI failed to generate summary.");
   return textResponse;
 }
-// First, let's define our interfaces to match the actual data structure
+
 interface GitHubMetrics {
   totalCommits: number;
   totalLines: number;
@@ -138,7 +122,7 @@ interface GitHubMetrics {
   githubProfile: GitHubProfile | null;
   weeklyCommits: Record<string, number>;
   dailyActivity: Record<number, number>;
-  language: Record<string, number>; // Note: This matches the actual property name
+  language: Record<string, number>;
 }
 
 interface Repository {
@@ -160,16 +144,14 @@ interface GitHubProfile {
 }
 
 export async function generateBio(userId: string, metrics: GitHubMetrics) {
-  // Validate and sanitize metrics data
   const sanitizedMetrics = {
     totalCommits: metrics.totalCommits ?? 0,
     totalCodingHours: metrics.totalCodingHours ?? 0,
     filesChanged: metrics.filesChanged ?? 0,
-    language: metrics.language ?? {}, // Using the correct property name
+    language: metrics.language ?? {},
     repositories: metrics.repositories ?? [],
   };
 
-  // Format languages with their percentages
   const languages =
     Object.entries(sanitizedMetrics.language)
       .sort(([, a], [, b]) => b - a)
@@ -177,7 +159,6 @@ export async function generateBio(userId: string, metrics: GitHubMetrics) {
       .map(([lang, percentage]) => `${lang} (${Math.round(percentage)}%)`)
       .join(", ") || "No language data available";
 
-  // Calculate additional metrics for the bio
   const activeRepositories = sanitizedMetrics.repositories.length;
   const totalStars = sanitizedMetrics.repositories.reduce(
     (sum, repo) => sum + repo.stars,
@@ -209,7 +190,6 @@ export async function generateBio(userId: string, metrics: GitHubMetrics) {
   `;
 
   try {
-    // Your AI generation logic here
     const result = await model.generateContent({
       contents: [{ role: "user", parts: [{ text: prompt }] }],
       generationConfig,
@@ -217,11 +197,8 @@ export async function generateBio(userId: string, metrics: GitHubMetrics) {
     const textResponse = result.response?.text?.();
     if (!textResponse) throw new Error("AI failed to generate summary.");
     return textResponse;
-    // For now, return a placeholder bio
-    return `A dedicated developer with ${sanitizedMetrics.totalCommits} contributions across ${activeRepositories} repositories, specializing in ${languages.split(",")[0]}. Has demonstrated expertise in ${Array.from(mostUsedLanguages).slice(0, 3).join(", ")}, with significant impact through ${totalStars} stars received from the community.`;
   } catch (error) {
     console.error("Error generating bio:", error);
-    // Provide a fallback bio with basic information
     return `A professional developer with ${sanitizedMetrics.totalCommits} contributions and expertise in ${Object.keys(sanitizedMetrics.language)[0] || "various"} technologies.`;
   }
 }

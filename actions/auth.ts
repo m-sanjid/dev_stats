@@ -1,6 +1,6 @@
 "use server";
 
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { signIn } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -44,7 +44,10 @@ export async function signUp(data: {
   }
 }
 
-export async function handleOAuthLogin(provider: string, providerAccountId: string) {
+export async function handleOAuthLogin(
+  provider: string,
+  providerAccountId: string,
+) {
   const existingAccount = await prisma.account.findUnique({
     where: {
       provider_providerAccountId: {
@@ -57,6 +60,4 @@ export async function handleOAuthLogin(provider: string, providerAccountId: stri
   if (existingAccount) {
     return { error: "This account is already linked to another user." };
   }
-
-  // Proceed with linking or creating a new account
 }

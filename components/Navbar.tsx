@@ -140,17 +140,17 @@ export default function Navbar() {
 						<DropdownMenuContent align="end" className="w-48">
 							{isAuthenticated
 								? navItems.map(({ title, href, icon: Icon }) => (
-										<DropdownMenuItem key={href} asChild>
-											<Link href={href} className="flex items-center gap-2">
-												<Icon className="h-4 w-4" /> {title}
-											</Link>
-										</DropdownMenuItem>
-									))
+									<DropdownMenuItem key={href} asChild>
+										<Link href={href} className="flex items-center gap-2">
+											<Icon className="h-4 w-4" /> {title}
+										</Link>
+									</DropdownMenuItem>
+								))
 								: outNavItems.map(({ title, href }) => (
-										<DropdownMenuItem key={href} asChild>
-											<Link href={href}>{title}</Link>
-										</DropdownMenuItem>
-									))}
+									<DropdownMenuItem key={href} asChild>
+										<Link href={href}>{title}</Link>
+									</DropdownMenuItem>
+								))}
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</div>

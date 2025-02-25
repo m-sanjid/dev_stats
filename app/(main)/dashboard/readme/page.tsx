@@ -20,6 +20,8 @@ import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
+import { PageHeader } from "@/components/PageHeader";
+import ProOnlyComponent from "@/components/ProOnlyComponent";
 
 interface Repository {
   id: number;
@@ -86,6 +88,7 @@ const ReadmeGenerator = () => {
   const [previewMode, setPreviewMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const isPro = session?.user?.subscription === "pro";
 
   useEffect(() => {
     const loadRepos = async () => {
@@ -266,141 +269,160 @@ const ReadmeGenerator = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">AI-Generated README</h1>
-        <p className="text-gray-600 mt-2">
-          Select a repository and customize your README sections.
-        </p>
-      </div>
+    <>
+      <PageHeader
+        title="AI-Generated README"
+        description="Select a repository and customize your README sections."
+      />
+      <div className="max-w-4xl mx-auto p-6 space-y-6">
+        <>
+          {" "}
+          {isPro ? (
+            <>
+              {error && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
 
-      {error && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      <div className="space-y-4">
-        <div>
-          <h2 className="text-xl font-semibold mb-2">Select Repository</h2>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="Search repositories..."
-              className="pl-10"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-
-          <Select value={selectedRepo} onValueChange={setSelectedRepo}>
-            <SelectTrigger className="mt-2">
-              <SelectValue placeholder="Select a Repository" />
-            </SelectTrigger>
-            <SelectContent>
-              {filteredRepos.map((repo) => (
-                <SelectItem key={repo.id} value={repo.name}>
-                  <div className="flex items-center space-x-2">
-                    <span>{repo.name}</span>
-                    <span className="text-gray-400">
-                      ⭐ {repo.stargazers_count}
-                    </span>
+              <div className="space-y-4">
+                <div>
+                  <h2 className="text-xl font-semibold mb-2">
+                    Select Repository
+                  </h2>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      placeholder="Search repositories..."
+                      className="pl-10"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                   </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
 
-        <div>
-          <h2 className="text-xl font-semibold mb-2">README Sections</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {sections.map((section) => (
-              <div
-                key={section.id}
-                className="flex items-start space-x-2 p-3 border rounded-lg hover:bg-gray-50"
-              >
-                <input
-                  type="checkbox"
-                  id={section.id}
-                  checked={section.enabled}
-                  onChange={() => handleSectionToggle(section.id)}
-                  className="mt-1"
-                />
-                <label htmlFor={section.id} className="cursor-pointer flex-1">
-                  <div className="font-medium">{section.label}</div>
-                  <div className="text-sm text-gray-500">
-                    {section.description}
+                  <Select value={selectedRepo} onValueChange={setSelectedRepo}>
+                    <SelectTrigger className="mt-2">
+                      <SelectValue placeholder="Select a Repository" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {filteredRepos.map((repo) => (
+                        <SelectItem key={repo.id} value={repo.name}>
+                          <div className="flex items-center space-x-2">
+                            <span>{repo.name}</span>
+                            <span className="text-gray-400">
+                              ⭐ {repo.stargazers_count}
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <h2 className="text-xl font-semibold mb-2">
+                    README Sections
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {sections.map((section) => (
+                      <div
+                        key={section.id}
+                        className="flex items-start space-x-2 p-3 border rounded-lg hover:bg-gray-50"
+                      >
+                        <input
+                          type="checkbox"
+                          id={section.id}
+                          checked={section.enabled}
+                          onChange={() => handleSectionToggle(section.id)}
+                          className="mt-1"
+                        />
+                        <label
+                          htmlFor={section.id}
+                          className="cursor-pointer flex-1"
+                        >
+                          <div className="font-medium">{section.label}</div>
+                          <div className="text-sm text-gray-500">
+                            {section.description}
+                          </div>
+                        </label>
+                      </div>
+                    ))}
                   </div>
-                </label>
-              </div>
-            ))}
-          </div>
-        </div>
+                </div>
 
-        <div className="flex space-x-4">
-          <Button
-            onClick={handleGenerateReadme}
-            disabled={loading || !selectedRepo}
-            className="flex-1"
-          >
-            {loading ? "Generating..." : "Generate README"}
-          </Button>
-        </div>
-        {loading ? <LoadingSkeleton /> : ""}
+                <div className="flex space-x-4">
+                  <Button
+                    onClick={handleGenerateReadme}
+                    disabled={loading || !selectedRepo}
+                    className="flex-1"
+                  >
+                    {loading ? "Generating..." : "Generate README"}
+                  </Button>
+                </div>
+                {loading ? <LoadingSkeleton /> : ""}
 
-        {readmeContent && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Generated README</h2>
-              <div className="space-x-2">
-                <Button
-                  onClick={handleImproveReadme}
-                  variant="outline"
-                  disabled={loading}
-                >
-                  Improve with AI
-                </Button>
-                <Button
-                  onClick={() => setPreviewMode(!previewMode)}
-                  variant="outline"
-                >
-                  {previewMode ? "Edit" : "Preview"}
-                </Button>
-              </div>
-            </div>
+                {readmeContent && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-xl font-semibold">
+                        Generated README
+                      </h2>
+                      <div className="space-x-2">
+                        <Button
+                          onClick={handleImproveReadme}
+                          variant="outline"
+                          disabled={loading}
+                        >
+                          Improve with AI
+                        </Button>
+                        <Button
+                          onClick={() => setPreviewMode(!previewMode)}
+                          variant="outline"
+                        >
+                          {previewMode ? "Edit" : "Preview"}
+                        </Button>
+                      </div>
+                    </div>
 
-            {previewMode ? (
-              <div className="border rounded-lg p-6 overflow-hidden">
-                <ReactMarkdown>{readmeContent}</ReactMarkdown>
-              </div>
-            ) : (
-              <Textarea
-                value={readmeContent}
-                onChange={(e) => setReadmeContent(e.target.value)}
-                className="min-h-[400px] font-mono"
-                placeholder="README content will appear here..."
-              />
-            )}
+                    {previewMode ? (
+                      <div className="border rounded-lg p-6 overflow-hidden">
+                        <ReactMarkdown>{readmeContent}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      <Textarea
+                        value={readmeContent}
+                        onChange={(e) => setReadmeContent(e.target.value)}
+                        className="min-h-[400px] font-mono"
+                        placeholder="README content will appear here..."
+                      />
+                    )}
 
-            <div className="relative">
-              <div className="absolute text-white left-1/4 z-20">
-                Comming soon
+                    <div className="relative">
+                      <div className="absolute text-white left-1/4 z-20">
+                        Comming soon
+                      </div>
+                      <Button
+                        onClick={handleCommitReadme}
+                        disabled
+                        // disabled={committing || !readmeContent}
+                        className="w-full blur-[2px]"
+                      >
+                        {committing
+                          ? "Committing to GitHub..."
+                          : "Commit to GitHub"}
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
-              <Button
-                onClick={handleCommitReadme}
-                disabled
-                // disabled={committing || !readmeContent}
-                className="w-full blur-[2px]"
-              >
-                {committing ? "Committing to GitHub..." : "Commit to GitHub"}
-              </Button>
-            </div>
-          </div>
-        )}
+            </>
+          ) : (
+            <ProOnlyComponent />
+          )}
+        </>
       </div>
-    </div>
+    </>
   );
 };
 

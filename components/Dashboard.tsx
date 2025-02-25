@@ -1,7 +1,4 @@
 "use client";
-import Image from "next/image";
-import DeveloperDashboard from "./Github/Dashboard";
-import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import Macbook from "./Macbook";
 
 function Dashboard() {

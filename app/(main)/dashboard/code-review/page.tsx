@@ -3,8 +3,17 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Link, Loader2 } from "lucide-react";
 import { fetchGitHubMetrics } from "@/lib/github";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { PageHeader } from "@/components/PageHeader";
+import ProOnlyComponent from "@/components/ProOnlyComponent";
 
 interface Repository {
   name: string;
@@ -42,6 +51,7 @@ export default function CodeReviewDashboard() {
   const [loading, setLoading] = useState<boolean>(false);
   const [aiAnalysis, setAIAnalysis] = useState<{ [key: number]: string }>({});
   const [loadingAI, setLoadingAI] = useState<{ [key: number]: boolean }>({});
+  const isPro = session?.user?.subscription === "pro";
 
   useEffect(() => {
     const fetchRepos = async () => {
@@ -114,69 +124,95 @@ export default function CodeReviewDashboard() {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-semibold">AI Code Review Dashboard</h1>
-
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700">
-          Select a Repository
-        </label>
-        <select
-          value={selectedRepo || ""}
-          onChange={(e) => setSelectedRepo(e.target.value)}
-          className="mt-1 p-2 border rounded w-full"
-        >
-          {repositories.map((repo) => (
-            <option key={repo.name} value={repo.name}>
-              {repo.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {loading ? (
-        <p>Loading pull requests...</p>
-      ) : pullRequests.length === 0 ? (
-        <p className="text-gray-600">No open pull requests found.</p>
-      ) : (
-        <div className="space-y-4">
-          {pullRequests.map((pr) => (
-            <div key={pr.id} className="border rounded-lg p-4 space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-lg font-medium">{pr.title}</h2>
-                  <p className="text-sm text-gray-500">
-                    By {pr.author.login} • {pr.changedFiles} files changed (
-                    {pr.additions} additions, {pr.deletions} deletions)
-                  </p>
-                </div>
-                <Button
-                  onClick={() => handleAIReview(pr)}
-                  disabled={loadingAI[pr.number]}
-                >
-                  {loadingAI[pr.number] ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Analyzing...
-                    </>
-                  ) : (
-                    "Generate AI Review"
-                  )}
-                </Button>
-              </div>
-
-              {aiAnalysis[pr.number] && (
-                <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                  <h3 className="font-medium mb-2">AI Analysis:</h3>
-                  <p className="text-gray-700 whitespace-pre-wrap">
-                    {aiAnalysis[pr.number]}
-                  </p>
-                </div>
-              )}
+    <>
+      <PageHeader
+        title="AI Code Review Dashboard"
+        description="Review your PRs by using AI"
+      />
+      {isPro ? (
+        <div>
+          <div className="p-6 space-y-6 w-full max-w-4xl mx-auto">
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Select a Repository
+              </label>
+              <Select
+                value={selectedRepo || ""}
+                onValueChange={setSelectedRepo}
+              >
+                <SelectTrigger className="mt-2">
+                  <SelectValue placeholder="Select a Repository" />
+                </SelectTrigger>
+                <SelectContent>
+                  {repositories.map((repo) => (
+                    <SelectItem key={repo.name} value={repo.name}>
+                      <span>{repo.name}</span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          ))}
+
+            {loading ? (
+              <div className="h-screen">
+                <div className="flex justify-center items-center w-full h-[50%]">
+                  <p className="text-gray-600 text-3xl">
+                    Loading pull requests...
+                  </p>
+                </div>
+              </div>
+            ) : pullRequests.length === 0 ? (
+              <div className="h-screen">
+                <div className="flex justify-center items-center w-full h-[50%]">
+                  <p className="text-gray-600 text-3xl">
+                    No open pull requests found.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {pullRequests.map((pr) => (
+                  <div key={pr.id} className="border rounded-lg p-4 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h2 className="text-lg font-medium">{pr.title}</h2>
+                        <p className="text-sm text-gray-500">
+                          By {pr.author.login} • {pr.changedFiles} files changed
+                          ({pr.additions} additions, {pr.deletions} deletions)
+                        </p>
+                      </div>
+                      <Button
+                        onClick={() => handleAIReview(pr)}
+                        disabled={loadingAI[pr.number]}
+                      >
+                        {loadingAI[pr.number] ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Analyzing...
+                          </>
+                        ) : (
+                          "Generate AI Review"
+                        )}
+                      </Button>
+                    </div>
+
+                    {aiAnalysis[pr.number] && (
+                      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                        <h3 className="font-medium mb-2">AI Analysis:</h3>
+                        <p className="text-gray-700 whitespace-pre-wrap">
+                          {aiAnalysis[pr.number]}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
+      ) : (
+        <ProOnlyComponent />
       )}
-    </div>
+    </>
   );
 }

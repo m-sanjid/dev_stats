@@ -23,7 +23,7 @@ export default async function DashboardPage() {
         title="GitHub Dashboard"
         description="View your GitHub repositories and activity"
       />
-      <div className="container mx-auto py-8 px-4">
+      <div className="container mx-auto max-w-4xl py-8 px-4">
         <div className="mb-8">
           <GithubConnect hasGithubToken={!!githubToken} />
         </div>

@@ -1,8 +1,7 @@
 import { auth } from "@/auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-//@ts-ignore
-export async function middleware(request) {
+export async function middleware(request: NextRequest) {
   const session = await auth();
 
   if (!session?.user && request.nextUrl.pathname.startsWith("/protected")) {

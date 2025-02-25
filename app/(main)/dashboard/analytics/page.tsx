@@ -17,6 +17,7 @@ import { useSession } from "next-auth/react";
 import { fetchGitHubMetrics } from "@/lib/github";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import ProOnlyComponent from "@/components/ProOnlyComponent";
 
 interface AnalyticsData {
   weeklyCommits: Record<string, number>;
@@ -118,6 +119,7 @@ export default function AnalyticsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isPro = session?.user?.subscription === "pro";
 
   if (!session) {
     return (
@@ -176,11 +178,11 @@ export default function AnalyticsPage() {
 
   const chartData = data?.weeklyCommits
     ? Object.entries(data.weeklyCommits)
-        .map(([date, count]) => ({
-          date,
-          commits: count,
-        }))
-        .slice(-12) // Show only last 12 weeks
+      .map(([date, count]) => ({
+        date,
+        commits: count,
+      }))
+      .slice(-12) // Show only last 12 weeks
     : [];
 
   return (
@@ -190,46 +192,56 @@ export default function AnalyticsPage() {
         description="Detailed analysis of your coding activity"
       />
       <div className="grid gap-6 mx-auto max-w-7xl p-4 mt-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <MetricCard
-            title="Total Commits"
-            value={data?.totalCommits || 0}
-            description="All-time commits"
-          />
-          <MetricCard
-            title="Lines of Code"
-            value={data?.totalLines || 0}
-            description="Total lines changed"
-          />
-          <MetricCard
-            title="Coding Hours"
-            value={data?.totalCodingHours || 0}
-            description="Total time spent coding"
-            format="hours"
-          />
-        </div>
-        <Card>
-          <CardContent className="p-6">
-            <h3 className="text-lg font-semibold mb-4">
-              Weekly Commit Activity
-            </h3>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                  <XAxis
-                    dataKey="date"
-                    tick={{ fontSize: 12 }}
-                    tickFormatter={(value) => value.split("-")[1]} // Show only month
-                  />
-                  <YAxis tick={{ fontSize: 12 }} />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="commits" fill="#8884d8" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+        {isPro ? (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <MetricCard
+                title="Total Commits"
+                value={data?.totalCommits || 0}
+                description="All-time commits"
+              />
+              <MetricCard
+                title="Lines of Code"
+                value={data?.totalLines || 0}
+                description="Total lines changed"
+              />
+              <MetricCard
+                title="Coding Hours"
+                value={data?.totalCodingHours || 0}
+                description="Total time spent coding"
+                format="hours"
+              />
             </div>
-          </CardContent>
-        </Card>
+            <Card>
+              <CardContent className="p-6">
+                <h3 className="text-lg font-semibold mb-4">
+                  Weekly Commit Activity
+                </h3>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={chartData}>
+                      <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+                      <XAxis
+                        dataKey="date"
+                        tick={{ fontSize: 12 }}
+                        tickFormatter={(value) => value.split("-")[1]} // Show only month
+                      />
+                      <YAxis tick={{ fontSize: 12 }} />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Bar
+                        dataKey="commits"
+                        fill="#8884d8"
+                        radius={[4, 4, 0, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </>
+        ) : (
+          <ProOnlyComponent />
+        )}
       </div>
     </>
   );

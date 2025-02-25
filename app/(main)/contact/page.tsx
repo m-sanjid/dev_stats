@@ -23,7 +23,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto py-8 px-4 max-w-5xl">
       <PageHeader
         title="Contact Us"
         description="Get in touch with the DevStats team"

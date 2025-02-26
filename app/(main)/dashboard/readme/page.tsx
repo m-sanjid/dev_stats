@@ -188,10 +188,13 @@ const ReadmeGenerator = () => {
 
       const enabledSections = sections
         .filter((s) => s.enabled)
-        .reduce((acc, section) => ({
-          ...acc,
-          [section.id]: section.label
-        }), {} as { [key: string]: string });
+        .reduce(
+          (acc, section) => ({
+            ...acc,
+            [section.id]: section.label,
+          }),
+          {} as { [key: string]: string },
+        );
 
       const generatedReadme = await generateReadme(
         repoData.name,

@@ -3,7 +3,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import Google from "next-auth/providers/google";
 import GitHub from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
+import argon2 from "argon2";
 import { prisma } from "./lib/prisma";
 
 const authConfig: NextAuthConfig = {
@@ -36,7 +36,7 @@ const authConfig: NextAuthConfig = {
 
         if (!user || !user.password) return null;
 
-        const isValid = await bcrypt.compare(
+        const isValid = await argon2.verify(
           credentials.password as string,
           user.password,
         );
@@ -79,7 +79,6 @@ const authConfig: NextAuthConfig = {
               create: { userId: token.sub, accessToken: account.access_token! },
               update: { accessToken: account.access_token! },
             });
-
           } catch (error) {
             console.error("Error storing GitHub token:", error);
           }

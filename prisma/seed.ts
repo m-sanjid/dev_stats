@@ -1,10 +1,10 @@
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
+import argon2 from "argon2";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const hashedPassword = await bcrypt.hash("adminpassword", 10); // Secure password
+  const hashedPassword = await argon2.hash("adminpassword", {type: argon2.argon2id}); // Secure password
 
   const admin = await prisma.user.upsert({
     where: { email: "admin@example.com" }, // Now valid due to @unique constraint

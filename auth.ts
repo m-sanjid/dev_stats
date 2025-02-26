@@ -1,12 +1,22 @@
-export const runtime = "nodejs";
-
 import NextAuth, { NextAuthConfig, User } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Google from "next-auth/providers/google";
 import GitHub from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
 import { prisma } from "./lib/prisma";
+
+// Password hashing and verification using Web Crypto API
+async function hashPassword(password: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  return Buffer.from(hashBuffer).toString("hex");
+}
+
+async function verifyPassword(inputPassword: string, hashedPassword: string): Promise<boolean> {
+  const hashedInput = await hashPassword(inputPassword);
+  return hashedInput === hashedPassword;
+}
 
 const authConfig: NextAuthConfig = {
   adapter: PrismaAdapter(prisma),
@@ -19,7 +29,6 @@ const authConfig: NextAuthConfig = {
     GitHub({
       clientId: process.env.AUTH_GITHUB_ID,
       clientSecret: process.env.AUTH_GITHUB_SECRET,
-      // Allow linking GitHub to an already existing user (e.g. one created via Google)
       allowDangerousEmailAccountLinking: true,
       authorization: { params: { scope: "repo read:user read:email" } },
     }),
@@ -38,16 +47,13 @@ const authConfig: NextAuthConfig = {
 
         if (!user || !user.password) return null;
 
-        const isValid = await bcrypt.compare(
-          credentials.password as string,
-          user.password,
-        );
+        const isValid = await verifyPassword(credentials.password as string, user.password);
 
         return isValid
           ? {
-              id: user.id.toString(), // Convert numeric ID to string
+              id: user.id.toString(),
               email: user.email,
-              role: user.role ?? "user", // Ensure role exists
+              role: user.role ?? "user",
               name: user.name,
             }
           : null;

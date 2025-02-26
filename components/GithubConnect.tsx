@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
 import { Github, Check, AlertCircle, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import {
   Tooltip,
   TooltipContent,

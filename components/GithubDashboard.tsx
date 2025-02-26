@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { GitCommit, Code, Clock, Github, Boxes } from "lucide-react";
 import CommitChart from "./Github/CommitsChart";
 import { StatCard } from "./ui/stat-card";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { fetchGitHubMetrics } from "@/lib/github";
 import { useSession, signIn } from "next-auth/react";

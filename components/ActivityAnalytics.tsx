@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { Calendar, Clock, GitCommit, GitPullRequest } from "lucide-react";
 import { StatCard } from "./ui/stat-card";
 import { ActivityHeatmap } from "@/components/Github/ActivityHeatmap";

@@ -1,6 +1,6 @@
 "use server";
 
-import argon2 from "argon2";
+import bcrypt from "bcryptjs";
 import { signIn } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -18,9 +18,7 @@ export async function signUp(data: {
       return { error: "User already exists with this email" };
     }
 
-    const hashedPassword = await argon2.hash(data.password, {
-      type: argon2.argon2id,
-    });
+    const hashedPassword = await bcrypt.hash(data.password, 10);
 
     const user = await prisma.user.create({
       data: {
@@ -62,4 +60,6 @@ export async function handleOAuthLogin(
   if (existingAccount) {
     return { error: "This account is already linked to another user." };
   }
+
+  // Proceed with linking or creating a new account
 }

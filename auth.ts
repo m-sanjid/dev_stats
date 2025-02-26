@@ -3,7 +3,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import Google from "next-auth/providers/google";
 import GitHub from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
-import argon2 from "argon2";
+import bcrypt from "bcryptjs";
 import { prisma } from "./lib/prisma";
 
 const authConfig: NextAuthConfig = {
@@ -36,7 +36,7 @@ const authConfig: NextAuthConfig = {
 
         if (!user || !user.password) return null;
 
-        const isValid = await argon2.verify(
+        const isValid = await bcrypt.compare(
           credentials.password as string,
           user.password,
         );

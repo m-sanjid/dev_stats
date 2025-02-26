@@ -8,7 +8,6 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Button } from "../ui/button";
-import { format } from "date-fns";
 import { Badge } from "../ui/badge";
 
 function PreviewImg2() {
@@ -88,6 +87,7 @@ const metrics = [
     forks: 5923,
     lastUpdated: "22/1/2025",
     url: "",
+    description:"A powerful tool for ironman glasses",
   },
   {
     name: "mark-II",
@@ -96,5 +96,6 @@ const metrics = [
     forks: 53425,
     lastUpdated: "22/2/2025",
     url: "",
+    description:"A powerful upgrade to the mark-I",
   },
 ];

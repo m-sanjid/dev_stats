@@ -20,7 +20,7 @@ const data = [
   { name: "Sun", value: 3 },
 ];
 
-function PreviewImg({ skew }: any) {
+function PreviewImg({ skew }: { skew: string }) {
   return (
     <div className="">
       <CardContent className={`grid grid-cols-3 gap-4 p-6 pt-14 ${skew}`}>

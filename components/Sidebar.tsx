@@ -17,7 +17,7 @@ import {
   BookOpenText,
   File,
 } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -42,10 +42,11 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
       {/* Mobile Sidebar */}
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="ghost" className="md:hidden fixed left-4 top-4 z-40">
+          <Button variant="ghost" className="md:hidden fixed left-4 top-16 z-40">
             <Menu className="h-4 w-4" />
           </Button>
         </SheetTrigger>
+        <SheetTitle className="hidden">Dev Stats</SheetTitle>
         <SheetContent side="left" className="w-64 p-0">
           <SidebarContent pathname={pathname ?? ""} isCollapsed={false} />
         </SheetContent>

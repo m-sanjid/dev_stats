@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { GitCommit, Code, Clock, Github, Boxes } from "lucide-react";
 import CommitChart from "./Github/CommitsChart";
@@ -10,6 +10,7 @@ import { fetchGitHubMetrics } from "@/lib/github";
 import { useSession, signIn } from "next-auth/react";
 import Link from "next/link";
 import { Skeleton } from "./ui/skeleton";
+import Image from "next/image";
 
 interface GitHubMetrics {
   totalCommits: number;
@@ -33,7 +34,7 @@ export const GithubDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadMetrics = async () => {
+  const loadMetrics = useCallback(async () => {
     if (!userId) {
       setError("User not authenticated.");
       setLoading(false);
@@ -65,7 +66,7 @@ export const GithubDashboard: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -74,7 +75,7 @@ export const GithubDashboard: React.FC = () => {
       setError("User not authenticated.");
       setLoading(false);
     }
-  }, [status, userId]);
+  }, [status, userId, loadMetrics]);
 
   if (loading) {
     return (
@@ -113,7 +114,9 @@ export const GithubDashboard: React.FC = () => {
             <Card className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
               <CardContent className="flex items-center gap-4 p-6">
                 <div className="relative">
-                  <img
+                  <Image
+                    width={16}
+                    height={16}
                     src={metrics.githubProfile.avatarUrl}
                     alt="GitHub Avatar"
                     className="w-16 h-16 rounded-full ring-2 ring-purple-500/20"
@@ -227,7 +230,7 @@ export const GithubDashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {metrics.repositories.slice(0, 3).map((repo, index) => (
+              {metrics.repositories.sort((a, b) => b.commits - a.commits).slice(0, 3).map((repo, index) => (
                 <div
                   key={index}
                   className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"

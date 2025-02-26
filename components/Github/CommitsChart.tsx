@@ -38,8 +38,8 @@ const CommitChart: React.FC<CommitChartProps> = ({ weeklyCommits }) => {
 
 	// Generate labels and data for the selected week
 	const getWeeklyData = () => {
-		let labels: string[] = [];
-		let data: number[] = [];
+		const labels: string[] = [];
+		const data: number[] = [];
 
 		for (let i = 0; i < 7; i++) {
 			const currentDate = format(addDays(startOfSelectedWeek, i), "yyyy-MM-dd");

@@ -68,7 +68,7 @@ const pricingData = [
 ];
 
 export default function Pricing() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   const isCurrentPlan = (planName: string) =>
     session?.user?.subscription === planName.toLowerCase();

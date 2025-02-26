@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { Link, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { fetchGitHubMetrics } from "@/lib/github";
 import {
   Select,
@@ -58,7 +58,12 @@ export default function CodeReviewDashboard() {
       if (!session?.user?.id) return;
       try {
         const metrics = await fetchGitHubMetrics(session.user.id);
-        setRepositories(metrics.repositories);
+        const formattedRepositories = metrics.repositories.map((repo) => ({
+          name: repo.name,
+          full_name: repo.name, 
+          owner: { login: 'unknown' }, 
+        }));
+        setRepositories(formattedRepositories);
         setSelectedRepo(
           metrics.repositories.length > 0 ? metrics.repositories[0].name : null,
         );
@@ -77,7 +82,7 @@ export default function CodeReviewDashboard() {
       try {
         const metrics = await fetchGitHubMetrics(session.user.id);
         const repo = metrics.repositories.find((r) => r.name === selectedRepo);
-        setPullRequests(repo ? repo.pullRequests || [] : []);
+        setPullRequests((repo && 'pullRequests' in repo ? repo.pullRequests || [] : []) as PullRequest[]);
       } catch (error) {
         console.error("Error fetching PRs:", error);
       } finally {

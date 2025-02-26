@@ -90,7 +90,7 @@ function Testimonials() {
           Loved by Developers
         </h2>
         <p className="text-lg text-gray-600 dark:text-gray-300">
-          Join thousands of developers who've enhanced their professional
+          Join thousands of developers who &apos ve enhanced their professional
           presence
         </p>
       </motion.div>
@@ -102,7 +102,7 @@ function Testimonials() {
         viewport={{ once: true }}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
       >
-        {testimonials.map((testimonial, index) => (
+        {testimonials.map((testimonial) => (
           <motion.div key={testimonial.name} variants={item} className="h-full">
             <CardContainer className="h-full flex flex-col">
               <div className="flex flex-col gap-4 h-full">
@@ -113,7 +113,7 @@ function Testimonials() {
 
                 {/* Content */}
                 <p className="text-gray-700 dark:text-gray-300 flex-grow">
-                  "{testimonial.content}"
+                  {`"${testimonial.content}"`}
                 </p>
 
                 {/* Rating */}

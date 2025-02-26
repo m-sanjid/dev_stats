@@ -8,18 +8,21 @@ import { loadStripe, Stripe } from "@stripe/stripe-js";
 
 interface Props {
   isPro: boolean;
-  plan: any | null;
+  plan: {
+    title: string;
+    cta: string;
+  };
   action: (planName: string) => boolean;
 }
 
 export const SubscribeButton: React.FC<Props> = ({ isPro, plan, action }) => {
   const { data: session } = useSession();
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<string | null>(null);
 
   const handleSubscribe = async () => {
     try {
-      setLoading(true);
+      setLoading(plan.title);
       if (!session) {
         router.push("/login");
         return;
@@ -49,7 +52,7 @@ export const SubscribeButton: React.FC<Props> = ({ isPro, plan, action }) => {
     } catch (error) {
       console.error("Error:", error);
     } finally {
-      setLoading(false);
+      setLoading(null);
     }
   };
 

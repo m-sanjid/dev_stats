@@ -16,7 +16,7 @@ import { useState, useMemo } from "react";
 
 interface Repository {
   name: string;
-  description: string | null;
+  description: string | undefined;
   url: string;
   stars: number;
   forks: number;
@@ -34,8 +34,7 @@ interface GitHubMetrics {
   filesChanged: number;
   repositories: Repository[];
   githubProfile: {
-    name: string;
-    login: string;
+    username: string;
     avatarUrl: string;
   } | null;
   weeklyCommits: Record<string, number>;

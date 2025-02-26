@@ -1,10 +1,9 @@
-import NextAuth, { Account, NextAuthConfig, User } from "next-auth";
+import NextAuth, { NextAuthConfig, User } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Google from "next-auth/providers/google";
 import GitHub from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { registerGitHubWebhook } from "./lib/githubWebhook";
 import { prisma } from "./lib/prisma";
 
 const authConfig: NextAuthConfig = {
@@ -81,28 +80,6 @@ const authConfig: NextAuthConfig = {
               update: { accessToken: account.access_token! },
             });
 
-            if (dbUser?.subscription === "pro" && dbUser?.useWebhook) {
-              const githubUser = await fetch("https://api.github.com/user", {
-                headers: { Authorization: `token ${account.access_token}` },
-              }).then((res) => res.json());
-
-              const repos = await fetch(githubUser.repos_url, {
-                headers: { Authorization: `token ${account.access_token}` },
-              }).then((res) => res.json());
-
-              for (const repo of repos) {
-                await registerGitHubWebhook(
-                  token.sub,
-                  githubUser.login,
-                  repo.name,
-                  account.access_token!,
-                );
-              }
-            }
-            console.log(
-              "GitHub token stored successfully:",
-              account.access_token,
-            );
           } catch (error) {
             console.error("Error storing GitHub token:", error);
           }

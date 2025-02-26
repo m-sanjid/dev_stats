@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useScreenshot } from "use-react-screenshot"; // Hook to capture screenshot
+import { useScreenshot } from "use-react-screenshot";
 import { Button } from "@/components/ui/button";
-import { Image } from "lucide-react";
+import { ImageIcon } from "lucide-react";
 
 interface SnapshotCaptureProps {
-  targetRef: React.RefObject<HTMLDivElement | null>; // Ref to capture component
+  targetRef: React.RefObject<HTMLDivElement | null>;
   fileName?: string;
   onCapture?: (imageUrl: string) => void;
 }
@@ -18,10 +18,8 @@ export default function SnapshotCapture({
 }: SnapshotCaptureProps) {
   const [snapshotUrl, setSnapshotUrl] = useState<string | null>(null);
 
-  // Ensure that `takeScreenshot` is safely called and typed properly
-  const [image, takeScreenshot] = useScreenshot(); // image is the screenshot, takeScreenshot is the function
+  const [takeScreenshot] = useScreenshot();
 
-  // Capture the snapshot using use-react-screenshot
   const captureSnapshot = async () => {
     if (targetRef.current && takeScreenshot) {
       const capturedImage = await takeScreenshot(targetRef.current);
@@ -30,7 +28,6 @@ export default function SnapshotCapture({
     }
   };
 
-  // Download the snapshot in PNG/JPG format
   const downloadSnapshot = (format: "png" | "jpg") => {
     if (!snapshotUrl) return;
 
@@ -45,11 +42,12 @@ export default function SnapshotCapture({
   return (
     <div className="flex flex-col items-center gap-4">
       <Button onClick={captureSnapshot} variant="outline">
-        <Image className="h-5 w-5 mr-2" /> Capture Snapshot
+        <ImageIcon className="h-5 w-5 mr-2" /> Capture Snapshot
       </Button>
 
       {snapshotUrl && (
         <div className="flex flex-col items-center gap-2">
+          {/*eslint-disable-next-line @next/next/no-img-element*/}
           <img
             src={snapshotUrl}
             alt="Snapshot Preview"

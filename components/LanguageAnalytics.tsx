@@ -33,7 +33,7 @@ export function LanguageAnalytics({ metrics }: LanguageAnalyticsProps) {
 
   return (
     <Card>
-      <CardContent className="p-6">
+      <CardContent className="sm:p-6">
         <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>

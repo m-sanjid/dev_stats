@@ -20,7 +20,7 @@ const generationConfig = {
 export async function generateReadme(
   repoName: string,
   repoDescription: string,
-  otherDetails: { [key: string]: any },
+  otherDetails: { [key: string]: string },
 ) {
   const prompt = `You are an expert technical writer specializing in GitHub README files.
 
@@ -56,6 +56,7 @@ Please generate a well-structured README using Markdown, including:
   return textResponse;
 }
 
+// eslint-disable-next-line
 function formatOtherDetails(otherDetails: { [key: string]: any }): string {
   let formatted = "";
   for (const key in otherDetails) {
@@ -143,7 +144,7 @@ interface GitHubProfile {
   avatarUrl: string;
 }
 
-export async function generateBio(userId: string, metrics: GitHubMetrics) {
+export async function generateBio(metrics: GitHubMetrics) {
   const sanitizedMetrics = {
     totalCommits: metrics.totalCommits ?? 0,
     totalCodingHours: metrics.totalCodingHours ?? 0,
@@ -159,11 +160,6 @@ export async function generateBio(userId: string, metrics: GitHubMetrics) {
       .map(([lang, percentage]) => `${lang} (${Math.round(percentage)}%)`)
       .join(", ") || "No language data available";
 
-  const activeRepositories = sanitizedMetrics.repositories.length;
-  const totalStars = sanitizedMetrics.repositories.reduce(
-    (sum, repo) => sum + repo.stars,
-    0,
-  );
   const mostUsedLanguages = new Set(
     sanitizedMetrics.repositories.map((repo) => repo.language),
   );
@@ -201,22 +197,4 @@ export async function generateBio(userId: string, metrics: GitHubMetrics) {
     console.error("Error generating bio:", error);
     return `A professional developer with ${sanitizedMetrics.totalCommits} contributions and expertise in ${Object.keys(sanitizedMetrics.language)[0] || "various"} technologies.`;
   }
-}
-
-export async function generateLinkedInSummary(bio: string, metrics: any) {
-  const prompt = `Convert this GitHub profile bio into a professional LinkedIn summary:
-  - Bio: "${bio}"
-  - Commits: ${metrics.totalCommits}
-  - PRs: ${metrics.totalPRs}
-  - Top Skills: ${Object.keys(metrics.languageUsage).join(", ")}
-
-  Make it engaging, concise, and suitable for a LinkedIn headline & summary.`;
-
-  const result = await model.generateContent({
-    contents: [{ role: "user", parts: [{ text: prompt }] }],
-    generationConfig,
-  });
-  const textResponse = result.response?.text?.();
-  if (!textResponse) throw new Error("AI failed to generate LinkedIn summary.");
-  return textResponse;
 }

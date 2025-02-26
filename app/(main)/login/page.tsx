@@ -3,10 +3,13 @@ import { auth } from "@/auth";
 import { LoginForm } from "@/components/LoginForm";
 
 export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: { error?: string };
-}) {
+  searchParams
+}
+: {
+  //eslint-disable-next-line @typescript-eslint/no-explicit-any
+  searchParams: any
+}
+) {
   // Check if user is already authenticated
   const session = await auth();
   if (session) {

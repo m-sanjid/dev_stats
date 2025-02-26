@@ -2,8 +2,10 @@ import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
+import { User } from "@/types/stripe";
 
-export async function POST(req: Request) {
+
+export async function POST() {
   try {
     const session = await auth();
 
@@ -49,10 +51,10 @@ export async function POST(req: Request) {
   }
 }
 
-async function createStripeCustomer(user: any) {
+async function createStripeCustomer(user: User) {
   const customer = await stripe.customers.create({
-    email: user.email,
-    name: user.name,
+    email: user.email ?? undefined,
+    name: user.name ?? undefined,
   });
 
   await prisma.user.update({

@@ -18,10 +18,10 @@ export function PageHeader({
   gradient = true,
 }: PageHeaderProps) {
   return (
-    <div className="max-w-4xl w-full mx-auto border-b bg-background/95 backdrop-blur pl-8 supports-[backdrop-filter]:bg-background/60">
+    <div className="max-w-4xl w-full mx-auto border-b bg-background/95 backdrop-blur pl-16 md:pl-8 supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 max-w-screen-2xl items-center">
         {showBack && (
-          <Button variant="ghost" asChild className="mr-4 h-8 w-8 p-0">
+          <Button variant="ghost" asChild className="mr-4 h-8 w-8 p-0 hidden md:flex">
             <Link href={backUrl}>
               <ArrowLeft className="h-4 w-4" />
               <span className="sr-only">Back</span>

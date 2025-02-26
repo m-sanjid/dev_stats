@@ -23,6 +23,7 @@ import SocialShareDropdown from "@/components/SocialShare";
 import EditableBio from "@/components/EditableBio";
 import SnapshotCapture from "@/components/SnapShotCapture";
 import ProOnlyComponent from "@/components/ProOnlyComponent";
+import { Session } from "next-auth";
 
 interface Repository {
   name: string;
@@ -55,7 +56,7 @@ interface LanguageStats {
   [key: string]: number;
 }
 
-function usePortfolioData(session: any, status: string) {
+function usePortfolioData(session: Session | null, status: string) {
   const [metrics, setMetrics] = useState<GitHubMetrics | null>(null);
   const [bio, setBio] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
@@ -96,7 +97,7 @@ function usePortfolioData(session: any, status: string) {
           dailyActivity: rawMetrics.dailyActivity ?? {},
         });
 
-        const generatedBio = await generateBio(session.user.id, rawMetrics);
+        const generatedBio = await generateBio(rawMetrics);
         setBio(generatedBio);
       } catch (err) {
         console.error("Portfolio data fetch failed:", err);
@@ -156,8 +157,7 @@ export default function PortfolioPage() {
   const { metrics, bio, loading, error } = usePortfolioData(session, status);
   const [snapshotUrl, setSnapshotUrl] = useState<string | null>(null);
   const portfolioRef = useRef<HTMLDivElement>(null);
-  const [userBio, setUserBio] = useState<string>(bio); // Store updated bio
-  const ref = useRef(null);
+  const [userBio, setUserBio] = useState<string>(bio);
   const isPro = session?.user?.subscription === "pro";
 
   const handleBioSave = (newBio: string) => {
@@ -224,7 +224,7 @@ export default function PortfolioPage() {
             className="border p-6 rounded-lg my-4 shadow-2xl"
           >
             <h1 className="text-4xl font-bold mb-6">
-              {session?.user?.name}'s
+              {`${session?.user?.name}'s`}
               <span className="text-3xl font-medium">
                 {" "}
                 Developer Portfolio
@@ -368,9 +368,16 @@ export default function PortfolioPage() {
                   bio={bio}
                   userBio={userBio}
                   projects={
-                    metrics?.repositories.map((repo) => repo.name) || []
+                    metrics?.repositories
+                      .sort(
+                        (a, b) =>
+                          new Date(b.lastUpdated).getTime() -
+                          new Date(a.lastUpdated).getTime(),
+                      )
+                      .slice(0, 6)
+                      .map((repo) => repo.name) || []
                   }
-                // careerAdvice="AI-powered career insights"
+                  // careerAdvice="AI-powered career insights"
                 />
               }
               fileName={`${session?.user?.name}_profilesummary.pdf`}

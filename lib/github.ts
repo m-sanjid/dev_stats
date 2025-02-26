@@ -185,6 +185,7 @@ export async function fetchGitHubMetrics(userId: string) {
 
       if (!userProfile) {
         userProfile = {
+          name: data.viewer.name,
           username: data.viewer.login,
           avatarUrl: data.viewer.avatarUrl,
         };

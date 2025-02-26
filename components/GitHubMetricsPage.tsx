@@ -21,6 +21,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { fetchGitHubMetrics } from "@/lib/github";
+import Image from "next/image";
 
 interface GitHubMetrics {
   totalCommits: number;
@@ -50,9 +51,9 @@ interface GitHubMetrics {
 
 export default function GitHubMetricsPage() {
   const { data: session, status } = useSession();
-  const [metrics, setMetrics] = useState<GitHubMetrics | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [metrics] = useState<GitHubMetrics | null>(null);
+  const [loading] = useState(true);
+  const [error] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "authenticated" && session?.user?.id) {
@@ -100,13 +101,14 @@ export default function GitHubMetricsPage() {
       <div className="flex items-center space-x-4 mb-8">
         {metrics.githubProfile && (
           <>
-            <img
+            <Image
+            width={64} height={64}
               src={metrics.githubProfile.avatarUrl}
               alt={metrics.githubProfile.username}
               className="w-16 h-16 rounded-full"
             />
             <h1 className="text-2xl font-bold">
-              {metrics.githubProfile.username}'s GitHub Activity
+              {metrics.githubProfile.username}&apos s GitHub Activity
             </h1>
           </>
         )}
@@ -186,7 +188,7 @@ function MetricCard({
 }: {
   title: string;
   value: number;
-  Icon: any;
+  Icon: React.ComponentType<{ className: string }>;
 }) {
   return (
     <Card>
@@ -201,7 +203,7 @@ function MetricCard({
   );
 }
 
-function RepoCard({ repo }: { repo: any }) {
+function RepoCard({ repo }: { repo: GitHubMetrics["repositories"][0] }) {
   return (
     <Card>
       <CardHeader>

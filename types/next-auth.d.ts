@@ -14,6 +14,7 @@ declare module "next-auth" {
       name?: string;
       role: string;
       hasGithubToken: boolean;
+      subscription: string;
     } & DefaultSession["user"];
   }
 

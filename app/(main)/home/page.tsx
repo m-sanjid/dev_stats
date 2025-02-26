@@ -27,7 +27,7 @@ export default function HomePage() {
 								Welcome to Your
 								<span className="text-purple-600 dark:text-purple-400">
 									{" "}
-									Dashboard
+									DevStats
 								</span>
 							</h1>
 							<p className="mx-auto max-w-[700px] pb-8 text-slate-600 dark:text-slate-400 md:text-xl">

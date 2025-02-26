@@ -7,7 +7,7 @@ import {
   Share2,
   Twitter,
   ChevronUp,
-  Image,
+  ImageIcon,
 } from "lucide-react";
 import { Button } from "./ui/button";
 
@@ -77,14 +77,14 @@ const SocialShareDropdown: React.FC<SocialShareDropdownProps> = ({
             rel="noopener noreferrer"
             className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
-            <Facebook className="h-4 w-4 text-blue-600" /> Facebook
+            <Facebook  className="h-4 w-4 text-blue-600" /> Facebook
           </a>
           {image && (
             <button
               onClick={() => window.open(image, "_blank")}
               className="flex w-full items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
-              <Image className="h-4 w-4 text-gray-600" /> View Snapshot
+              <ImageIcon className="h-4 w-4 text-gray-600" /> View Snapshot
             </button>
           )}
         </div>

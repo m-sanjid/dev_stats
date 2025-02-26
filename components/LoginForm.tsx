@@ -42,6 +42,7 @@ export function LoginForm() {
         router.refresh(); // Ensure session updates
       }
     } catch (error) {
+      console.error("Login error:", error);
       setError("root", { message: "Something went wrong. Please try again." });
     }
   };
@@ -123,6 +124,7 @@ function InputField({
   id: string;
   label: string;
   type: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   register: any;
   error?: string;
 }) {

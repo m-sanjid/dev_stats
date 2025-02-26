@@ -5,13 +5,13 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { PageHeader } from "@/components/PageHeader";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
+	BarChart,
+	Bar,
+	XAxis,
+	YAxis,
+	CartesianGrid,
+	Tooltip,
+	ResponsiveContainer,
 } from "recharts";
 import { useSession } from "next-auth/react";
 import { fetchGitHubMetrics } from "@/lib/github";
@@ -100,149 +100,151 @@ const MetricCard = ({
   );
 };
 
-const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-white dark:bg-gray-800 p-3 border rounded shadow">
-        <p className="text-sm font-medium">{label}</p>
-        <p className="text-sm text-blue-600 dark:text-blue-400">
-          {`${payload[0].value} commits`}
-        </p>
-      </div>
-    );
-  }
-  return null;
+const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: { value: number }[]; label?: string }) => {
+	if (active && payload && payload.length) {
+		return (
+			<div className="bg-white dark:bg-gray-800 p-3 border rounded shadow">
+				<p className="text-sm font-medium">{label}</p>
+				<p className="text-sm text-blue-600 dark:text-blue-400">
+					{`${payload[0].value} commits`}
+				</p>
+			</div>
+		);
+	}
+	return null;
 };
 
 export default function AnalyticsPage() {
-  const { data: session } = useSession();
-  const [data, setData] = useState<AnalyticsData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const isPro = session?.user?.subscription === "pro";
+	const { data: session } = useSession();
+	const [data, setData] = useState<AnalyticsData | null>(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
+	const isPro = session?.user?.subscription === "pro";
 
-  if (!session) {
-    return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <h1 className="text-xl p-6">Please sign in to view access this page</h1>
+	useEffect(() => {
+		async function fetchData() {
+			if (!session?.user?.id) {
+				setError("Please sign in to view your analytics");
+				setLoading(false);
+				return;
+			}
 
-        <Button className="px-8">
-          <Link href="/signup">Sign In</Link>
-        </Button>
-      </div>
-    );
-  }
+			try {
+				const result = await fetchGitHubMetrics(session.user.id);
 
-  useEffect(() => {
-    async function fetchData() {
-      if (!session?.user?.id) {
-        setError("Please sign in to view your analytics");
-        setLoading(false);
-        return;
-      }
+				setData(result);
+			} catch (error) {
+				const errorMessage =
+					error instanceof Error
+						? error.message
+						: "Failed to load analytics data";
+				setError(errorMessage);
+				console.error("Error fetching analytics:", error);
+			} finally {
+				setLoading(false);
+			}
+		}
 
-      try {
-        const result = await fetchGitHubMetrics(session.user.id);
+		if (session) {
+			fetchData();
+		}
+	}, [session]);
 
-        setData(result);
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : "Failed to load analytics data";
-        setError(errorMessage);
-        console.error("Error fetching analytics:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
+	if (!session) {
+		return (
+			<div className="flex flex-col items-center justify-center h-screen">
+				<h1 className="text-xl p-6">Please sign in to view access this page</h1>
 
-    if (session) {
-      fetchData();
-    }
-  }, [session]);
+				<Button className="px-8">
+					<Link href="/signup">Sign In</Link>
+				</Button>
+			</div>
+		);
+	}
 
-  if (loading) {
-    return <LoadingSkeleton />;
-  }
-  if (error) {
-    return (
-      <div className="max-w-7xl mx-auto p-4 mt-8">
-        <Alert variant="destructive">
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      </div>
-    );
-  }
+	
 
-  const chartData = data?.weeklyCommits
-    ? Object.entries(data.weeklyCommits)
-      .map(([date, count]) => ({
-        date,
-        commits: count,
-      }))
-      .slice(-12) // Show only last 12 weeks
-    : [];
+	if (loading) {
+		return <LoadingSkeleton />;
+	}
+	if (error) {
+		return (
+			<div className="max-w-7xl mx-auto p-4 mt-8">
+				<Alert variant="destructive">
+					<AlertTitle>Error</AlertTitle>
+					<AlertDescription>{error}</AlertDescription>
+				</Alert>
+			</div>
+		);
+	}
 
-  return (
-    <>
-      <PageHeader
-        title="Analytics"
-        description="Detailed analysis of your coding activity"
-      />
-      <div className="grid gap-6 mx-auto max-w-7xl p-4 mt-8">
-        {isPro ? (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <MetricCard
-                title="Total Commits"
-                value={data?.totalCommits || 0}
-                description="All-time commits"
-              />
-              <MetricCard
-                title="Lines of Code"
-                value={data?.totalLines || 0}
-                description="Total lines changed"
-              />
-              <MetricCard
-                title="Coding Hours"
-                value={data?.totalCodingHours || 0}
-                description="Total time spent coding"
-                format="hours"
-              />
-            </div>
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-lg font-semibold mb-4">
-                  Weekly Commit Activity
-                </h3>
-                <div className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData}>
-                      <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                      <XAxis
-                        dataKey="date"
-                        tick={{ fontSize: 12 }}
-                        tickFormatter={(value) => value.split("-")[1]} // Show only month
-                      />
-                      <YAxis tick={{ fontSize: 12 }} />
-                      <Tooltip content={<CustomTooltip />} />
-                      <Bar
-                        dataKey="commits"
-                        fill="#8884d8"
-                        radius={[4, 4, 0, 0]}
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-          </>
-        ) : (
-          <ProOnlyComponent />
-        )}
-      </div>
-    </>
-  );
+	const chartData = data?.weeklyCommits
+		? Object.entries(data.weeklyCommits)
+				.map(([date, count]) => ({
+					date,
+					commits: count,
+				}))
+				.slice(-12) // Show only last 12 weeks
+		: [];
+
+	return (
+		<>
+			<PageHeader
+				title="Analytics"
+				description="Detailed analysis of your coding activity"
+			/>
+			<div className="grid gap-6 mx-auto max-w-7xl p-4 mt-8">
+				{isPro ? (
+					<>
+						<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+							<MetricCard
+								title="Total Commits"
+								value={data?.totalCommits || 0}
+								description="All-time commits"
+							/>
+							<MetricCard
+								title="Lines of Code"
+								value={data?.totalLines || 0}
+								description="Total lines changed"
+							/>
+							<MetricCard
+								title="Coding Hours"
+								value={data?.totalCodingHours || 0}
+								description="Total time spent coding"
+								format="hours"
+							/>
+						</div>
+						<Card>
+							<CardContent className="p-6">
+								<h3 className="text-lg font-semibold mb-4">
+									Weekly Commit Activity
+								</h3>
+								<div className="h-[300px]">
+									<ResponsiveContainer width="100%" height="100%">
+										<BarChart data={chartData}>
+											<CartesianGrid strokeDasharray="3 3" opacity={0.2} />
+											<XAxis
+												dataKey="date"
+												tick={{ fontSize: 12 }}
+												tickFormatter={(value) => value.split("-")[1]} // Show only month
+											/>
+											<YAxis tick={{ fontSize: 12 }} />
+											<Tooltip content={<CustomTooltip active={undefined} payload={undefined} label={undefined} />} />
+											<Bar
+												dataKey="commits"
+												fill="#8884d8"
+												radius={[4, 4, 0, 0]}
+											/>
+										</BarChart>
+									</ResponsiveContainer>
+								</div>
+							</CardContent>
+						</Card>
+					</>
+				) : (
+					<ProOnlyComponent />
+				)}
+			</div>
+		</>
+	);
 }

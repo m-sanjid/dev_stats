@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useEffect, useState } from "react";
 import SignoutButton from "./Buttons/SignoutButton";
+import Image from "next/image";
 
 const navItems = [
 	{ title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -167,7 +168,9 @@ export default function Navbar() {
 							<DropdownMenu>
 								<DropdownMenuTrigger asChild>
 									<Button variant="ghost" size="sm" className="gap-2">
-										<img
+										<Image
+                    width={24}
+                    height={24}
 											src={session.user?.image || "/default-avatar.png"}
 											alt="Avatar"
 											className="h-6 w-6 rounded-full"

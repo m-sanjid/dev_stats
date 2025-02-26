@@ -40,24 +40,27 @@ model Session {
 }
 
 model User {
-  id             String           @id @default(cuid())
-  name           String?
-  email          String?          @unique
-  githubUsername String?          @unique
-  password       String?
-  role           Role             @default(user)
-  emailVerified  DateTime?
-  image          String?
-  subscription   SubscriptionType @default(free)
-  useWebhook     Boolean          @default(false)
-  accounts       Account[]
-  sessions       Session[]
-  githubToken    GithubToken?
-  repositories   Repository[]
-  commits        GithubCommit[]
-  webhooks       GitHubWebhook[]
-  GitHubMetrics  GitHubMetrics?
-  Portfolio      Portfolio?
+  id                 String           @id @default(cuid())
+  name               String?
+  email              String?          @unique
+  githubUsername     String?          @unique
+  password           String?
+  role               Role             @default(user)
+  emailVerified      DateTime?
+  image              String?
+  subscription       SubscriptionType @default(free)
+  stripeCustomerId   String?          @unique
+  useWebhook         Boolean          @default(false)
+  accounts           Account[]
+  sessions           Session[]
+  githubToken        GithubToken?
+  repositories       Repository[]
+  commits            GithubCommit[]
+  webhooks           GitHubWebhook[]
+  GitHubMetrics      GitHubMetrics?
+  Portfolio          Portfolio?
+  stripeSubscription Subscription?
+  Payment            Payment[]
 }
 
 model VerificationToken {
@@ -186,6 +189,52 @@ model Portfolio {
   projects  Json
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptionId    String   @unique // Stripe subscription ID
+  status            String // Stripe subscription status
+  currentPeriodEnd  DateTime
+  cancelAtPeriodEnd Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([status])
+  @@index([currentPeriodEnd])
+}
+
+model Payment {
+  id              String         @id @default(cuid())
+  userId          String
+  paymentId       String         @unique
+  amount          Int
+  currency        String
+  status          String
+  description     String?
+  paymentMethod   String?
+  customerId      String?
+  shippingName    String?
+  shippingAddress Json?
+  charge          PaymentCharge?
+  createdAt       DateTime       @default(now())
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model PaymentCharge {
+  id        String   @id @default(cuid())
+  paymentId String   @unique
+  chargeId  String   @unique
+  status    String
+  createdAt DateTime @default(now())
+  payment   Payment  @relation(fields: [paymentId], references: [paymentId], onDelete: Cascade)
+
+  @@index([status])
 }
 
 enum Role {

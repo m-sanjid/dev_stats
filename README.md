@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# devStats
 
-## Getting Started
+**Transform your GitHub activity into compelling proof of work. Showcase your skills with beautiful analytics and insights.**
 
-First, run the development server:
+## Description
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+devStats is an open-source tool designed to provide actionable insights into your development process. By gathering and analyzing metrics from codebases, devStats helps teams improve productivity, code quality, and project progress. Whether you’re a solo developer or part of a large team, devStats empowers you to make data-driven decisions.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Table of Contents
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. [Key Features](#key-features)
+2. [Configuration](#configuration)
+3. [Contributing](#contributing)
+4. [License](#license)
+5. [Contact](#contact)
+6. [Project Status](#project-status)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Key Features
 
-## Learn More
+- Automated code analysis
+- Integration with GitHub
+- Metrics dashboards with charts & graphs
+- Customizable reports (daily, weekly, monthly)
+- AI-generated README.md
+- Code review insights (e.g., average PR review time)
+- AI-generated portfolio based on GitHub
+- AI-powered recommendations for improving team efficiency
 
-To learn more about Next.js, take a look at the following resources:
+## Configuration
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Create a `.env` file to store environment variables:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Refer to `.env.example` for guidance.
 
-## Deploy on Vercel
+You can also customize the tool via `config.yaml` for things like ignored files, time ranges, and more.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Contributing
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Contributions are welcome! To get started:
+
+1. **Fork the repository**
+2. **Create a branch** (`git checkout -b feature/your-feature`)
+3. **Commit your changes** (`git commit -m "Add feature XYZ"`)
+4. **Push to the branch** (`git push origin feature/your-feature`)
+5. **Submit a pull request** 🚀
+
+## License
+
+Licensed under the [MIT License](LICENSE).
+
+## Contact
+
+👤 Muhammed Sanjid
+📧 sanjid357@gmail.com
+
+## Project Status
+
+- **Alpha:** Actively developing core features
+- **Beta:** Planned (coming soon!)
+
+---
+
+_Stay tuned for updates, and feel free to contribute!_

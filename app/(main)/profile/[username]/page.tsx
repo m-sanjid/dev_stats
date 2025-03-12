@@ -398,8 +398,7 @@ export default function PortfolioPage() {
             />
 
             <SocialShareDropdown
-              //TODO:replace with original url improve snapshot
-              url={`http://localhost:3000/profile/${session?.user.username || session?.user.id}`}
+              url={`${process.env.NEXT_PUBLIC_BASE_URL}/profile/${session?.user.username || session?.user.id}`}
               image={snapshotUrl || ""}
               text="Check out my GitHub portfolio snapshot! 🚀"
             />

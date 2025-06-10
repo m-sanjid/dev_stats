@@ -11,14 +11,21 @@ interface StatCardProps {
   delay?: number;
 }
 
-export function StatCard({ title, value, icon: Icon, description, trend, delay = 0 }: StatCardProps) {
+export function StatCard({
+  title,
+  value,
+  icon: Icon,
+  description,
+  trend,
+  delay = 0,
+}: StatCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
     >
-      <Card className="hover:shadow-lg transition-all duration-200 dark:hover:shadow-purple-500/5">
+      <Card className="transition-all duration-200 hover:shadow-lg dark:hover:shadow-purple-500/5">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
             {title}
@@ -31,13 +38,15 @@ export function StatCard({ title, value, icon: Icon, description, trend, delay =
               {value}
             </div>
             {description && (
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                 {description}
               </p>
             )}
             {trend !== undefined && (
-              <div className={`text-xs mt-2 ${trend >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                {trend >= 0 ? '↑' : '↓'} {Math.abs(trend)}% from last week
+              <div
+                className={`mt-2 text-xs ${trend >= 0 ? "text-green-500" : "text-red-500"}`}
+              >
+                {trend >= 0 ? "↑" : "↓"} {Math.abs(trend)}% from last week
               </div>
             )}
           </div>
@@ -45,4 +54,4 @@ export function StatCard({ title, value, icon: Icon, description, trend, delay =
       </Card>
     </motion.div>
   );
-} 
+}

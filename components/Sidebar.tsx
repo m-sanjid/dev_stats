@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "next-view-transitions";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -63,8 +63,8 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
       {/* Desktop Sidebar */}
       <div
         className={cn(
-          "fixed left-0 top-0 z-40 hidden h-screen flex-col border-r bg-background pt-14 transition-all duration-300 md:flex",
-          isCollapsed ? "w-16" : "w-64",
+          "sticky left-0 top-0 z-40 hidden h-screen flex-col border-r pt-14 transition-all duration-300 md:flex",
+          isCollapsed ? "w-16" : "w-[16rem]",
         )}
       >
         <SidebarContent pathname={pathname ?? ""} isCollapsed={isCollapsed} />
@@ -117,7 +117,7 @@ function SidebarContent({
               asChild
               className={cn(
                 "w-full justify-start gap-2",
-                pathname === link.href && "bg-accent",
+                pathname === link.href && "bg-primary/5 border-2 rounded-2xl",
               )}
             >
               <Link href={link.href}>

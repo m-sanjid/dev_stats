@@ -27,18 +27,18 @@ export function StatCard({
     >
       <Card className="transition-all duration-200 hover:shadow-lg dark:hover:shadow-purple-500/5">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
+          <CardTitle className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
             {title}
           </CardTitle>
           <Icon className="h-4 w-4 text-purple-500 dark:text-purple-400" />
         </CardHeader>
         <CardContent>
           <div className="flex flex-col">
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">
+            <div className="text-2xl font-bold text-neutral-900 dark:text-white">
               {value}
             </div>
             {description && (
-              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
                 {description}
               </p>
             )}

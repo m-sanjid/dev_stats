@@ -17,9 +17,9 @@ export default function RepoButton() {
         className="group hover:bg-purple-50 dark:hover:bg-purple-900/20"
       >
         <Link href="/dashboard/repos">
-          <Book className="mr-2 h-4 w-4 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300" />
+          <Book className="mr-2 h-4 w-4 text-purple-600 group-hover:text-purple-700 dark:text-purple-400 dark:group-hover:text-purple-300" />
           Repositories
-          <ChevronRight className="ml-2 h-4 w-4 text-purple-400 dark:text-purple-500 group-hover:translate-x-0.5 transition-transform" />
+          <ChevronRight className="ml-2 h-4 w-4 text-purple-400 transition-transform group-hover:translate-x-0.5 dark:text-purple-500" />
         </Link>
       </Button>
     </motion.div>

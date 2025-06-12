@@ -16,7 +16,7 @@ export function ActivityHeatmap({ data }: ActivityHeatmapProps) {
   }).reverse();
 
   const getIntensityClass = (count: number) => {
-    if (count === 0) return "bg-gray-100 dark:bg-gray-800";
+    if (count === 0) return "bg-neutral-100 dark:bg-neutral-800";
     if (count < 3) return "bg-green-200 dark:bg-green-900";
     if (count < 5) return "bg-green-300 dark:bg-green-800";
     if (count < 8) return "bg-green-400 dark:bg-green-700";
@@ -28,7 +28,7 @@ export function ActivityHeatmap({ data }: ActivityHeatmapProps) {
       {days.map(({ date, count }) => (
         <div
           key={date}
-          className={`w-full aspect-square rounded-sm ${getIntensityClass(count)}`}
+          className={`aspect-square w-full rounded-sm ${getIntensityClass(count)}`}
           title={`${format(parseISO(date), "MMM d")}: ${count} contributions`}
         />
       ))}

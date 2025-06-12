@@ -1,34 +1,110 @@
-import { auth } from "@/auth";
+"use client";
+
+import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import { prisma } from "@/lib/prisma";
+import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { GithubDashboard } from "@/components/GithubDashboard";
 import { GithubConnect } from "@/components/GithubConnect";
+import { motion } from "motion/react";
 
-export default async function DashboardPage() {
-  const session = await auth();
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 20,
+    },
+  },
+};
 
-  // If no session, redirect to the signin page
-  if (!session) {
-    redirect("/signup");
-  }
+const stagger = {
+  visible: {
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
 
-  const githubToken = await prisma.githubToken.findUnique({
-    where: { userId: session.user.id },
+export default function DashboardPage() {
+  const { data: session, status } = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/signup");
+    },
   });
 
-  return (
-    <>
-      <PageHeader
-        title="GitHub Dashboard"
-        description="View your GitHub repositories and activity"
-      />
-      <div className="container mx-auto max-w-4xl py-8 px-4">
-        <div className="mb-8">
-          <GithubConnect hasGithubToken={!!githubToken} />
-        </div>
-        {githubToken && <GithubDashboard />}
+  const [githubToken, setGithubToken] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchGithubToken() {
+      if (session?.user?.id) {
+        try {
+          const response = await fetch(
+            `/api/github-token?userId=${session.user.id}`,
+          );
+          const data = await response.json();
+          setGithubToken(data.token || null);
+        } catch (error) {
+          console.error("Failed to fetch GitHub token:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    if (session) {
+      fetchGithubToken();
+    }
+  }, [session]);
+
+  // Show loading state while checking authentication
+  if (status === "loading" || isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
       </div>
-    </>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-background to-background/80">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+      >
+        <PageHeader
+          title="GitHub Dashboard"
+          description="View your GitHub repositories and activity"
+        />
+      </motion.div>
+
+      <motion.div
+        className="container mx-auto max-w-7xl px-4 py-12"
+        variants={stagger}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div className="mb-8" variants={fadeInUp}>
+          <GithubConnect hasGithubToken={!!githubToken} />
+        </motion.div>
+
+        {githubToken && (
+          <motion.div
+            variants={fadeInUp}
+            className="rounded-lg border-2 border-transparent bg-card p-6 shadow-lg transition-all duration-300 hover:border-purple-500/20 hover:shadow-xl dark:hover:border-purple-500/10"
+          >
+            <GithubDashboard />
+          </motion.div>
+        )}
+      </motion.div>
+    </div>
   );
 }

@@ -40,7 +40,7 @@ const socialLinks = [
   {
     name: "Twitter",
     icon: IconBrandX,
-    href: "https://x.com/sanjid357",
+    href: "https://x.com/dev_sanjid",
     color: "hover:bg-black p-2 rounded-2xl",
   },
   {

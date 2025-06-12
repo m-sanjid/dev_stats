@@ -5,11 +5,11 @@ import PreviewImg2 from "./PreviewImg2";
 function PreviewCard() {
   return (
     <div
-      className="h-full flex justify-between gap-8 items-center"
+      className="flex h-full items-center justify-between gap-8"
       style={{ perspective: 1200 }}
     >
       <div
-        className="relative scale-75 mt-12 transition-transform duration-500 ease-in-out"
+        className="relative mt-12 scale-75 transition-transform duration-500 ease-in-out"
         style={{
           transform: "rotateY(25deg) translateZ(50px)",
         }}

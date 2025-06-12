@@ -116,10 +116,10 @@ function usePortfolioData(session: Session | null, status: string) {
 // Loading skeleton component for better UX
 function PortfolioSkeleton() {
   return (
-    <div className="space-y-4 mx-auto max-w-4xl">
+    <div className="mx-auto max-w-4xl space-y-4">
       <Skeleton className="h-12 w-3/4" />
       <Skeleton className="h-32 w-full" />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Skeleton className="h-48 w-full" />
         <Skeleton className="h-48 w-full" />
         <Skeleton className="h-48 w-full" />
@@ -143,7 +143,7 @@ function LanguageStats({ languages }: { languages: LanguageStats }) {
           <span className="flex items-center gap-2">
             <Badge variant="outline">{language}</Badge>
           </span>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-neutral-500">
             {Math.round((value / total) * 100)}%
           </span>
         </li>
@@ -186,7 +186,7 @@ export default function PortfolioPage() {
 
   if (error) {
     return (
-      <div className="max-w-2xl mx-auto p-6">
+      <div className="mx-auto max-w-2xl p-6">
         <Alert variant="destructive">
           <AlertTitle>Unable to Load Portfolio</AlertTitle>
           <AlertDescription>
@@ -216,14 +216,14 @@ export default function PortfolioPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl flex flex-col">
+    <div className="container mx-auto flex max-w-4xl flex-col p-6">
       {isPro ? (
         <>
           <div
             ref={portfolioRef}
-            className="border p-6 rounded-lg my-4 shadow-2xl"
+            className="my-4 rounded-lg border p-6 shadow-2xl"
           >
-            <h1 className="text-4xl font-bold mb-6">
+            <h1 className="mb-6 text-4xl font-bold">
               {`${session?.user?.name}'s`}
               <span className="text-3xl font-medium">
                 {" "}
@@ -233,7 +233,7 @@ export default function PortfolioPage() {
 
             <EditableBio initialBio={bio} onSave={handleBioSave} />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               <Card>
                 <CardHeader>
                   <CardTitle>GitHub Stats</CardTitle>
@@ -242,13 +242,13 @@ export default function PortfolioPage() {
                   <CardContent>
                     <dl className="space-y-2">
                       <div>
-                        <dt className="text-sm text-gray-500">Total Commits</dt>
+                        <dt className="text-sm text-neutral-500">Total Commits</dt>
                         <dd className="text-2xl font-bold">
                           {metrics?.totalCommits.toLocaleString()}
                         </dd>
                       </div>
                       <div>
-                        <dt className="text-sm text-gray-500">
+                        <dt className="text-sm text-neutral-500">
                           Lines of Code Changed
                         </dt>
                         <dd className="text-2xl font-bold">
@@ -256,7 +256,7 @@ export default function PortfolioPage() {
                         </dd>
                       </div>
                       <div>
-                        <dt className="text-sm text-gray-500">
+                        <dt className="text-sm text-neutral-500">
                           Files Modified
                         </dt>
                         <dd className="text-2xl font-bold">
@@ -285,7 +285,7 @@ export default function PortfolioPage() {
                 <CardContent>
                   <dl className="space-y-2">
                     <div>
-                      <dt className="text-sm text-gray-500">
+                      <dt className="text-sm text-neutral-500">
                         Active Repositories
                       </dt>
                       <dd className="text-2xl font-bold">
@@ -293,7 +293,7 @@ export default function PortfolioPage() {
                       </dd>
                     </div>
                     <div>
-                      <dt className="text-sm text-gray-500">Total Stars</dt>
+                      <dt className="text-sm text-neutral-500">Total Stars</dt>
                       <dd className="text-2xl font-bold">
                         {metrics?.repositories
                           .reduce((acc, repo) => acc + repo.stars, 0)
@@ -301,7 +301,7 @@ export default function PortfolioPage() {
                       </dd>
                     </div>
                     <div>
-                      <dt className="text-sm text-gray-500">Coding Hours</dt>
+                      <dt className="text-sm text-neutral-500">Coding Hours</dt>
                       <dd className="text-2xl font-bold">
                         {metrics?.totalCodingHours.toLocaleString()}
                       </dd>
@@ -311,8 +311,8 @@ export default function PortfolioPage() {
               </Card>
             </div>
             <section className="mb-8">
-              <h2 className="text-2xl font-bold mb-4">Featured Projects</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <h2 className="mb-4 text-2xl font-bold">Featured Projects</h2>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {metrics?.repositories
                   .sort(
                     (a, b) =>

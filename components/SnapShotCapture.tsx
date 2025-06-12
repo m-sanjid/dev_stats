@@ -42,7 +42,7 @@ export default function SnapshotCapture({
   return (
     <div className="flex flex-col items-center gap-4">
       <Button onClick={captureSnapshot} variant="outline">
-        <ImageIcon className="h-5 w-5 mr-2" /> Capture Snapshot
+        <ImageIcon className="mr-2 h-5 w-5" /> Capture Snapshot
       </Button>
 
       {snapshotUrl && (

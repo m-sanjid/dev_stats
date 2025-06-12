@@ -9,6 +9,10 @@ import { OAuthButton } from "./Buttons/OAuthButton";
 import { GitHubIcon, GoogleIcon } from "./icons";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import { motion } from "motion/react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -16,6 +20,29 @@ const loginSchema = z.object({
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 10 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 20,
+    },
+  },
+};
 
 export function LoginForm() {
   const router = useRouter();
@@ -48,111 +75,95 @@ export function LoginForm() {
   };
 
   return (
-    <main className="flex w-[70%] xl:w-[30%] justify-center items-center">
-      <div className="w-full max-w-md bg-white dark:bg-black dark:border dark:border-neutral-700 shadow-lg rounded-lg p-8">
-        <h2 className="font-bold text-xl text-center py-4 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-          DevStats
-        </h2>
-        <p className="text-center text-gray-500 dark:text-neutral-500 text-sm mb-4">
-          Please sign in to continue. <strong>|</strong>
-          <Link className="ml-0" href={"/signup"}>
-            <Button variant={"link"}>signup?</Button>
-          </Link>
-        </p>
+    <motion.main
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className="flex w-[70%] items-center justify-center xl:w-[30%]"
+    >
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-center">DevStats</CardTitle>
+          <p className="text-center text-sm text-muted-foreground">
+            Please sign in to continue. <strong>|</strong>
+            <Link href="/signup">
+              <Button variant="link" className="h-auto p-0">
+                signup?
+              </Button>
+            </Link>
+          </p>
+        </CardHeader>
 
-        {/* OAuth Buttons */}
-        <div className="space-y-2">
-          <OAuthButton provider="google">
-            <GoogleIcon className="w-5 h-5" />
-            Sign in with Google
-          </OAuthButton>
+        <CardContent>
+          <motion.div variants={item} className="space-y-2">
+            <OAuthButton provider="google">
+              <GoogleIcon className="h-5 w-5" />
+              Sign in with Google
+            </OAuthButton>
 
-          <OAuthButton provider="github">
-            <GitHubIcon className="w-5 h-5" />
-            Sign in with GitHub
-          </OAuthButton>
-        </div>
+            <OAuthButton provider="github">
+              <GitHubIcon className="h-5 w-5" />
+              Sign in with GitHub
+            </OAuthButton>
+          </motion.div>
 
-        <div className="text-center text-gray-400 dark:text-neutral-500 my-3 text-sm">
-          Or
-        </div>
-
-        {/* Login Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <InputField
-            id="email"
-            label="Email"
-            type="email"
-            register={register}
-            error={errors.email?.message}
-          />
-
-          <InputField
-            id="password"
-            label="Password"
-            type="password"
-            register={register}
-            error={errors.password?.message}
-          />
-
-          {errors.root?.message && (
-            <p className="text-red-500 text-sm text-center" aria-live="polite">
-              {errors.root.message}
-            </p>
-          )}
-
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full dark:bg-neutral-600 text-white p-2 mt-4 rounded-md hover:bg-purple-600 disabled:bg-gray-400"
+          <motion.div
+            variants={item}
+            className="my-3 text-center text-sm text-muted-foreground"
           >
-            {isSubmitting ? "Logging in..." : "Login"}
-          </Button>
-        </form>
-      </div>
-    </main>
-  );
-}
+            Or
+          </motion.div>
 
-function InputField({
-  id,
-  label,
-  type,
-  register,
-  error,
-}: {
-  id: string;
-  label: string;
-  type: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  register: any;
-  error?: string;
-}) {
-  return (
-    <div>
-      <label
-        htmlFor={id}
-        className="block text-sm font-medium text-gray-700 dark:text-neutral-400"
-      >
-        {label}
-      </label>
-      <input
-        {...register(id)}
-        id={id}
-        type={type}
-        className="w-full p-2 border border-gray-300 rounded-md focus:ring dark:bg-neutral-400 focus:ring-purple-200"
-        aria-invalid={!!error}
-        aria-describedby={error ? `${id}-error` : undefined}
-      />
-      {error && (
-        <p
-          id={`${id}-error`}
-          className="text-red-500 text-sm mt-1"
-          aria-live="polite"
-        >
-          {error}
-        </p>
-      )}
-    </div>
+          <motion.form
+            variants={item}
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-4"
+          >
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                {...register("email")}
+                className={errors.email ? "border-destructive" : ""}
+              />
+              {errors.email && (
+                <p className="text-sm text-destructive">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                {...register("password")}
+                className={errors.password ? "border-destructive" : ""}
+              />
+              {errors.password && (
+                <p className="text-sm text-destructive">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+
+            {errors.root?.message && (
+              <p
+                className="text-center text-sm text-destructive"
+                aria-live="polite"
+              >
+                {errors.root.message}
+              </p>
+            )}
+
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              {isSubmitting ? "Logging in..." : "Login"}
+            </Button>
+          </motion.form>
+        </CardContent>
+      </Card>
+    </motion.main>
   );
 }

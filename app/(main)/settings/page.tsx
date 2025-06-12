@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import LoginCTA from "@/components/LoginCTA";
 
 export default function SettingsPage() {
   const [name, setName] = useState("");
@@ -14,6 +15,7 @@ export default function SettingsPage() {
   const [password, setPassword] = useState("");
   const [isDarkMode, setIsDarkMode] = useState<boolean | undefined>(undefined);
   const { data: session } = useSession();
+  const isAuthenticated = !!session;
 
   useEffect(() => {
     const root = document.documentElement;
@@ -35,12 +37,16 @@ export default function SettingsPage() {
 
   const isPro = session?.user?.subscription === "pro";
 
+  if (!isAuthenticated) {
+    return <LoginCTA/>
+  }
+
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Settings</h1>
+    <div className="mx-auto max-w-4xl p-6">
+      <h1 className="mb-6 text-2xl font-bold">Settings</h1>
 
       <Tabs defaultValue="profile">
-        <TabsList className="mb-6 h-18">
+        <TabsList className="h-18 mb-6">
           <TabsTrigger value="profile" className="py-4">
             Profile Settings
           </TabsTrigger>
@@ -66,7 +72,7 @@ export default function SettingsPage() {
 
         {/* Profile Settings */}
         <TabsContent value="profile">
-          <Card className=" max-w-3xl">
+          <Card className="max-w-3xl">
             <CardHeader>
               <CardTitle>Profile Settings</CardTitle>
             </CardHeader>
@@ -97,7 +103,7 @@ export default function SettingsPage() {
 
         {/* Subscription Management */}
         <TabsContent value="subscription">
-          <Card className=" max-w-3xl">
+          <Card className="max-w-3xl">
             <CardHeader>
               <CardTitle>Subscription Management</CardTitle>
             </CardHeader>
@@ -114,7 +120,7 @@ export default function SettingsPage() {
 
         {/* Preferences */}
         <TabsContent value="preferences">
-          <Card className=" max-w-3xl">
+          <Card className="max-w-3xl">
             <CardHeader>
               <CardTitle>Preferences</CardTitle>
             </CardHeader>
@@ -129,7 +135,7 @@ export default function SettingsPage() {
 
         {/* Security & Privacy */}
         <TabsContent value="security">
-          <Card className=" max-w-3xl">
+          <Card className="max-w-3xl">
             <CardHeader>
               <CardTitle>Security & Privacy</CardTitle>
             </CardHeader>
@@ -142,7 +148,7 @@ export default function SettingsPage() {
 
         {/* Billing & Payment */}
         <TabsContent value="billing">
-          <Card className=" max-w-3xl">
+          <Card className="max-w-3xl">
             <CardHeader>
               <CardTitle>Billing & Payment</CardTitle>
             </CardHeader>
@@ -155,7 +161,7 @@ export default function SettingsPage() {
 
         {/* Integrations */}
         <TabsContent value="integrations">
-          <Card className=" max-w-3xl">
+          <Card className="max-w-3xl">
             <CardHeader>
               <CardTitle>Integrations</CardTitle>
             </CardHeader>
@@ -168,7 +174,7 @@ export default function SettingsPage() {
 
         {/* AI Features */}
         <TabsContent value="ai">
-          <Card className=" max-w-3xl">
+          <Card className="max-w-3xl">
             <CardHeader>
               <CardTitle>AI Features</CardTitle>
             </CardHeader>

@@ -61,7 +61,7 @@ export const SubscribeButton: React.FC<Props> = ({ isPro, plan, action }) => {
       onClick={handleSubscribe}
       className={`w-full ${
         isPro
-          ? "bg-purple-600 hover:bg-purple-700 text-white dark:bg-purple-500 dark:hover:bg-purple-600"
+          ? "bg-primary hover:bg-primary/90 dark:bg-primary/90 dark:hover:bg-primary"
           : ""
       }`}
       variant={isPro ? "default" : "outline"}

@@ -4,7 +4,6 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { User } from "@/types/stripe";
 
-
 export async function POST() {
   try {
     const session = await auth();

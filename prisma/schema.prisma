@@ -61,6 +61,7 @@ model User {
   Portfolio          Portfolio?
   stripeSubscription Subscription?
   Payment            Payment[]
+  githubOAuthState   String?
 }
 
 model VerificationToken {
@@ -73,14 +74,15 @@ model VerificationToken {
 
 //Github analytics
 model GithubToken {
-  id          String   @id @default(cuid())
-  accessToken String   @db.Text
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@unique([userId])
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  accessToken    String?
+  githubUsername String?
+  tokenType      String?
+  scope          String?
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 model Repository {

@@ -39,7 +39,9 @@ export default function ResumePDF({
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.section}>
-          <Text style={styles.header}>{profile}&apos s Developer Portfolio</Text>
+          <Text style={styles.header}>
+            {profile}&apos s Developer Portfolio
+          </Text>
           <Text style={styles.subHeader}>{userBio || bio}</Text>
         </View>
         <View style={styles.section}>

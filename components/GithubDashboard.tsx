@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { GitCommit, Code, Clock, Github, Boxes } from "lucide-react";
 import CommitChart from "./Github/CommitsChart";
 import { StatCard } from "./ui/stat-card";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { fetchGitHubMetrics } from "@/lib/github";
 import { useSession, signIn } from "next-auth/react";
@@ -79,7 +79,7 @@ export const GithubDashboard: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-[400px]">
+      <div className="flex min-h-[400px] items-center justify-center">
         <LoadingSkeleton />
       </div>
     );
@@ -87,7 +87,7 @@ export const GithubDashboard: React.FC = () => {
 
   if (error) {
     return (
-      <div className="text-center text-red-500 p-4">
+      <div className="p-4 text-center text-red-500">
         <p>{error}</p>
         <Button
           onClick={() =>
@@ -102,32 +102,43 @@ export const GithubDashboard: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7 }}
+      className="mx-auto max-w-4xl space-y-12"
+    >
       {/* Profile Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.7 }}
+        className="grid grid-cols-1 gap-6 lg:grid-cols-4"
+      >
         {metrics?.githubProfile && (
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="lg:col-span-1 md:mr-4"
+            transition={{ delay: 0.15, duration: 0.7 }}
+            className="md:mr-4 lg:col-span-1"
           >
-            <Card className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
+            <Card className="rounded-2xl border border-white/30 bg-white/70 shadow-xl backdrop-blur-lg transition-all duration-300 hover:shadow-2xl dark:border-zinc-700/40 dark:bg-zinc-900/70">
               <CardContent className="flex items-center gap-4 p-6">
                 <div className="relative">
                   <Image
-                    width={16}
-                    height={16}
+                    width={64}
+                    height={64}
                     src={metrics.githubProfile.avatarUrl}
                     alt="GitHub Avatar"
-                    className="w-16 h-16 rounded-full ring-2 ring-purple-500/20"
+                    className="h-16 w-16 rounded-full ring-2 ring-indigo-400/30"
                   />
-                  <Github className="absolute -bottom-2 -right-2 h-6 w-6 text-purple-500 dark:text-purple-400" />
+                  <Github className="absolute -bottom-2 -right-2 h-6 w-6 text-indigo-500 dark:text-indigo-400" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
                     {metrics.githubProfile.username}
                   </h2>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-neutral-500 dark:text-neutral-400">
                     GitHub Profile
                   </p>
                 </div>
@@ -136,7 +147,7 @@ export const GithubDashboard: React.FC = () => {
           </motion.div>
         )}
         {/* Statistics */}
-        <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:col-span-3">
           <StatCard
             title="Total Commits"
             value={metrics?.totalCommits ?? 0}
@@ -156,17 +167,22 @@ export const GithubDashboard: React.FC = () => {
             delay={0.3}
           />
         </div>
-      </div>
+      </motion.div>
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.7 }}
+        className="grid grid-cols-1 gap-8 lg:grid-cols-3"
+      >
         {metrics?.weeklyCommits && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+            transition={{ delay: 0.25, duration: 0.7 }}
             className="lg:col-span-2"
           >
-            <Card className="h-full">
+            <Card className="h-full rounded-2xl border border-white/30 bg-white/70 shadow-xl backdrop-blur-lg transition-all duration-300 hover:shadow-2xl dark:border-zinc-700/40 dark:bg-zinc-900/70">
               <CardHeader>
                 <CardTitle>Commit Activity</CardTitle>
               </CardHeader>
@@ -181,12 +197,12 @@ export const GithubDashboard: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
+            transition={{ delay: 0.3, duration: 0.7 }}
           >
-            <Card className="h-full">
+            <Card className="h-full rounded-2xl border border-white/30 bg-white/70 shadow-xl backdrop-blur-lg transition-all duration-300 hover:shadow-2xl dark:border-zinc-700/40 dark:bg-zinc-900/70">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Languages</CardTitle>
-                <Boxes className="h-5 w-5 text-purple-500 dark:text-purple-400" />
+                <Boxes className="h-5 w-5 text-indigo-500 dark:text-indigo-400" />
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -197,13 +213,13 @@ export const GithubDashboard: React.FC = () => {
                           <span className="font-medium dark:text-white">
                             {lang}
                           </span>
-                          <span className="text-gray-500 dark:text-gray-400">
+                          <span className="text-neutral-500 dark:text-neutral-400">
                             {percentage}%
                           </span>
                         </div>
-                        <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full">
+                        <div className="h-2 rounded-full bg-neutral-100 dark:bg-neutral-700">
                           <div
-                            className="h-full bg-purple-500 dark:bg-purple-400 rounded-full"
+                            className="h-full rounded-full bg-indigo-500 dark:bg-indigo-400"
                             style={{ width: `${percentage}%` }}
                           />
                         </div>
@@ -215,69 +231,92 @@ export const GithubDashboard: React.FC = () => {
             </Card>
           </motion.div>
         )}
-      </div>
+      </motion.div>
       {/* Repository Preview Section */}
-      {metrics?.repositories && metrics.repositories.length > 0 && (
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Recent Repositories</CardTitle>
-            <Link
-              href="/dashboard/repos"
-              className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-            >
-              View All
-            </Link>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {metrics.repositories.sort((a, b) => b.commits - a.commits).slice(0, 3).map((repo, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+      <AnimatePresence>
+        {metrics?.repositories && metrics.repositories.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 30 }}
+            transition={{ delay: 0.35, duration: 0.7 }}
+          >
+            <Card className="rounded-2xl border border-white/30 bg-white/70 shadow-xl backdrop-blur-lg transition-all duration-300 hover:shadow-2xl dark:border-zinc-700/40 dark:bg-zinc-900/70">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle>Recent Repositories</CardTitle>
+                <Link
+                  href="/dashboard/repos"
+                  className="text-sm text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300"
                 >
-                  <div className="flex flex-col">
-                    <span className="font-medium">{repo.name}</span>
-                    <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <GitCommit className="h-4 w-4" />
-                        {repo.commits} commits
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Code className="h-4 w-4" />
-                        {repo.linesChanged} lines changed
-                      </span>
-                    </div>
-                  </div>
+                  View All
+                </Link>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {metrics.repositories
+                    .sort((a, b) => b.commits - a.commits)
+                    .slice(0, 3)
+                    .map((repo, index) => (
+                      <motion.div
+                        key={index}
+                        className="flex items-center justify-between rounded-lg border bg-card p-4 transition-colors hover:bg-indigo-50/60 dark:hover:bg-indigo-900/30"
+                        whileHover={{ scale: 1.02 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 400,
+                          damping: 12,
+                        }}
+                      >
+                        <div className="flex flex-col">
+                          <span className="font-medium text-zinc-900 dark:text-white">
+                            {repo.name}
+                          </span>
+                          <div className="mt-1 flex items-center gap-4 text-sm text-zinc-500 dark:text-zinc-300">
+                            <span className="flex items-center gap-1">
+                              <GitCommit className="h-4 w-4" />
+                              {repo.commits} commits
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Code className="h-4 w-4" />
+                              {repo.linesChanged} lines changed
+                            </span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
 
 const LoadingSkeleton = () => (
-  <div className="grid gap-6 mx-auto max-w-4xl p-4 mt-8">
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+  <div className="mx-auto mt-8 grid max-w-4xl gap-6 p-4">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
       {[1, 2, 3, 4].map((i) => (
-        <Card key={i}>
+        <Card
+          key={i}
+          className="rounded-2xl border border-white/30 bg-white/70 shadow-xl backdrop-blur-lg dark:border-zinc-700/40 dark:bg-zinc-900/70"
+        >
           <CardContent className="p-6">
-            <Skeleton className="h-4 w-24 mb-4" />
-            <Skeleton className="h-8 w-32 mb-2" />
+            <Skeleton className="mb-4 h-4 w-24" />
+            <Skeleton className="mb-2 h-8 w-32" />
             <Skeleton className="h-4 w-40" />
           </CardContent>
         </Card>
       ))}
     </div>
-    <Card>
-      <CardContent className="p-6 flex gap-6">
+    <Card className="rounded-2xl border border-white/30 bg-white/70 shadow-xl backdrop-blur-lg dark:border-zinc-700/40 dark:bg-zinc-900/70">
+      <CardContent className="flex gap-6 p-6">
         <Skeleton className="h-[300px] w-[70%]" />
         <Skeleton className="h-[300px] w-[30%]" />
       </CardContent>
     </Card>
-    <Card>
+    <Card className="rounded-2xl border border-white/30 bg-white/70 shadow-xl backdrop-blur-lg dark:border-zinc-700/40 dark:bg-zinc-900/70">
       <CardContent className="p-6">
         <Skeleton className="h-[300px] w-full" />
       </CardContent>

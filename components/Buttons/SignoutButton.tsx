@@ -18,7 +18,7 @@ export default function SignoutButton() {
   return (
     <Button
       onClick={handleAuthAction}
-      className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-2 rounded-md dark:bg-purple-700 dark:hover:bg-purple-800"
+      className="rounded-md bg-purple-600 px-8 py-2 text-white hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800"
     >
       {isAuthenticated ? "Log Out" : "Log In"}
     </Button>

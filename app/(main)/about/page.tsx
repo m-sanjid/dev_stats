@@ -11,14 +11,14 @@ import {
 
 export default function AboutPage() {
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto px-4 py-8">
       <PageHeader
         title="About DevStats"
         description="Your personal GitHub analytics and productivity dashboard"
       />
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto mt-6 space-y-8">
+      <div className="mx-auto mt-6 max-w-4xl space-y-8">
         {/* Mission Statement */}
         <Card>
           <CardHeader>
@@ -35,7 +35,7 @@ export default function AboutPage() {
         </Card>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <FeatureCard
             icon={<GitCommit className="h-6 w-6" />}
             title="Commit Analytics"
@@ -105,13 +105,13 @@ export default function AboutPage() {
         </Card>
 
         {/* GitHub Integration */}
-        <Card className="bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+        <Card className="bg-gradient-to-br from-neutral-900 to-neutral-800 text-white">
           <CardContent className="p-8">
-            <div className="flex items-center gap-4 mb-4">
+            <div className="mb-4 flex items-center gap-4">
               <Github className="h-8 w-8" />
               <h3 className="text-xl font-semibold">Powered by GitHub</h3>
             </div>
-            <p className="text-gray-300">
+            <p className="text-neutral-300">
               GitMetrics integrates seamlessly with GitHub to provide you with
               accurate and up-to-date analytics about your development activity.
             </p>
@@ -134,9 +134,9 @@ const FeatureCard = ({
 }) => (
   <Card>
     <CardContent className="p-6">
-      <div className="flex items-center gap-4 mb-4">
-        <div className="p-2 bg-primary/10 rounded-lg text-primary">{icon}</div>
-        <h3 className="font-semibold text-lg">{title}</h3>
+      <div className="mb-4 flex items-center gap-4">
+        <div className="rounded-lg bg-primary/10 p-2 text-primary">{icon}</div>
+        <h3 className="text-lg font-semibold">{title}</h3>
       </div>
       <p className="text-muted-foreground">{description}</p>
     </CardContent>
@@ -153,11 +153,11 @@ const Step = ({
   description: string;
 }) => (
   <div className="flex gap-4">
-    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
+    <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary font-bold text-primary-foreground">
       {number}
     </div>
     <div>
-      <h4 className="font-semibold mb-1">{title}</h4>
+      <h4 className="mb-1 font-semibold">{title}</h4>
       <p className="text-muted-foreground">{description}</p>
     </div>
   </div>

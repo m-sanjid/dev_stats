@@ -12,7 +12,7 @@ import { Badge } from "../ui/badge";
 
 function PreviewImg2() {
   return (
-    <div className="scale-75 mt-14">
+    <div className="mt-14 scale-75">
       {" "}
       <Card>
         <CardHeader>
@@ -21,23 +21,23 @@ function PreviewImg2() {
         <CardContent>
           <dl className="space-y-2">
             <div>
-              <dt className="text-sm text-gray-500">Active Repositories</dt>
+              <dt className="text-sm text-neutral-500">Active Repositories</dt>
               <dd className="text-2xl font-bold">55</dd>
             </div>
             <div>
-              <dt className="text-sm text-gray-500">Total Stars</dt>
+              <dt className="text-sm text-neutral-500">Total Stars</dt>
               <dd className="text-2xl font-bold">323K</dd>
             </div>
             <div>
-              <dt className="text-sm text-gray-500">Coding Hours</dt>
+              <dt className="text-sm text-neutral-500">Coding Hours</dt>
               <dd className="text-2xl font-bold">45263</dd>
             </div>
           </dl>
         </CardContent>
       </Card>
       <section className="mb-8">
-        <h2 className="text-2xl font-bold mb-4">Featured Projects</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <h2 className="mb-4 text-2xl font-bold">Featured Projects</h2>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {metrics.map((repo) => (
             <Card key={repo.name} className="flex flex-col">
               <CardHeader>
@@ -87,7 +87,7 @@ const metrics = [
     forks: 5923,
     lastUpdated: "22/1/2025",
     url: "",
-    description:"A powerful tool for ironman glasses",
+    description: "A powerful tool for ironman glasses",
   },
   {
     name: "mark-II",
@@ -96,6 +96,6 @@ const metrics = [
     forks: 53425,
     lastUpdated: "22/2/2025",
     url: "",
-    description:"A powerful upgrade to the mark-I",
+    description: "A powerful upgrade to the mark-I",
   },
 ];

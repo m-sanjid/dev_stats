@@ -3,7 +3,14 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import {
+  Loader2,
+  ArrowLeft,
+  GitPullRequest,
+  FileDiff,
+  Plus,
+  Minus,
+} from "lucide-react";
 import { fetchGitHubMetrics } from "@/lib/github";
 import {
   Select,
@@ -14,6 +21,10 @@ import {
 } from "@/components/ui/select";
 import { PageHeader } from "@/components/PageHeader";
 import ProOnlyComponent from "@/components/ProOnlyComponent";
+import { motion } from "motion/react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 interface Repository {
   name: string;
@@ -43,6 +54,30 @@ interface PullRequest {
   };
 }
 
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 10 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 20,
+    },
+  },
+};
+
 export default function CodeReviewDashboard() {
   const { data: session } = useSession();
   const [repositories, setRepositories] = useState<Repository[]>([]);
@@ -60,8 +95,8 @@ export default function CodeReviewDashboard() {
         const metrics = await fetchGitHubMetrics(session.user.id);
         const formattedRepositories = metrics.repositories.map((repo) => ({
           name: repo.name,
-          full_name: repo.name, 
-          owner: { login: 'unknown' }, 
+          full_name: repo.name,
+          owner: { login: "unknown" },
         }));
         setRepositories(formattedRepositories);
         setSelectedRepo(
@@ -82,7 +117,11 @@ export default function CodeReviewDashboard() {
       try {
         const metrics = await fetchGitHubMetrics(session.user.id);
         const repo = metrics.repositories.find((r) => r.name === selectedRepo);
-        setPullRequests((repo && 'pullRequests' in repo ? repo.pullRequests || [] : []) as PullRequest[]);
+        setPullRequests(
+          (repo && "pullRequests" in repo
+            ? repo.pullRequests || []
+            : []) as PullRequest[],
+        );
       } catch (error) {
         console.error("Error fetching PRs:", error);
       } finally {
@@ -129,95 +168,155 @@ export default function CodeReviewDashboard() {
   };
 
   return (
-    <>
-      <PageHeader
-        title="AI Code Review Dashboard"
-        description="Review your PRs by using AI"
-      />
-      {isPro ? (
-        <div>
-          <div className="p-6 space-y-6 w-full max-w-4xl mx-auto">
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Select a Repository
-              </label>
-              <Select
-                value={selectedRepo || ""}
-                onValueChange={setSelectedRepo}
+    <div className="min-h-screen bg-background">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="container mx-auto max-w-7xl px-4 py-8"
+      >
+        <motion.div
+          className="space-y-8"
+          variants={container}
+          initial="hidden"
+          animate="show"
+        >
+          <motion.div variants={item} className="flex items-center gap-4">
+            <Button variant="ghost" asChild className="group">
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
               >
-                <SelectTrigger className="mt-2">
-                  <SelectValue placeholder="Select a Repository" />
-                </SelectTrigger>
-                <SelectContent>
-                  {repositories.map((repo) => (
-                    <SelectItem key={repo.name} value={repo.name}>
-                      <span>{repo.name}</span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+                Back to Dashboard
+              </Link>
+            </Button>
+            <PageHeader
+              title="AI Code Review Dashboard"
+              description="Review your pull requests with AI-powered analysis"
+            />
+          </motion.div>
 
-            {loading ? (
-              <div className="h-screen">
-                <div className="flex justify-center items-center w-full h-[50%]">
-                  <p className="text-gray-600 text-3xl">
-                    Loading pull requests...
-                  </p>
-                </div>
-              </div>
-            ) : pullRequests.length === 0 ? (
-              <div className="h-screen">
-                <div className="flex justify-center items-center w-full h-[50%]">
-                  <p className="text-gray-600 text-3xl">
-                    No open pull requests found.
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {pullRequests.map((pr) => (
-                  <div key={pr.id} className="border rounded-lg p-4 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h2 className="text-lg font-medium">{pr.title}</h2>
-                        <p className="text-sm text-gray-500">
-                          By {pr.author.login} • {pr.changedFiles} files changed
-                          ({pr.additions} additions, {pr.deletions} deletions)
-                        </p>
-                      </div>
-                      <Button
-                        onClick={() => handleAIReview(pr)}
-                        disabled={loadingAI[pr.number]}
-                      >
-                        {loadingAI[pr.number] ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Analyzing...
-                          </>
-                        ) : (
-                          "Generate AI Review"
-                        )}
-                      </Button>
-                    </div>
+          {isPro ? (
+            <motion.div variants={item} className="space-y-8">
+              <Card className="bg-card/50 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle>Repository Selection</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Select
+                    value={selectedRepo || ""}
+                    onValueChange={setSelectedRepo}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a Repository" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {repositories.map((repo) => (
+                        <SelectItem key={repo.name} value={repo.name}>
+                          <span className="flex items-center gap-2">
+                            <GitPullRequest className="h-4 w-4" />
+                            {repo.name}
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </CardContent>
+              </Card>
 
-                    {aiAnalysis[pr.number] && (
-                      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                        <h3 className="font-medium mb-2">AI Analysis:</h3>
-                        <p className="text-gray-700 whitespace-pre-wrap">
-                          {aiAnalysis[pr.number]}
-                        </p>
-                      </div>
-                    )}
+              {loading ? (
+                <motion.div
+                  className="flex min-h-[400px] items-center justify-center"
+                  variants={item}
+                >
+                  <div className="space-y-4 text-center">
+                    <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
+                    <p className="text-muted-foreground">
+                      Loading pull requests...
+                    </p>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      ) : (
-        <ProOnlyComponent />
-      )}
-    </>
+                </motion.div>
+              ) : pullRequests.length === 0 ? (
+                <motion.div
+                  className="flex min-h-[400px] items-center justify-center"
+                  variants={item}
+                >
+                  <div className="space-y-4 text-center">
+                    <GitPullRequest className="mx-auto h-12 w-12 text-muted-foreground" />
+                    <p className="text-xl text-muted-foreground">
+                      No open pull requests found
+                    </p>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div className="space-y-4" variants={container}>
+                  {pullRequests.map((pr) => (
+                    <motion.div
+                      key={pr.id}
+                      variants={item}
+                      className="space-y-4 rounded-lg bg-card/50 p-6 backdrop-blur-sm"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-2">
+                          <h2 className="text-lg font-medium">{pr.title}</h2>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <span>By {pr.author.login}</span>
+                            <span className="flex items-center gap-1">
+                              <FileDiff className="h-4 w-4" />
+                              {pr.changedFiles} files changed
+                            </span>
+                            <span className="flex items-center gap-1 text-green-500">
+                              <Plus className="h-4 w-4" />
+                              {pr.additions}
+                            </span>
+                            <span className="flex items-center gap-1 text-red-500">
+                              <Minus className="h-4 w-4" />
+                              {pr.deletions}
+                            </span>
+                          </div>
+                        </div>
+                        <Button
+                          onClick={() => handleAIReview(pr)}
+                          disabled={loadingAI[pr.number]}
+                          className="bg-primary text-primary-foreground hover:bg-primary/90"
+                        >
+                          {loadingAI[pr.number] ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Analyzing...
+                            </>
+                          ) : (
+                            "Generate AI Review"
+                          )}
+                        </Button>
+                      </div>
+
+                      {aiAnalysis[pr.number] && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          transition={{ duration: 0.3 }}
+                          className="mt-4 rounded-lg bg-background/50 p-4"
+                        >
+                          <h3 className="mb-2 font-medium">AI Analysis</h3>
+                          <p className="whitespace-pre-wrap text-muted-foreground">
+                            {aiAnalysis[pr.number]}
+                          </p>
+                        </motion.div>
+                      )}
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
+            </motion.div>
+          ) : (
+            <motion.div variants={item}>
+              <ProOnlyComponent />
+            </motion.div>
+          )}
+        </motion.div>
+      </motion.div>
+    </div>
   );
 }

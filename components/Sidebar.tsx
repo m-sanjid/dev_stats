@@ -17,7 +17,12 @@ import {
   BookOpenText,
   File,
 } from "lucide-react";
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -42,7 +47,10 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
       {/* Mobile Sidebar */}
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="ghost" className="md:hidden fixed left-4 top-16 z-40">
+          <Button
+            variant="ghost"
+            className="fixed left-4 top-16 z-40 md:hidden"
+          >
             <Menu className="h-4 w-4" />
           </Button>
         </SheetTrigger>
@@ -55,7 +63,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
       {/* Desktop Sidebar */}
       <div
         className={cn(
-          "hidden md:flex h-screen fixed left-0 pt-14 top-0 z-40 flex-col border-r bg-background transition-all duration-300",
+          "fixed left-0 top-0 z-40 hidden h-screen flex-col border-r bg-background pt-14 transition-all duration-300 md:flex",
           isCollapsed ? "w-16" : "w-64",
         )}
       >
@@ -96,10 +104,10 @@ function SidebarContent({
             <span>Dev Stats</span>
           </Link>
         ) : (
-          <GitFork className="h-6 w-6 mx-auto" />
+          <GitFork className="mx-auto h-6 w-6" />
         )}
       </div>
-      <ScrollArea className="flex-1 p-3 space-y-1">
+      <ScrollArea className="flex-1 space-y-1 p-3">
         {sidebarLinks.map((link) => {
           const Icon = link.icon;
           return (

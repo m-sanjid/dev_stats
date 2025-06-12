@@ -8,6 +8,10 @@ import { OAuthButton } from "./Buttons/OAuthButton";
 import { GitHubIcon, GoogleIcon } from "./icons";
 import { signUp } from "@/actions/auth";
 import { Button } from "./ui/button";
+import { motion } from "motion/react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const signUpSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -16,6 +20,29 @@ const signUpSchema = z.object({
 });
 
 type SignUpFormData = z.infer<typeof signUpSchema>;
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 10 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 20,
+    },
+  },
+};
 
 export function SignUpForm() {
   const router = useRouter();
@@ -43,115 +70,105 @@ export function SignUpForm() {
   };
 
   return (
-    <main className="h-screen w-[50%] flex justify-center items-center">
-      <div className="w-full max-w-md bg-white dark:bg-black dark:border dark:border-neutral-700 shadow-lg rounded-lg p-8">
-        <h2 className="font-bold text-xl text-center py-4 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-          DevStats
-        </h2>
-        <p className="text-center text-gray-500 dark:text-neutral-500 text-sm mb-4">
-          Welcome! Please sign up to continue.
-        </p>
+    <motion.main
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className="flex h-screen w-[50%] items-center justify-center"
+    >
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-center">DevStats</CardTitle>
+          <p className="text-center text-sm text-muted-foreground">
+            Welcome! Please sign up to continue.
+          </p>
+        </CardHeader>
 
-        <div className="space-y-2">
-          <OAuthButton provider="google">
-            <GoogleIcon className="w-5 h-5" />
-            Sign up with Google
-          </OAuthButton>
+        <CardContent>
+          <motion.div variants={item} className="space-y-2">
+            <OAuthButton provider="google">
+              <GoogleIcon className="h-5 w-5" />
+              Sign up with Google
+            </OAuthButton>
 
-          <OAuthButton provider="github">
-            <GitHubIcon className="w-5 h-5" />
-            Sign up with GitHub
-          </OAuthButton>
-        </div>
+            <OAuthButton provider="github">
+              <GitHubIcon className="h-5 w-5" />
+              Sign up with GitHub
+            </OAuthButton>
+          </motion.div>
 
-        <div className="text-center text-gray-400 dark:text-neutral-500 my-3 text-sm">
-          Or
-        </div>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <InputField
-            id="name"
-            label="Name"
-            type="text"
-            register={register}
-            error={errors.name?.message}
-          />
-
-          <InputField
-            id="email"
-            label="Email"
-            type="email"
-            register={register}
-            error={errors.email?.message}
-          />
-
-          <InputField
-            id="password"
-            label="Password"
-            type="password"
-            register={register}
-            error={errors.password?.message}
-          />
-
-          {errors.root?.message && (
-            <p className="text-red-500 text-sm text-center" aria-live="polite">
-              {errors.root.message}
-            </p>
-          )}
-
-          <Button
-            variant="default"
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full dark:bg-neutral-600 text-white p-2 mt-4 rounded-md hover:bg-purple-600 disabled:bg-gray-400"
+          <motion.div
+            variants={item}
+            className="my-3 text-center text-sm text-muted-foreground"
           >
-            {isSubmitting ? "Creating account..." : "Sign Up"}
-          </Button>
-        </form>
-      </div>
-    </main>
-  );
-}
+            Or
+          </motion.div>
 
-function InputField({
-  id,
-  label,
-  type,
-  register,
-  error,
-}: {
-  id: string;
-  label: string;
-  type: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  register: any;
-  error?: string;
-}) {
-  return (
-    <div>
-      <label
-        htmlFor={id}
-        className="block text-sm font-medium text-gray-700 dark:text-neutral-400"
-      >
-        {label}
-      </label>
-      <input
-        {...register(id)}
-        id={id}
-        type={type}
-        className="w-full p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-200"
-        aria-invalid={!!error}
-        aria-describedby={error ? `${id}-error` : undefined}
-      />
-      {error && (
-        <p
-          id={`${id}-error`}
-          className="text-red-500 text-sm mt-1"
-          aria-live="polite"
-        >
-          {error}
-        </p>
-      )}
-    </div>
+          <motion.form
+            variants={item}
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-4"
+          >
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                type="text"
+                {...register("name")}
+                className={errors.name ? "border-destructive" : ""}
+              />
+              {errors.name && (
+                <p className="text-sm text-destructive">
+                  {errors.name.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                {...register("email")}
+                className={errors.email ? "border-destructive" : ""}
+              />
+              {errors.email && (
+                <p className="text-sm text-destructive">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                {...register("password")}
+                className={errors.password ? "border-destructive" : ""}
+              />
+              {errors.password && (
+                <p className="text-sm text-destructive">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+
+            {errors.root?.message && (
+              <p
+                className="text-center text-sm text-destructive"
+                aria-live="polite"
+              >
+                {errors.root.message}
+              </p>
+            )}
+
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              {isSubmitting ? "Creating account..." : "Sign Up"}
+            </Button>
+          </motion.form>
+        </CardContent>
+      </Card>
+    </motion.main>
   );
 }

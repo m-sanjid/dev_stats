@@ -46,29 +46,29 @@ const language = [
 export default function DeveloperDashboard() {
   return (
     <motion.div
-      className="max-w-4xl mx-auto dark:bg-gradient-to-br dark:from-gray-900 dark:to-gray-800 p-8"
+      className="mx-auto max-w-4xl p-8 dark:bg-gradient-to-br dark:from-neutral-900 dark:to-neutral-800"
       initial="offscreen"
       whileInView="onscreen"
       viewport={{ amount: 0.8 }}
     >
-      <motion.div className="relative max-w-[1200px] mx-auto">
+      <motion.div className="relative mx-auto max-w-[1200px]">
         {/* Main card */}
-        <Card className="relative dark:bg-gray-900/50 border-gray-800 backdrop-blur-sm">
-          <CardHeader className="border-b border-gray-800">
-            <div className="flex items-center justify-between p-4 mb-2">
+        <Card className="relative border-neutral-800 backdrop-blur-sm dark:bg-neutral-900/50">
+          <CardHeader className="border-b border-neutral-800">
+            <div className="mb-2 flex items-center justify-between p-4">
               <div className="flex items-center space-x-4">
                 <div>
-                  <CardTitle className="text-lg font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                  <CardTitle className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-lg font-semibold text-transparent">
                     Developer Dashboard
                   </CardTitle>
-                  <p className="text-sm text-gray-400 mt-2">
+                  <p className="mt-2 text-sm text-neutral-400">
                     Real-time Data and Activities
                   </p>
                 </div>
               </div>
             </div>
-            <div className="p-4 mb-4 flex gap-3">
-              <div className="bg-green-100 items-center rounded-md text-green-600 flex gap-3 p-2">
+            <div className="mb-4 flex gap-3 p-4">
+              <div className="flex items-center gap-3 rounded-md bg-green-100 p-2 text-green-600">
                 <Check />
                 GitHub Connected
               </div>
@@ -79,14 +79,14 @@ export default function DeveloperDashboard() {
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 mt-6  gap-6">
+            <div className="mt-6 grid grid-cols-1 gap-6">
               {/* Profile Card - Spans 1 column */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 className="lg:col-span-1"
               >
-                <Card className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
+                <Card className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-neutral-800 dark:to-neutral-700">
                   <CardContent className="flex items-center gap-4 p-6">
                     <div className="relative">
                       <Avatar className="h-10 w-10">
@@ -100,10 +100,10 @@ export default function DeveloperDashboard() {
                       <Github className="absolute -bottom-2 -right-2 h-6 w-6 text-purple-500 dark:text-purple-400" />
                     </div>
                     <div>
-                      <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                      <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
                         tony_stark
                       </h2>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <p className="text-sm text-neutral-500 dark:text-neutral-400">
                         GitHub Profile
                       </p>
                     </div>
@@ -112,7 +112,7 @@ export default function DeveloperDashboard() {
               </motion.div>
 
               {/* Stats Cards - Span 3 columns */}
-              <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:col-span-3">
                 <StatCard
                   title="Total Commits"
                   value={1096}
@@ -139,15 +139,15 @@ export default function DeveloperDashboard() {
               <div className="space-y-4">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-2xl pb-4">
+                    <CardTitle className="pb-4 text-2xl">
                       Commit Avtivity
                     </CardTitle>
                     <div className="flex justify-between">
-                      <span className="px-3 py-2 bg-purple-600 rounded-md text-sm text-white">
+                      <span className="rounded-md bg-purple-600 px-3 py-2 text-sm text-white">
                         Previous Week
                       </span>
 
-                      <span className="px-3 py-2 bg-gray-400 rounded-md text-sm text-black dark:text-white">
+                      <span className="rounded-md bg-neutral-400 px-3 py-2 text-sm text-black dark:text-white">
                         Next Week
                       </span>
                     </div>
@@ -185,17 +185,17 @@ export default function DeveloperDashboard() {
                   {language.map((lang) => (
                     <div
                       key={lang.id}
-                      className="flex justify-between items-center"
+                      className="flex items-center justify-between"
                     >
                       <div>
-                        <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                        <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
                           {lang.id}
                         </p>
                         <div
-                          className={`bg-purple-400 ${lang.width} h-2 mt-2 dark:bg-purple-500 `}
+                          className={`bg-purple-400 ${lang.width} mt-2 h-2 dark:bg-purple-500`}
                         ></div>
                       </div>
-                      <span className="text-xs text-gray-800 dark:text-gray-200">
+                      <span className="text-xs text-neutral-800 dark:text-neutral-200">
                         {lang.percentage}
                       </span>
                     </div>
@@ -206,12 +206,12 @@ export default function DeveloperDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="relative mt-10 w-full dark:bg-gray-900/50 border-gray-800 backdrop-blur-sm">
+        <Card className="relative mt-10 w-full border-neutral-800 backdrop-blur-sm dark:bg-neutral-900/50">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="font-semibold text-lg border-b py-2">
+            <CardTitle className="border-b py-2 text-lg font-semibold">
               Recent Repositories
             </CardTitle>
-            <div className="text-md items-center flex gap-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+            <div className="text-md flex items-center gap-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
               View All
               <ChevronRight />
             </div>
@@ -220,12 +220,12 @@ export default function DeveloperDashboard() {
             {repos.map((repo) => (
               <div
                 key={repo.value}
-                className="flex justify-between px-4 items-center border-b py-2 last:border-b-0"
+                className="flex items-center justify-between border-b px-4 py-2 last:border-b-0"
               >
                 <span className="font-medium">{repo.value}</span>
                 <div className="text-right">
-                  <p className="text-sm text-gray-600">{repo.label} commits</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-neutral-600">{repo.label} commits</p>
+                  <p className="text-sm text-neutral-600">
                     {repo.lines} lines changed
                   </p>
                 </div>

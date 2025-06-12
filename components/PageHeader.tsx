@@ -17,11 +17,16 @@ export function PageHeader({
   backUrl = "/dashboard",
   gradient = true,
 }: PageHeaderProps) {
+
   return (
-    <div className="max-w-4xl w-full mx-auto border-b bg-background/95 backdrop-blur pl-16 md:pl-8 supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 max-w-screen-2xl items-center">
+    <div className="mx-auto w-full max-w-4xl border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-24 max-w-screen-2xl items-center">
         {showBack && (
-          <Button variant="ghost" asChild className="mr-4 h-8 w-8 p-0 hidden md:flex">
+          <Button
+            variant="ghost"
+            asChild
+            className="mr-4 hidden h-8 w-8 p-0 md:flex"
+          >
             <Link href={backUrl}>
               <ArrowLeft className="h-4 w-4" />
               <span className="sr-only">Back</span>
@@ -29,11 +34,11 @@ export function PageHeader({
           </Button>
         )}
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          <div className="w-full flex-1">
+          <div className="w-full flex-1 items-center">
             <h1
               className={`text-lg font-semibold ${
                 gradient
-                  ? "bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent"
+                  ? "text-primary"
                   : "text-foreground"
               }`}
             >

@@ -13,7 +13,7 @@ export const PrimaryButton = ({
   return (
     <Button
       onClick={onClick}
-      className={`${size === "small" ? "text-md" : "text-xl"} ${size === "small" ? "px-8 py-2" : "px-8 py-4"} cursor-pointer text-center hover:shadow-md rounded-3xl bg-purple-500`}
+      className={`${size === "small" ? "text-md" : "text-xl"} ${size === "small" ? "px-8 py-2" : "px-8 py-4"} cursor-pointer rounded-3xl bg-purple-500 text-center hover:shadow-md`}
     >
       {children}
     </Button>

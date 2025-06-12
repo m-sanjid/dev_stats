@@ -63,14 +63,14 @@ export default function GitHubMetricsPage() {
 
   const commitChartData = metrics
     ? Object.entries(metrics.weeklyCommits)
-      .map(([date, count]) => ({ date, commits: count }))
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        .map(([date, count]) => ({ date, commits: count }))
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     : [];
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
       </div>
     );
   }
@@ -96,16 +96,17 @@ export default function GitHubMetricsPage() {
   }
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="mx-auto max-w-7xl space-y-6 p-6">
       {/* Profile Section */}
-      <div className="flex items-center space-x-4 mb-8">
+      <div className="mb-8 flex items-center space-x-4">
         {metrics.githubProfile && (
           <>
             <Image
-            width={64} height={64}
+              width={64}
+              height={64}
               src={metrics.githubProfile.avatarUrl}
               alt={metrics.githubProfile.username}
-              className="w-16 h-16 rounded-full"
+              className="h-16 w-16 rounded-full"
             />
             <h1 className="text-2xl font-bold">
               {metrics.githubProfile.username}&apos s GitHub Activity
@@ -115,7 +116,7 @@ export default function GitHubMetricsPage() {
       </div>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           title="Total Commits"
           value={metrics.totalCommits}
@@ -171,7 +172,7 @@ export default function GitHubMetricsPage() {
       {/* Repositories */}
       <div className="space-y-4">
         <h2 className="text-xl font-bold">Repositories</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {metrics.repositories.map((repo) => (
             <RepoCard key={repo.name} repo={repo} />
           ))}
@@ -212,23 +213,23 @@ function RepoCard({ repo }: { repo: GitHubMetrics["repositories"][0] }) {
             href={repo.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-blue-500 transition-colors"
+            className="transition-colors hover:text-blue-500"
           >
             {repo.name}
           </a>
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="mb-4 text-sm text-neutral-600">
           {repo.description || "No description"}
         </p>
         <div className="flex space-x-4 text-sm">
           <div className="flex items-center">
-            <Star className="w-4 h-4 mr-1" />
+            <Star className="mr-1 h-4 w-4" />
             {repo.stars}
           </div>
           <div className="flex items-center">
-            <GitFork className="w-4 h-4 mr-1" />
+            <GitFork className="mr-1 h-4 w-4" />
             {repo.forks}
           </div>
           <div>{repo.language}</div>

@@ -47,19 +47,19 @@ const SocialShareDropdown: React.FC<SocialShareDropdownProps> = ({
         onClick={() => setOpen(!open)}
         className="bg-purple-600 text-white"
       >
-        <Share2 className="h-5 w-5 mr-2" />
+        <Share2 className="mr-2 h-5 w-5" />
         Share
         <ChevronUp className="ml-2 h-4 w-4" />
       </Button>
 
       {/* Dropdown Menu (Opens Upward) */}
       {open && (
-        <div className="absolute bottom-full mb-2 w-40 bg-white dark:bg-gray-800 shadow-lg rounded-md overflow-hidden animate-fade-in-up">
+        <div className="animate-fade-in-up absolute bottom-full mb-2 w-40 overflow-hidden rounded-md bg-white shadow-lg dark:bg-neutral-800">
           <a
             href={generateShareLink("twitter")}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="flex items-center gap-2 p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700"
           >
             <Twitter className="h-4 w-4 text-blue-500" /> Twitter
           </a>
@@ -67,7 +67,7 @@ const SocialShareDropdown: React.FC<SocialShareDropdownProps> = ({
             href={generateShareLink("linkedin")}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="flex items-center gap-2 p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700"
           >
             <Linkedin className="h-4 w-4 text-blue-700" /> LinkedIn
           </a>
@@ -75,16 +75,16 @@ const SocialShareDropdown: React.FC<SocialShareDropdownProps> = ({
             href={generateShareLink("facebook")}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="flex items-center gap-2 p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700"
           >
-            <Facebook  className="h-4 w-4 text-blue-600" /> Facebook
+            <Facebook className="h-4 w-4 text-blue-600" /> Facebook
           </a>
           {image && (
             <button
               onClick={() => window.open(image, "_blank")}
-              className="flex w-full items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="flex w-full items-center gap-2 p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700"
             >
-              <ImageIcon className="h-4 w-4 text-gray-600" /> View Snapshot
+              <ImageIcon className="h-4 w-4 text-neutral-600" /> View Snapshot
             </button>
           )}
         </div>

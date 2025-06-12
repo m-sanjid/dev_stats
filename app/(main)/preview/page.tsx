@@ -6,15 +6,13 @@ import PreviewImg2 from "@/components/Github/PreviewImg2";
 
 function Preview() {
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="mx-auto max-w-4xl">
       <main>
         <Dashboard />
         <div className="scale-125">
           <PreviewImg2 />
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

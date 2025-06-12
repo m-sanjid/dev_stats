@@ -18,16 +18,16 @@ export default function EditableBio({ initialBio, onSave }: EditableBioProps) {
   };
 
   return (
-    <div className="p-4 border rounded-lg">
+    <div className="rounded-lg border p-4">
       {isEditing ? (
         <textarea
           value={bio}
           onChange={(e) => setBio(e.target.value)}
-          className="w-full p-2 border rounded-md"
+          className="w-full rounded-md border p-2"
           rows={4}
         />
       ) : (
-        <p className="text-gray-700">{bio || "Click edit to add a bio..."}</p>
+        <p className="text-neutral-700">{bio || "Click edit to add a bio..."}</p>
       )}
 
       <div className="mt-2">

@@ -8,11 +8,11 @@ import DeveloperDashboard from "./Dashboard";
 function AnimateDashboard() {
   const [isVisible, setIsVisible] = useState(true);
   return (
-    <div className="w-full flex flex-col relative justify-center">
+    <div className="relative flex w-full flex-col justify-center">
       <AnimatePresence initial={false}>
         {isVisible ? (
           <motion.div
-            className="bg-cyan-500 h-full w-full"
+            className="h-full w-full bg-cyan-500"
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0 }}

@@ -1,5 +1,12 @@
+"use client";
+
 import Link from "next/link";
-import { Github, Twitter, Linkedin } from "lucide-react";
+import { motion } from "motion/react";
+import {
+  IconBrandGithub,
+  IconBrandLinkedin,
+  IconBrandX,
+} from "@tabler/icons-react";
 
 const footerLinks = {
   product: [
@@ -26,33 +33,75 @@ const footerLinks = {
 const socialLinks = [
   {
     name: "GitHub",
-    icon: Github,
+    icon: IconBrandGithub,
     href: "https://github.com/m-sanjid/dev_stats",
+    color: "hover:bg-black p-2 rounded-2xl",
   },
-  { name: "Twitter", icon: Twitter, href: "https://x.com/sanjid357" },
+  {
+    name: "Twitter",
+    icon: IconBrandX,
+    href: "https://x.com/sanjid357",
+    color: "hover:bg-black p-2 rounded-2xl",
+  },
   {
     name: "LinkedIn",
-    icon: Linkedin,
+    icon: IconBrandLinkedin,
     href: "https://www.linkedin.com/in/muhammedsanjid1/",
+    color: "hover:bg-blue-600 p-2 rounded-2xl",
   },
 ];
 
+const container = {
+  hidden: { opacity: 0, filter: "blur(4px)" },
+  show: {
+    opacity: 1,
+    filter: "blur(0px)",
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 10 },
+  show: {
+    opacity: 1,
+    y: 0,
+    delay: 0.4,
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 20,
+    },
+  },
+};
+
 export function Footer() {
   return (
-    <footer className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+    <motion.footer
+      variants={container}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true }}
+      className="mx-auto mb-6 max-w-[90%] rounded-3xl border-t bg-gradient-to-b from-zinc-200 via-zinc-100 to-zinc-500 text-xs backdrop-blur-lg dark:from-zinc-800 dark:to-black md:text-sm"
+    >
+      <div className="mx-auto max-w-6xl px-4 py-16">
+        <motion.div
+          variants={item}
+          className="mb-14 grid grid-cols-2 gap-10 md:grid-cols-4"
+        >
           {/* Product Links */}
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-              Product
-            </h3>
+            <h3 className="mb-4 text-sm font-semibold md:text-base">Product</h3>
             <ul className="space-y-2">
               {footerLinks.product.map((link) => (
-                <li key={link.name}>
+                <li
+                  key={link.name}
+                  className="transition-all duration-200 hover:translate-x-1"
+                >
                   <Link
                     href={link.href}
-                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                    className="text-muted-foreground transition-colors hover:text-primary"
                   >
                     {link.name}
                   </Link>
@@ -60,18 +109,20 @@ export function Footer() {
               ))}
             </ul>
           </div>
-
           {/* Resources Links */}
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
+            <h3 className="mb-4 text-sm font-semibold md:text-base">
               Resources
             </h3>
             <ul className="space-y-2">
               {footerLinks.resources.map((link) => (
-                <li key={link.name}>
+                <li
+                  key={link.name}
+                  className="transition-all duration-200 hover:translate-x-1"
+                >
                   <Link
                     href={link.href}
-                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                    className="text-muted-foreground transition-colors hover:text-primary"
                   >
                     {link.name}
                   </Link>
@@ -79,18 +130,18 @@ export function Footer() {
               ))}
             </ul>
           </div>
-
           {/* Company Links */}
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-              Company
-            </h3>
+            <h3 className="mb-4 text-sm font-semibold md:text-base">Company</h3>
             <ul className="space-y-2">
               {footerLinks.company.map((link) => (
-                <li key={link.name}>
+                <li
+                  key={link.name}
+                  className="transition-all duration-200 hover:translate-x-1"
+                >
                   <Link
                     href={link.href}
-                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                    className="text-muted-foreground transition-colors hover:text-primary"
                   >
                     {link.name}
                   </Link>
@@ -98,18 +149,18 @@ export function Footer() {
               ))}
             </ul>
           </div>
-
           {/* Legal Links */}
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-              Legal
-            </h3>
+            <h3 className="mb-4 text-sm font-semibold md:text-base">Legal</h3>
             <ul className="space-y-2">
               {footerLinks.legal.map((link) => (
-                <li key={link.name}>
+                <li
+                  key={link.name}
+                  className="transition-all duration-200 hover:translate-x-1"
+                >
                   <Link
                     href={link.href}
-                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                    className="text-muted-foreground transition-colors hover:text-primary"
                   >
                     {link.name}
                   </Link>
@@ -117,42 +168,41 @@ export function Footer() {
               ))}
             </ul>
           </div>
-        </div>
-
+        </motion.div>
         {/* Bottom Section */}
-        <div className="border-t border-gray-200 dark:border-gray-800 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+        <motion.div variants={item} className="border-t pt-10">
+          <div className="flex flex-col items-center justify-between space-y-6 md:flex-row md:space-y-0">
             {/* Logo and Copyright */}
             <div className="flex flex-col items-center md:items-start">
-              <div className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-                DevStats
-              </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="mb-2 text-lg font-bold">DevStats</div>
+              <p className="text-sm text-muted-foreground">
                 © {new Date().getFullYear()} DevStats. All rights reserved.
               </p>
             </div>
-
             {/* Social Links */}
-            <div className="flex space-x-6">
+            <div className="flex space-x-8">
               {socialLinks.map((link) => {
                 const Icon = link.icon;
                 return (
-                  <a
+                  <motion.a
                     key={link.name}
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                    className={`text-zinc-600 transition-colors hover:text-white dark:text-zinc-500 ${link.color}`}
+                    whileHover={{ x: 2 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
                   >
                     <span className="sr-only">{link.name}</span>
-                    <Icon className="h-6 w-6" />
-                  </a>
+                    <Icon className="h-7 w-7" />
+                  </motion.a>
                 );
               })}
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
-    </footer>
+    </motion.footer>
   );
 }

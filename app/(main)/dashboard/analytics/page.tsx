@@ -15,10 +15,9 @@ import {
 } from "recharts";
 import { useSession } from "next-auth/react";
 import { fetchGitHubMetrics } from "@/lib/github";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import ProOnlyComponent from "@/components/ProOnlyComponent";
 import { motion, AnimatePresence } from "motion/react";
+import LoginCTA from "@/components/LoginCTA";
 
 interface AnalyticsData {
   weeklyCommits: Record<string, number>;
@@ -89,8 +88,9 @@ const MetricCard = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
+      className="bg-primary/5 backdrop-blur-md border rounded-3xl p-2"
     >
-      <Card className="transform overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+      <Card className="transform overflow-hidden h-full rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
         <CardContent className="relative p-6">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -107,9 +107,7 @@ const MetricCard = ({
             transition={{ duration: 0.5, delay: delay + 0.3 }}
             className="mt-2 flex items-baseline"
           >
-            <p className="bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-3xl font-semibold text-transparent">
-              {formattedValue}
-            </p>
+            <p className="text-3xl font-semibold">{formattedValue}</p>
           </motion.div>
           <motion.p
             initial={{ opacity: 0 }}
@@ -138,9 +136,7 @@ const CustomTooltip = ({
     return (
       <div className="rounded-lg border bg-card/95 p-3 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <p className="text-sm font-medium text-foreground">{label}</p>
-        <p className="bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-sm font-semibold text-transparent">
-          {`${payload[0].value} commits`}
-        </p>
+        <p className="text-sm font-semibold">{`${payload[0].value} commits`}</p>
       </div>
     );
   }
@@ -183,18 +179,7 @@ export default function AnalyticsPage() {
   }, [session]);
 
   if (!session) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex h-screen flex-col items-center justify-center"
-      >
-        <h1 className="p-6 text-xl">Please sign in to view access this page</h1>
-        <Button className="px-8 transition-transform hover:scale-105">
-          <Link href="/signup">Sign In</Link>
-        </Button>
-      </motion.div>
-    );
+    return <LoginCTA />;
   }
 
   if (loading) {
@@ -273,10 +258,11 @@ export default function AnalyticsPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
+                className="rounded-3xl border p-2 bg-primary/5 backdrop-blur-md"
               >
-                <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg">
+                <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg rounded-2xl">
                   <CardContent className="p-6">
-                    <h3 className="mb-4 bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-lg font-semibold text-transparent">
+                    <h3 className="mb-4 text-lg font-semibold">
                       Weekly Commit Activity
                     </h3>
                     <div className="h-[300px]">
@@ -303,8 +289,8 @@ export default function AnalyticsPage() {
                               x2="0"
                               y2="1"
                             >
-                              <stop offset="0%" stopColor="#8B5CF6" />
-                              <stop offset="100%" stopColor="#3B82F6" />
+                              <stop offset="0%" stopColor="#D1D5DB" />
+                              <stop offset="100%" stopColor="#6B7280" />
                             </linearGradient>
                           </defs>
                         </BarChart>

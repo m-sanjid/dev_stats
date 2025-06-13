@@ -6,16 +6,7 @@ import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import ReactMarkdown from "react-markdown";
-import {
-  Search,
-  AlertCircle,
-  ArrowLeft,
-  Settings,
-  Eye,
-  EyeOff,
-  Save,
-  Wand2,
-} from "lucide-react";
+import { Search, Settings, Eye, EyeOff, Save, Wand2, Copy } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -25,9 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { commitReadmeToGitHub, fetchGitHubMetrics } from "@/lib/github";
-import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/PageHeader";
 import ProOnlyComponent from "@/components/ProOnlyComponent";
@@ -35,6 +24,8 @@ import { motion } from "motion/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import LoginCTA from "@/components/LoginCTA";
+import BorderDiv from "@/components/BorderDiv";
 
 interface Repository {
   id: number;
@@ -173,26 +164,13 @@ const ReadmeGenerator = () => {
     loadRepos();
   }, [session, status]);
 
+  const handleCopy = () => {
+    navigator.clipboard.writeText(readmeContent);
+    toast.success("Copied to clipboard");
+  };
+
   if (!session) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-background to-background/80">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-4 text-center"
-        >
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
-            Sign in to Generate READMEs
-          </h1>
-          <Button
-            className="transform bg-gradient-to-r from-purple-600 to-blue-600 px-8 transition-all duration-300 hover:-translate-y-1 hover:from-purple-700 hover:to-blue-700"
-            asChild
-          >
-            <Link href="/signup">Sign In with GitHub</Link>
-          </Button>
-        </motion.div>
-      </div>
-    );
+    return <LoginCTA />;
   }
 
   const filteredRepos = repos.filter((repo) =>
@@ -340,15 +318,6 @@ const ReadmeGenerator = () => {
           animate="show"
         >
           <motion.div variants={item} className="flex items-center gap-4">
-            <Button variant="ghost" asChild className="group">
-              <Link
-                href="/dashboard"
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
-              >
-                <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-                Back to Dashboard
-              </Link>
-            </Button>
             <PageHeader
               title="README Generator"
               description="Create professional README files for your GitHub repositories"
@@ -357,76 +326,80 @@ const ReadmeGenerator = () => {
 
           {isPro ? (
             <motion.div variants={item} className="space-y-8">
-              <Card className="bg-card/50 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Settings className="h-5 w-5" />
-                    Repository Settings
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
-                      <Input
-                        placeholder="Search repositories..."
-                        className="pl-10"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                      />
-                    </div>
-                    <Select
-                      value={selectedRepo}
-                      onValueChange={setSelectedRepo}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a repository" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {filteredRepos.map((repo) => (
-                          <SelectItem key={repo.id} value={repo.name}>
-                            {repo.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-card/50 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Settings className="h-5 w-5" />
-                    README Sections
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {sections.map((section) => (
-                      <div
-                        key={section.id}
-                        className="flex items-center justify-between rounded-lg bg-background/50 p-4 transition-colors hover:bg-background/80"
-                      >
-                        <div>
-                          <Label className="text-sm font-medium">
-                            {section.label}
-                          </Label>
-                          <p className="text-sm text-muted-foreground">
-                            {section.description}
-                          </p>
-                        </div>
-                        <Switch
-                          checked={section.enabled}
-                          onCheckedChange={() =>
-                            handleSectionToggle(section.id)
-                          }
+              <BorderDiv>
+                <Card className="rounded-2xl bg-card/80 backdrop-blur-sm">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Settings className="h-5 w-5" />
+                      Repository Settings
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
+                        <Input
+                          placeholder="Search repositories..."
+                          className="pl-10"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
                         />
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                      <Select
+                        value={selectedRepo}
+                        onValueChange={setSelectedRepo}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a repository" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {filteredRepos.map((repo) => (
+                            <SelectItem key={repo.id} value={repo.name}>
+                              {repo.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </CardContent>
+                </Card>
+              </BorderDiv>
+
+              <BorderDiv>
+                <Card className="rounded-2xl bg-card/80 backdrop-blur-sm">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Settings className="h-5 w-5" />
+                      README Sections
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {sections.map((section) => (
+                        <div
+                          key={section.id}
+                          className="flex items-center justify-between rounded-lg bg-primary/5 p-4 transition-colors hover:bg-background/80"
+                        >
+                          <div>
+                            <Label className="text-sm font-medium">
+                              {section.label}
+                            </Label>
+                            <p className="text-sm text-muted-foreground">
+                              {section.description}
+                            </p>
+                          </div>
+                          <Switch
+                            checked={section.enabled}
+                            onCheckedChange={() =>
+                              handleSectionToggle(section.id)
+                            }
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </BorderDiv>
 
               <div className="flex flex-wrap gap-4">
                 <Button
@@ -494,12 +467,17 @@ const ReadmeGenerator = () => {
                 </CardContent>
               </Card>
             ) : (
+              <div className="relative">
               <Textarea
                 value={readmeContent}
                 onChange={(e) => setReadmeContent(e.target.value)}
                 className="min-h-[500px] font-mono"
                 placeholder="Your README content will appear here..."
               />
+                <Button variant="secondary" size="icon" className="absolute right-2 top-2 z-10" onClick={handleCopy}>
+                  <Copy />
+                </Button>
+              </div>
             )}
           </motion.div>
         </motion.div>

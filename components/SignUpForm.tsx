@@ -12,6 +12,7 @@ import { motion } from "motion/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import BorderDiv from "./BorderDiv";
 
 const signUpSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -74,9 +75,10 @@ export function SignUpForm() {
       variants={container}
       initial="hidden"
       animate="show"
-      className="flex h-screen w-[50%] items-center justify-center"
+      className="flex h-screen w-full items-center justify-center"
     >
-      <Card className="w-full max-w-md">
+      <BorderDiv className="w-full max-w-md">
+      <Card className="w-full rounded-2xl">
         <CardHeader>
           <CardTitle className="text-center">DevStats</CardTitle>
           <p className="text-center text-sm text-muted-foreground">
@@ -169,6 +171,7 @@ export function SignUpForm() {
           </motion.form>
         </CardContent>
       </Card>
+      </BorderDiv>
     </motion.main>
   );
 }

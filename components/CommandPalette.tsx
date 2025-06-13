@@ -29,7 +29,6 @@ export function CommandMenu() {
 
   const navItems = [
     { title: "Dashboard", href: "/dashboard" },
-    { title: "Pro", href: "/pricing" },
     { title: "Settings", href: "/settings" },
     { title: "Pricing", href: "/pricing" },
     { title: "Preview", href: "/preview" },
@@ -62,8 +61,9 @@ export function CommandMenu() {
         <CommandList>
           <CommandGroup heading="Navigation">
             <CommandEmpty>No commands</CommandEmpty>
-            {navItems.map((item) => (
+            {navItems.map((item, idx) => (
               <CommandItem
+                key={idx}
                 onSelect={() => runCommand(() => router.push(item.href))}
               >
                 <IconArrowUpRight

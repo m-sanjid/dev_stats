@@ -2,9 +2,7 @@
 
 import { Sidebar } from "@/components/Sidebar";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
 import { PageWrapper } from "@/components/PageWrapper";
-import { Toaster } from "@/components/ui/sonner";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -15,19 +13,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <PageWrapper>
-      <div className="min-h-screen bg-background">
+      <div className="flex min-h-screen bg-background">
         <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
-        <div
-          className={cn(
-            "flex min-h-screen flex-col",
-            isCollapsed ? "md:pl-16" : "md:pl-64",
-            "transition-all duration-300",
-          )}
-        >
-          {children}
-        </div>
+        <div className="flex-1">{children}</div>
       </div>
-      <Toaster />
     </PageWrapper>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "next-view-transitions";
 import { motion } from "motion/react";
 import {
   IconBrandGithub,
@@ -83,9 +83,9 @@ export function Footer() {
       initial="hidden"
       whileInView="show"
       viewport={{ once: true }}
-      className="mx-auto mb-6 max-w-[90%] rounded-3xl border-t bg-gradient-to-b from-zinc-200 via-zinc-100 to-zinc-500 text-xs backdrop-blur-lg dark:from-zinc-800 dark:to-black md:text-sm"
+      className="z-10 mx-8 max-w-6xl rounded-3xl border p-2 bg-primary/5 backdrop-blur-md text-xs"
     >
-      <div className="mx-auto max-w-6xl px-4 py-16">
+      <div className="mx-auto px-8 md:px-24 py-16 border rounded-2xl bg-white dark:bg-black">
         <motion.div
           variants={item}
           className="mb-14 grid grid-cols-2 gap-10 md:grid-cols-4"

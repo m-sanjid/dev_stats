@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowLeft, Search, Filter } from "lucide-react";
-import Link from "next/link";
+import { Link } from "next-view-transitions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,6 +14,7 @@ import {
 import { RepositoryList } from "@/components/RepositoryList";
 import { useState, useMemo } from "react";
 import { motion } from "motion/react";
+import LoginCTA from "@/components/LoginCTA";
 
 interface Repository {
   name: string;
@@ -105,25 +106,7 @@ export default function RepoPageClient({ metrics }: RepoPageProps) {
   }, [metrics?.repositories, searchQuery, sortBy]);
 
   if (!metrics) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-background to-background/80">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-4 text-center"
-        >
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
-            Please sign in to view this page
-          </h1>
-          <Button
-            className="transform bg-gradient-to-r from-purple-600 to-blue-600 px-8 transition-all duration-300 hover:-translate-y-1 hover:from-purple-700 hover:to-blue-700"
-            asChild
-          >
-            <Link href="/signup">Sign In</Link>
-          </Button>
-        </motion.div>
-      </div>
-    );
+    return <LoginCTA/>
   }
 
   if (!metrics.repositories.length) {
@@ -158,10 +141,7 @@ export default function RepoPageClient({ metrics }: RepoPageProps) {
               <p className="mb-6 text-neutral-600 dark:text-neutral-400">
                 Connect your GitHub account to see your repositories here.
               </p>
-              <Button
-                asChild
-                className="transform bg-gradient-to-r from-purple-600 to-blue-600 transition-all duration-300 hover:-translate-y-1 hover:from-purple-700 hover:to-blue-700"
-              >
+              <Button asChild>
                 <Link href="/dashboard">Return to Dashboard</Link>
               </Button>
             </div>

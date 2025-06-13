@@ -10,7 +10,7 @@ import {
   ExternalLink,
   GitCommit,
 } from "lucide-react";
-import Link from "next/link";
+import { Link } from "next-view-transitions";
 import { LanguageTag } from "@/components/ui/language-tag";
 import { StatBadge } from "@/components/ui/stat-badge";
 
@@ -54,16 +54,6 @@ const item = {
   },
 };
 
-const cardHover = {
-  scale: 1.04,
-  boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.15)",
-  transition: {
-    type: "spring",
-    stiffness: 400,
-    damping: 12,
-  },
-};
-
 const iconHover = {
   scale: 1.2,
   rotate: 5,
@@ -85,63 +75,40 @@ export function RepositoryList({ repositories }: RepositoryListProps) {
     return repositories.slice(start, start + PAGE_SIZE);
   }, [repositories, page]);
 
-  // For animated page transitions
-  const [direction, setDirection] = useState(0);
   const handlePageChange = (newPage: number) => {
-    setDirection(newPage > page ? 1 : -1);
     setPage(newPage);
   };
 
   return (
     <div>
       <AnimatePresence mode="wait" initial={false}>
-        <motion.div
-          key={page}
-          variants={container}
-          initial={{ opacity: 0, x: direction * 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: direction * -40 }}
-          transition={{
-            duration: 0.35,
-            type: "spring",
-            stiffness: 200,
-            damping: 30,
-          }}
-          className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
-        >
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {paginatedRepos.map((repo) => (
-            <motion.div key={repo.name} variants={item} whileHover={cardHover}>
-              <Card className="group h-full rounded-2xl border border-white/30 bg-white/70 shadow-xl backdrop-blur-lg transition-all duration-300 hover:shadow-2xl dark:border-zinc-700/40 dark:bg-zinc-900/70">
+            <div
+              key={repo.name}
+              className="rounded-3xl border bg-primary/5 p-2 backdrop-blur-md"
+            >
+              <Card className="group h-full rounded-2xl border transition-all duration-300 hover:shadow-xl">
                 <CardContent className="p-6">
                   <div className="flex h-full flex-col">
                     <div className="mb-4 flex items-start justify-between">
                       <div className="flex-1">
                         <div className="mb-2 flex items-center gap-2">
-                          <motion.h3
-                            className="text-lg font-semibold text-neutral-900 dark:text-white"
-                            whileHover={{ scale: 1.02 }}
-                            transition={{
-                              type: "spring",
-                              stiffness: 400,
-                              damping: 10,
-                            }}
-                          >
-                            {repo.name}
-                          </motion.h3>
+                          <h3 className="text-lg font-semibold">{repo.name}</h3>
                           {repo.url && (
                             <motion.div
                               whileHover={iconHover}
                               className="opacity-0 transition-opacity group-hover:opacity-100"
                             >
                               <Link href={repo.url} target="_blank">
-                                <ExternalLink className="h-4 w-4 text-neutral-400 hover:text-purple-500" />
+                                <ExternalLink className="h-4 w-4 text-muted-foreground hover:text-primary" />
                               </Link>
                             </motion.div>
                           )}
                         </div>
                         {repo.description && (
                           <motion.p
-                            className="mb-3 line-clamp-2 text-sm text-neutral-600 dark:text-neutral-400"
+                            className="mb-3 line-clamp-2 text-sm text-muted-foreground"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.2 }}
@@ -162,7 +129,7 @@ export function RepositoryList({ repositories }: RepositoryListProps) {
                     </div>
 
                     <motion.div
-                      className="mb-4 flex items-center gap-4 text-sm text-neutral-600 dark:text-neutral-400"
+                      className="mb-4 flex items-center gap-4 text-sm text-muted-foreground"
                       variants={container}
                       initial="hidden"
                       animate="show"
@@ -197,7 +164,7 @@ export function RepositoryList({ repositories }: RepositoryListProps) {
                     </motion.div>
 
                     <motion.div
-                      className="mt-auto border-t border-neutral-200 pt-4 dark:border-neutral-700"
+                      className="mt-auto border-t pt-4"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
@@ -212,11 +179,11 @@ export function RepositoryList({ repositories }: RepositoryListProps) {
                             damping: 10,
                           }}
                         >
-                          <div className="flex items-center gap-1 text-sm text-neutral-600 dark:text-neutral-400">
+                          <div className="flex items-center gap-1 text-sm text-muted-foreground">
                             <GitCommit className="h-4 w-4" />
                             <span>Commits</span>
                           </div>
-                          <p className="font-medium text-neutral-900 dark:text-white">
+                          <p className="font-medium">
                             {repo.commits.toLocaleString()}
                           </p>
                         </motion.div>
@@ -229,10 +196,10 @@ export function RepositoryList({ repositories }: RepositoryListProps) {
                             damping: 10,
                           }}
                         >
-                          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                          <p className="text-sm text-muted-foreground">
                             Lines Changed
                           </p>
-                          <p className="font-medium text-neutral-900 dark:text-white">
+                          <p className="font-medium">
                             {repo.linesChanged.toLocaleString()}
                           </p>
                         </motion.div>
@@ -241,35 +208,64 @@ export function RepositoryList({ repositories }: RepositoryListProps) {
                   </div>
                 </CardContent>
               </Card>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </AnimatePresence>
       {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div className="mt-10 flex items-center justify-center gap-2">
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-2">
+          {/* Prev Button */}
           <button
-            className="rounded-lg bg-zinc-100 px-3 py-1 text-zinc-500 transition-colors hover:bg-indigo-100 disabled:opacity-50 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-indigo-900"
+            className="rounded-lg bg-primary/5 px-3 py-1 text-primary transition-colors hover:bg-primary/10 disabled:opacity-50 dark:bg-primary/5 dark:text-primary-foreground dark:hover:bg-primary/10"
             onClick={() => handlePageChange(page - 1)}
             disabled={page === 1}
           >
             Prev
           </button>
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i}
-              className={`rounded-lg px-3 py-1 font-semibold transition-colors ${
-                page === i + 1
-                  ? "bg-indigo-500 text-white shadow"
-                  : "bg-zinc-100 text-zinc-500 hover:bg-indigo-100 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-indigo-900"
-              }`}
-              onClick={() => handlePageChange(i + 1)}
-            >
-              {i + 1}
-            </button>
-          ))}
+
+          {/* Page Numbers with Ellipsis */}
+          {Array.from({ length: totalPages }, (_, i) => i + 1)
+            .filter((p) => {
+              return (
+                p === 1 || // Always show first page
+                p === totalPages || // Always show last page
+                Math.abs(p - page) <= 1 // Show current, one before, and one after
+              );
+            })
+            .reduce((acc: (number | "...")[], p, i, arr) => {
+              if (i > 0 && p - (arr[i - 1] as number) > 1) {
+                acc.push("...");
+              }
+              acc.push(p);
+              return acc;
+            }, [])
+            .map((item, idx) =>
+              item === "..." ? (
+                <span
+                  key={`ellipsis-${idx}`}
+                  className="px-2 text-primary dark:text-primary-foreground"
+                >
+                  ...
+                </span>
+              ) : (
+                <button
+                  key={`page-${item}`}
+                  className={`rounded-lg px-3 py-1 font-semibold transition-colors ${
+                    page === item
+                      ? "bg-primary text-primary-foreground shadow"
+                      : "bg-primary/5 text-primary hover:bg-primary/10 dark:bg-primary/5 dark:text-primary-foreground dark:hover:bg-primary/10"
+                  }`}
+                  onClick={() => handlePageChange(item)}
+                >
+                  {item}
+                </button>
+              ),
+            )}
+
+          {/* Next Button */}
           <button
-            className="rounded-lg bg-zinc-100 px-3 py-1 text-zinc-500 transition-colors hover:bg-indigo-100 disabled:opacity-50 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-indigo-900"
+            className="rounded-lg bg-primary/5 px-3 py-1 text-primary transition-colors hover:bg-primary/10 disabled:opacity-50 dark:bg-primary/5 dark:text-primary-foreground dark:hover:bg-primary/10"
             onClick={() => handlePageChange(page + 1)}
             disabled={page === totalPages}
           >

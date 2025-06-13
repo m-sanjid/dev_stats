@@ -1,12 +1,10 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
-import Link from "next/link";
+import { Link } from "next-view-transitions";
 import { Button } from "./ui/button";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard,
-  GitFork,
   User,
   LogOut,
   ChevronDown,
@@ -15,8 +13,6 @@ import {
   FileText,
   Settings,
   Menu,
-  Keyboard,
-  Search,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -31,11 +27,13 @@ import SignoutButton from "./Buttons/SignoutButton";
 import Image from "next/image";
 import { CommandMenu } from "./CommandPalette";
 import { cn } from "@/lib/utils";
+import Logo from "./Logo";
+import { motion } from "motion/react";
 
 const navItems = [
-  { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { title: "Pro", href: "/pricing", icon: GitFork },
-  { title: "Settings", href: "/settings", icon: Settings },
+  { title: "Dashboard", href: "/dashboard" },
+  { title: "Pro", href: "/pricing" },
+  { title: "Settings", href: "/settings" },
 ];
 
 const outNavItems = [
@@ -91,53 +89,35 @@ export default function Navbar() {
   return (
     <nav
       className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-200",
+        "duration-400 sticky z-50 w-full text-sm transition-all ease-in-out",
         isScrolled
-          ? "border-b bg-background/80 backdrop-blur-lg"
-          : "bg-background/50 backdrop-blur-sm",
+          ? "top-6 mx-auto max-w-5xl rounded-3xl border bg-primary/5 p-2 backdrop-blur-[2.5px]"
+          : "top-0 mx-auto max-w-6xl px-4",
       )}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-8">
-        {/* Logo */}
-        <Link
-          href={`${isAuthenticated ? "/home" : "/"}`}
-          className="flex items-center gap-2"
-        >
-          <div className="relative h-8 w-8 overflow-hidden rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 p-[1px]">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-blue-600 opacity-50 blur-sm" />
-            <div className="relative flex h-full w-full items-center justify-center rounded-lg bg-background">
-              <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-lg font-bold text-transparent">
-                D
-              </span>
-            </div>
-          </div>
-          <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-xl font-bold text-transparent">
-            DevStats
-          </span>
-        </Link>
-
-        {/* Desktop Navigation */}
-        <div className="hidden items-center space-x-1 md:flex">
-          {isAuthenticated ? (
-            <>
-              {navItems.map(({ title, href, icon: Icon }) => (
-                <Button
-                  key={href}
-                  variant={pathname === href ? "secondary" : "ghost"}
-                  size="sm"
-                  className={cn(
-                    "gap-2 transition-all duration-200",
-                    pathname === href
-                      ? "bg-secondary/80 text-secondary-foreground"
-                      : "hover:bg-secondary/50",
-                  )}
-                  asChild
-                >
-                  <Link href={href}>
-                    <Icon className="h-4 w-4" /> {title}
+      <div className={isScrolled ? "rounded-2xl border px-2" : ""}>
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-8">
+          <Logo />
+          {/* Desktop Navigation */}
+          <div className="hidden items-center space-x-1 md:flex">
+            {(isAuthenticated ? navItems : outNavItems).map(
+              ({ title, href }) => (
+                <div key={href} className="relative">
+                  <Link className="relative z-10 p-2" href={href}>
+                    {title}
                   </Link>
-                </Button>
-              ))}
+                  {pathname === href && (
+                    <motion.div
+                      layoutId="active-link"
+                      className="absolute -inset-2 rounded-2xl border bg-primary/5 p-1 backdrop-blur-sm"
+                    >
+                      <motion.div className="h-full w-full rounded-xl border bg-white p-2 dark:bg-black" />
+                    </motion.div>
+                  )}
+                </div>
+              ),
+            )}
+            {isAuthenticated && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -151,128 +131,104 @@ export default function Navbar() {
                   AI Portfolio
                 </Link>
               </Button>
-            </>
-          ) : (
-            outNavItems.map(({ title, href }) => (
-              <Button
-                key={href}
-                variant={pathname === href ? "secondary" : "ghost"}
-                size="sm"
-                className={cn(
-                  "transition-all duration-200",
-                  pathname === href
-                    ? "bg-secondary/80 text-secondary-foreground"
-                    : "hover:bg-secondary/50",
-                )}
-                asChild
-              >
-                <Link href={href}>{title}</Link>
-              </Button>
-            ))
-          )}
-        </div>
-
-        {/* Right Section */}
-        <div className="flex items-center gap-2">
-          {isAuthenticated ? (
-            <>
-              {currentPlan === "pro" && (
-                <div className="hidden items-center gap-1.5 rounded-full border border-purple-500/20 bg-purple-500/10 px-2.5 py-1 text-xs font-medium text-purple-500 md:flex">
-                  <GitFork className="h-3 w-3" />
-                  <span>Pro</span>
-                </div>
-              )}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="flex items-center gap-2 rounded-full border border-border/50 bg-background/50 px-2 py-1.5 hover:bg-secondary/50"
-                  >
-                    <Image
-                      width={24}
-                      height={24}
-                      src={session.user?.image || "/default-avatar.png"}
-                      alt="Avatar"
-                      className="h-6 w-6 rounded-full ring-2 ring-border"
-                    />
-                    <span className="hidden text-sm font-medium md:inline-block">
-                      {session.user?.name}
-                    </span>
-                    <ChevronDown className="h-4 w-4 opacity-50" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href={`/profile/${session.user.username || session.user.id}`}
-                      className="flex items-center gap-2"
-                    >
-                      <User className="h-4 w-4" /> Profile
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/settings" className="flex items-center gap-2">
-                      <Settings className="h-4 w-4" /> Settings
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() => signOut()}
-                    className="flex items-center gap-2 text-red-500 focus:text-red-500"
-                  >
-                    <LogOut className="h-4 w-4" /> Sign out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </>
-          ) : (
-            <SignoutButton />
-          )}
-          <CommandMenu />
-          {/* Theme Toggle */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={toggleTheme}
-            className="rounded-full border border-border/50 bg-background/50 p-2 hover:bg-secondary/50"
-          >
-            {isDarkMode ? (
-              <Sun className="h-4 w-4" />
-            ) : (
-              <Moon className="h-4 w-4" />
             )}
-          </Button>
+          </div>
 
-          {/* Mobile Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="rounded-full border border-border/50 bg-background/50 p-2 hover:bg-secondary/50 md:hidden"
-              >
-                <Menu className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              {isAuthenticated
-                ? navItems.map(({ title, href, icon: Icon }) => (
-                    <DropdownMenuItem key={href} asChild>
-                      <Link href={href} className="flex items-center gap-2">
-                        <Icon className="h-4 w-4" /> {title}
+          {/* Right Section */}
+          <div className="flex items-center gap-2">
+            {isAuthenticated ? (
+              <>
+                {currentPlan === "pro" && (
+                  <div className="hidden items-center rounded-2xl border bg-primary/5 p-1 text-xs font-medium backdrop-blur-sm md:flex">
+                    <span className="animate-pulse rounded-xl border bg-white px-2 py-0.5 text-xs font-medium uppercase tracking-tighter dark:bg-black">
+                      Pro
+                    </span>
+                  </div>
+                )}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <div className="flex items-center gap-2 rounded-[14px] border-2 bg-primary/5 p-1 backdrop-blur-sm">
+                      <Image
+                        width={24}
+                        height={24}
+                        src={session.user?.image || "/default-avatar.png"}
+                        alt="Avatar"
+                        className="h-6 w-6 rounded-full ring-2 ring-border"
+                      />
+                      <ChevronDown className="h-4 w-4 opacity-50" />
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>{session.user.name}</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href={`/profile/${session.user.username || session.user.id}`}
+                        className="flex items-center gap-2"
+                      >
+                        <User className="h-4 w-4" /> Profile
                       </Link>
                     </DropdownMenuItem>
-                  ))
-                : outNavItems.map(({ title, href }) => (
-                    <DropdownMenuItem key={href} asChild>
-                      <Link href={href}>{title}</Link>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/settings"
+                        className="flex items-center gap-2"
+                      >
+                        <Settings className="h-4 w-4" /> Settings
+                      </Link>
                     </DropdownMenuItem>
-                  ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => signOut()}
+                      className="flex items-center gap-2 text-red-500 focus:text-red-500"
+                    >
+                      <LogOut className="h-4 w-4" /> Sign out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <SignoutButton />
+            )}
+            <CommandMenu />
+            {/* Theme Toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleTheme}
+              className="rounded-full border border-border/50 bg-background/50 p-2 hover:bg-secondary/50"
+            >
+              {isDarkMode ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+            </Button>
+
+            {/* Mobile Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="rounded-full border border-border/50 bg-background/50 p-2 hover:bg-secondary/50 md:hidden"
+                >
+                  <Menu className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="mt-6 w-56">
+                {(isAuthenticated ? navItems : outNavItems).map(
+                  ({ title, href }) => (
+                    <DropdownMenuItem key={href} asChild>
+                      <Link href={href} className="flex items-center gap-2">
+                        {title}
+                      </Link>
+                    </DropdownMenuItem>
+                  ),
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
     </nav>

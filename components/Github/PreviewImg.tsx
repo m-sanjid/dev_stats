@@ -1,6 +1,7 @@
 "use client";
 import { Line, ResponsiveContainer, XAxis, YAxis, LineChart } from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import BorderDiv from "@/components/BorderDiv";
 
 const language = [
   { id: "C++", width: "w-[30px]", percentage: "10%" },

@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import { useMemo } from "react";
 import { motion } from "motion/react";
 import { CalendarDays, Clock, User, Tag, ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { Link } from "next-view-transitions";
 import { blogPosts } from "@/constant/blog";
 
 export default function BlogDetailsPage() {
@@ -21,7 +21,10 @@ export default function BlogDetailsPage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center">
         <h2 className="mb-4 text-2xl font-bold">Blog post not found</h2>
-        <Link href="/blog" className="text-muted-foreground hover:text-primary hover:underline">
+        <Link
+          href="/blog"
+          className="text-muted-foreground hover:text-primary hover:underline"
+        >
           Back to Blog
         </Link>
       </div>
@@ -76,12 +79,10 @@ export default function BlogDetailsPage() {
               <Clock className="h-4 w-4" /> {post.readTime}
             </span>
           </div>
-          <h1 className="mb-4 text-2xl md:text-4xl font-bold lg:text-5xl">
+          <h1 className="mb-4 text-2xl font-bold md:text-4xl lg:text-5xl">
             {post.title}
           </h1>
-          <p className="mb-8 text-lg text-muted-foreground">
-            {post.excerpt}
-          </p>
+          <p className="mb-8 text-lg text-muted-foreground">{post.excerpt}</p>
         </div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}

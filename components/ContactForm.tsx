@@ -13,7 +13,12 @@ import { toast } from "sonner";
 import BorderDiv from "./BorderDiv";
 
 const ContactForm = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+  }>({
     name: "",
     email: "",
     subject: "",
@@ -105,7 +110,7 @@ const ContactForm = () => {
                       {isTextarea ? (
                         <textarea
                           placeholder={field.placeholder}
-                          value={formData[field.name]}
+                          value={formData[field.name as keyof typeof formData]}
                           onChange={(e) =>
                             setFormData({
                               ...formData,
@@ -122,7 +127,7 @@ const ContactForm = () => {
                         <input
                           type={field.type}
                           placeholder={field.placeholder}
-                          value={formData[field.name]}
+                          value={formData[field.name as keyof typeof formData]}
                           onChange={(e) =>
                             setFormData({
                               ...formData,

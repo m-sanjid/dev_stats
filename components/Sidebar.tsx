@@ -49,9 +49,9 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
         <SheetTrigger asChild>
           <Button
             variant="ghost"
-            className="fixed left-4 top-16 z-40 md:hidden"
+            className="fixed left-4 top-28 bg-primary/10 backdrop-blur-md z-40 md:hidden"
           >
-            <Menu className="h-4 w-4" />
+            <Menu className="h-6 w-6" />
           </Button>
         </SheetTrigger>
         <SheetTitle className="hidden">Dev Stats</SheetTitle>
@@ -116,8 +116,8 @@ function SidebarContent({
               variant="ghost"
               asChild
               className={cn(
-                "w-full justify-start gap-2",
-                pathname === link.href && "bg-primary/5 border-2 rounded-2xl",
+                "w-full justify-start gap-2 relative",
+                pathname === link.href && "rounded-2xl border-2 bg-primary/5",
               )}
             >
               <Link href={link.href}>

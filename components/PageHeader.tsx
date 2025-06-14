@@ -1,5 +1,5 @@
 import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { Link } from "next-view-transitions";
 import { Button } from "@/components/ui/button";
 
 interface PageHeaderProps {
@@ -17,7 +17,6 @@ export function PageHeader({
   backUrl = "/dashboard",
   gradient = true,
 }: PageHeaderProps) {
-
   return (
     <div className="mx-auto w-full max-w-4xl border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-24 max-w-screen-2xl items-center">
@@ -33,13 +32,11 @@ export function PageHeader({
             </Link>
           </Button>
         )}
-        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
+        <div className="flex flex-1 ml-14 md:ml-0 items-center justify-between space-x-2 md:justify-end">
           <div className="w-full flex-1 items-center">
             <h1
               className={`text-lg font-semibold ${
-                gradient
-                  ? "text-primary"
-                  : "text-foreground"
+                gradient ? "text-primary" : "text-foreground"
               }`}
             >
               {title}

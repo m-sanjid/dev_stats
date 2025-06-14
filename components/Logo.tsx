@@ -9,19 +9,14 @@ const Logo = () => {
   return (
     <Link
       href={`${isAuthenticated ? "/home" : "/"}`}
-      className="flex items-center gap-2"
+      className="flex items-center gap-2 rounded-2xl border p-2 bg-primary/5 backdrop-blur-sm"
     >
-      <div className="relative h-8 w-8 overflow-hidden rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 p-[1px]">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-600 to-blue-600 opacity-50 blur-sm" />
-        <div className="relative flex h-full w-full items-center justify-center rounded-lg bg-background">
-          <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-lg font-bold text-transparent">
+      <div className="relative h-6 w-6 overflow-hidden rounded-lg border p-[1px] flex items-center justify-center bg-black dark:bg-white text-primary-foreground">
+          <span className="text-lg font-bold">
             D
           </span>
-        </div>
       </div>
-      <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-xl font-bold text-transparent">
-        DevStats
-      </span>
+          <span className="text-xs tracking-tighter">DevStats</span>
     </Link>
   );
 };

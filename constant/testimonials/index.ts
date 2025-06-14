@@ -4,7 +4,7 @@ export const testimonials = [
     role: "Full Stack Developer",
     company: "Tech Innovators",
     content:
-      "DevStats has been a game-changer for my job search. It beautifully showcases all my contributions across different platforms, giving potential employers a comprehensive view of my skills.",
+      "DevStats has been a game-changer for my job search. It beautifully showcases all my contributions, giving potential employers a comprehensive view of my skills.",
   },
   {
     name: "Michael Chen",

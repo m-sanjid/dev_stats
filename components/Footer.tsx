@@ -83,9 +83,9 @@ export function Footer() {
       initial="hidden"
       whileInView="show"
       viewport={{ once: true }}
-      className="z-10 mx-8 max-w-6xl rounded-3xl border p-2 bg-primary/5 backdrop-blur-md text-xs"
+      className="z-10 mx-auto max-w-6xl rounded-3xl border bg-primary/5 p-2 text-xs backdrop-blur-md"
     >
-      <div className="mx-auto px-8 md:px-24 py-16 border rounded-2xl bg-white dark:bg-black">
+      <div className="mx-auto rounded-2xl border bg-white px-8 py-16 dark:bg-black md:px-24">
         <motion.div
           variants={item}
           className="mb-14 grid grid-cols-2 gap-10 md:grid-cols-4"
@@ -189,7 +189,7 @@ export function Footer() {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`text-zinc-600 transition-colors hover:text-white dark:text-zinc-500 ${link.color}`}
+                    className={`text-zinc-600 transition-colors hover:text-white ${link.color}`}
                     whileHover={{ x: 2 }}
                     whileTap={{ scale: 0.95 }}
                     transition={{ duration: 0.2, ease: "easeInOut" }}

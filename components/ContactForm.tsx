@@ -48,6 +48,7 @@ const ContactForm = () => {
         toast.error(data.message || "Failed to send message");
       }
     } catch (err) {
+      console.log(err);
       toast.error("Something went wrong");
     } finally {
       setLoading(false);
@@ -80,7 +81,7 @@ const ContactForm = () => {
             <div className="border-b px-4 py-1">
               <h3 className="text-base font-semibold">Send Message</h3>
               <p className="text-sm text-muted-foreground">
-                We'll get back to you soon
+                We&apos;ll get back to you soon
               </p>
             </div>
 

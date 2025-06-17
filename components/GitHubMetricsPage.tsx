@@ -23,7 +23,7 @@ import {
 import { fetchGitHubMetrics } from "@/lib/github";
 import Image from "next/image";
 
-interface GitHubMetrics {
+export interface GitHubMetrics {
   totalCommits: number;
   totalLines: number;
   repositories: Array<{

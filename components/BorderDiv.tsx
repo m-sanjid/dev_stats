@@ -9,7 +9,14 @@ const BorderDiv = ({
   className?: string;
 }) => {
   return (
-    <div className={cn("rounded-3xl border-2 p-2 bg-primary/5 backdrop-blur-md", className)}>{children}</div>
+    <div
+      className={cn(
+        "rounded-3xl border-2 bg-primary/5 p-2 backdrop-blur-md",
+        className,
+      )}
+    >
+      {children}
+    </div>
   );
 };
 

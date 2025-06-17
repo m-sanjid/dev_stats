@@ -21,7 +21,15 @@ export function DailyActivityChart({ data }: DailyActivityChartProps) {
     commits: data[i] || 0,
   }));
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({
+    active,
+    payload,
+    label,
+  }: {
+    active?: boolean;
+    payload?: { value: number }[];
+    label?: string;
+  }) => {
     if (active && payload && payload.length) {
       return (
         <div className="rounded-lg bg-neutral-900 p-3 text-sm text-white shadow-lg dark:bg-white dark:text-neutral-900">

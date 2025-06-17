@@ -11,7 +11,7 @@ export default function Testimonials() {
         title="Loved by Developers"
         subtitle="Thousands of devs use DevStats to impress recruiters and track growth."
       />
-      <div className="mx-auto max-w-6xl rounded-3xl border-2 bg-primary/5 backdrop-blur-md p-2">
+      <div className="mx-auto max-w-6xl rounded-3xl border-2 bg-primary/5 p-2 backdrop-blur-md">
         <Marquee
           pauseOnHover
           speed={40}
@@ -20,7 +20,7 @@ export default function Testimonials() {
           {testimonials.map((t) => (
             <div
               key={t.name}
-              className="mx-4 h-full w-[320px] cursor-pointer bg-neutral-100 dark:bg-neutral-800 rounded-3xl border p-4 shadow-lg"
+              className="mx-4 h-full w-[320px] cursor-pointer rounded-3xl border bg-neutral-100 p-4 shadow-lg dark:bg-neutral-800"
             >
               <div className="h-ful mt-3 pb-4 text-sm text-muted-foreground">
                 <Quote className="mb-2 h-4 w-4 text-primary" />
@@ -31,7 +31,10 @@ export default function Testimonials() {
                 <div>
                   <p className="text-sm text-muted-foreground">
                     {t.role}
-                    <span className="text-primary font-light text-xs"> @ {t.company}</span>
+                    <span className="text-xs font-light text-primary">
+                      {" "}
+                      @ {t.company}
+                    </span>
                   </p>
                 </div>
               </div>

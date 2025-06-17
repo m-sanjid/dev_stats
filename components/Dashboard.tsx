@@ -1,8 +1,8 @@
 "use client";
 import Macbook from "./Macbook";
-import { motion } from "motion/react";
+import { motion, Variants } from "motion/react";
 
-const container = {
+const container: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -13,7 +13,7 @@ const container = {
   },
 };
 
-const item = {
+const item: Variants = {
   hidden: { opacity: 0, y: 20 },
   show: {
     opacity: 1,
@@ -26,7 +26,7 @@ const item = {
   },
 };
 
-const macbookAnimation = {
+const macbookAnimation: Variants = {
   hidden: { opacity: 0, scale: 0.9 },
   show: {
     opacity: 1,

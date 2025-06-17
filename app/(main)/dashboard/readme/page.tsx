@@ -20,7 +20,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/PageHeader";
 import ProOnlyComponent from "@/components/ProOnlyComponent";
-import { motion } from "motion/react";
+import { motion, Variants } from "motion/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -92,7 +92,7 @@ const container = {
   },
 };
 
-const item = {
+const item: Variants = {
   hidden: { opacity: 0, y: 10 },
   show: {
     opacity: 1,
@@ -130,6 +130,7 @@ const ReadmeGenerator = () => {
 
         if (!metricsData?.repositories?.length) {
           setError("No repositories found");
+          console.log(error);
           return;
         }
 
@@ -468,13 +469,18 @@ const ReadmeGenerator = () => {
               </Card>
             ) : (
               <div className="relative">
-              <Textarea
-                value={readmeContent}
-                onChange={(e) => setReadmeContent(e.target.value)}
-                className="min-h-[500px] font-mono"
-                placeholder="Your README content will appear here..."
-              />
-                <Button variant="secondary" size="icon" className="absolute right-2 top-2 z-10" onClick={handleCopy}>
+                <Textarea
+                  value={readmeContent}
+                  onChange={(e) => setReadmeContent(e.target.value)}
+                  className="min-h-[500px] font-mono"
+                  placeholder="Your README content will appear here..."
+                />
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="absolute right-2 top-2 z-10"
+                  onClick={handleCopy}
+                >
                   <Copy />
                 </Button>
               </div>

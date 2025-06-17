@@ -10,19 +10,8 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import LoginCTA from "@/components/LoginCTA";
 import { Skeleton } from "@/components/ui/skeleton";
+import { GitHubMetrics } from "@/components/GitHubMetricsPage";
 
-export interface GitHubMetrics {
-  totalCommits: number;
-  totalLines: number;
-  repositories: any[];
-  githubProfile: any;
-  weeklyCommits: Record<string, number>;
-  totalCodingHours: number;
-  filesChanged: number;
-  dailyActivity: Record<string, number>;
-  language: Record<string, number>;
-}
- 
 export default function ActivityPage() {
   const { data: session } = useSession();
   const [metrics, setMetrics] = useState<GitHubMetrics | null>(null);
@@ -31,7 +20,7 @@ export default function ActivityPage() {
   useEffect(() => {
     const fetchMetrics = async () => {
       if (!session?.user?.id) return;
-      
+
       try {
         setIsLoading(true);
         const data = await fetchGitHubMetrics(session.user.id);

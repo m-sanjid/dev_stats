@@ -1,7 +1,7 @@
 "use client";
 
 import { Link } from "next-view-transitions";
-import { motion } from "motion/react";
+import { motion, Variants } from "motion/react";
 import {
   IconBrandGithub,
   IconBrandLinkedin,
@@ -62,13 +62,13 @@ const container = {
   },
 };
 
-const item = {
+const item: Variants = {
   hidden: { opacity: 0, y: 10 },
   show: {
     opacity: 1,
     y: 0,
-    delay: 0.4,
     transition: {
+      delay: 0.4,
       type: "spring",
       stiffness: 300,
       damping: 20,

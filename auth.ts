@@ -58,9 +58,9 @@ const authConfig: NextAuthConfig = {
         return isValid
           ? {
               id: user.id.toString(),
-              email: user.email,
+              email: user.email!,
               role: user.role ?? "user",
-              name: user.name,
+              name: user.name!,
             }
           : null;
       },

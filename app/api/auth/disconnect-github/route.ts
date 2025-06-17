@@ -19,7 +19,8 @@ export async function POST() {
       .delete({
         where: { userId: session.user.id },
       })
-      .catch((error) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .catch((error: any) => {
         // If the token doesn't exist, that's fine
         if (error.code !== "P2025") {
           // Prisma "Record not found" error

@@ -7,6 +7,7 @@ import { Footer } from "@/components/Footer";
 import { Inter } from "next/font/google";
 import { ViewTransitions } from "next-view-transitions";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "DevStats",
@@ -32,6 +33,7 @@ export default function RootLayout({
             </Providers>
             <Toaster />
           </ThemeProvider>
+        <Analytics />
         </body>
       </html>
     </ViewTransitions>

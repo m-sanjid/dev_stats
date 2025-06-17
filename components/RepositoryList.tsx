@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, Variants } from "motion/react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   GitFork,
@@ -30,7 +30,7 @@ interface RepositoryListProps {
   repositories: Repository[];
 }
 
-const container = {
+const container: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -41,7 +41,7 @@ const container = {
   },
 };
 
-const item = {
+const item: Variants = {
   hidden: { opacity: 0, y: 20 },
   show: {
     opacity: 1,
@@ -51,16 +51,6 @@ const item = {
       stiffness: 300,
       damping: 20,
     },
-  },
-};
-
-const iconHover = {
-  scale: 1.2,
-  rotate: 5,
-  transition: {
-    type: "spring",
-    stiffness: 400,
-    damping: 10,
   },
 };
 
@@ -97,7 +87,12 @@ export function RepositoryList({ repositories }: RepositoryListProps) {
                           <h3 className="text-lg font-semibold">{repo.name}</h3>
                           {repo.url && (
                             <motion.div
-                              whileHover={iconHover}
+                              whileHover={{ scale: 1.2, rotate: 5 }}
+                              transition={{
+                                type: "spring",
+                                stiffness: 400,
+                                damping: 10,
+                              }}
                               className="opacity-0 transition-opacity group-hover:opacity-100"
                             >
                               <Link href={repo.url} target="_blank">

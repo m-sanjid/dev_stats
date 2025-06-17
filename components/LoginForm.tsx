@@ -9,7 +9,7 @@ import { OAuthButton } from "./Buttons/OAuthButton";
 import { GitHubIcon, GoogleIcon } from "./icons";
 import { Button } from "./ui/button";
 import { Link } from "next-view-transitions";
-import { motion } from "motion/react";
+import { motion, Variants } from "motion/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,7 +22,7 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-const container = {
+const container: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -32,7 +32,7 @@ const container = {
   },
 };
 
-const item = {
+const item: Variants = {
   hidden: { opacity: 0, y: 10 },
   show: {
     opacity: 1,

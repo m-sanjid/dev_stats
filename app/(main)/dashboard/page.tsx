@@ -6,9 +6,9 @@ import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { GithubDashboard } from "@/components/GithubDashboard";
 import { GithubConnect } from "@/components/GithubConnect";
-import { motion } from "motion/react";
+import { motion, Variants } from "motion/react";
 
-const fadeInUp = {
+const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
@@ -21,11 +21,23 @@ const fadeInUp = {
   },
 };
 
-const stagger = {
+const stagger: Variants = {
   visible: {
     transition: {
       staggerChildren: 0.1,
       delayChildren: 0.2,
+    },
+  },
+};
+
+const container: Variants = {
+  hidden: { opacity: 0, filter: "blur(4px)" },
+  show: {
+    opacity: 1,
+    filter: "blur(0px)",
+    transition: {
+      staggerChildren: 0.1,
+      duration: 0.5,
     },
   },
 };
@@ -75,9 +87,9 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/80">
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        initial="hidden"
+        animate="show"
+        variants={container}
         className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
       >
         <PageHeader

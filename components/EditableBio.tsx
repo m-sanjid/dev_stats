@@ -27,7 +27,9 @@ export default function EditableBio({ initialBio, onSave }: EditableBioProps) {
           rows={4}
         />
       ) : (
-        <p className="text-neutral-700">{bio || "Click edit to add a bio..."}</p>
+        <p className="text-neutral-700">
+          {bio || "Click edit to add a bio..."}
+        </p>
       )}
 
       <div className="mt-2">

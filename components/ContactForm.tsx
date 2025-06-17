@@ -13,7 +13,12 @@ import { toast } from "sonner";
 import BorderDiv from "./BorderDiv";
 
 const ContactForm = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+  }>({
     name: "",
     email: "",
     subject: "",
@@ -43,6 +48,7 @@ const ContactForm = () => {
         toast.error(data.message || "Failed to send message");
       }
     } catch (err) {
+      console.log(err);
       toast.error("Something went wrong");
     } finally {
       setLoading(false);
@@ -75,7 +81,7 @@ const ContactForm = () => {
             <div className="border-b px-4 py-1">
               <h3 className="text-base font-semibold">Send Message</h3>
               <p className="text-sm text-muted-foreground">
-                We'll get back to you soon
+                We&apos;ll get back to you soon
               </p>
             </div>
 
@@ -105,7 +111,7 @@ const ContactForm = () => {
                       {isTextarea ? (
                         <textarea
                           placeholder={field.placeholder}
-                          value={formData[field.name]}
+                          value={formData[field.name as keyof typeof formData]}
                           onChange={(e) =>
                             setFormData({
                               ...formData,
@@ -122,7 +128,7 @@ const ContactForm = () => {
                         <input
                           type={field.type}
                           placeholder={field.placeholder}
-                          value={formData[field.name]}
+                          value={formData[field.name as keyof typeof formData]}
                           onChange={(e) =>
                             setFormData({
                               ...formData,

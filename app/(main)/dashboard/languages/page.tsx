@@ -1,7 +1,16 @@
-import { LanguagesClient } from "./LanguagesClient";
+import { PageHeader } from "@/components/PageHeader";
+import LanguagesClient from "./LanguagesClient";
 
-export default async function LanguagesPage() {
-  const initialMetrics = null;
-
-  return <LanguagesClient initialMetrics={initialMetrics} />;
+export default function LanguagesPage() {
+  return (
+    <div className="h-full w-full p-6">
+      <PageHeader
+        title="Language Analytics"
+        description="A breakdown of language usage across your public repositories."
+      />
+      <div className="mt-8">
+        <LanguagesClient />
+      </div>
+    </div>
+  );
 }

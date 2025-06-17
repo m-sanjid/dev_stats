@@ -242,7 +242,9 @@ export default function PortfolioPage() {
                   <CardContent>
                     <dl className="space-y-2">
                       <div>
-                        <dt className="text-sm text-neutral-500">Total Commits</dt>
+                        <dt className="text-sm text-neutral-500">
+                          Total Commits
+                        </dt>
                         <dd className="text-2xl font-bold">
                           {metrics?.totalCommits.toLocaleString()}
                         </dd>

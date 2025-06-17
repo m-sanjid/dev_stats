@@ -3,7 +3,7 @@
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CalendarDays, Clock, User, Tag } from "lucide-react";
-import Link from "next/link";
+import { Link } from "next-view-transitions";
 import { motion } from "motion/react";
 import { blogPosts } from "@/constant/blog";
 import Image from "next/image";
@@ -18,7 +18,7 @@ export default function BlogPage() {
         />
       </div>
 
-      <div className="px-4 py-20">
+      <div className="mx-auto max-w-4xl px-4 py-20">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {blogPosts.map((post, idx) => (
             <motion.div
@@ -28,14 +28,14 @@ export default function BlogPage() {
               key={post.id}
             >
               <Link href={`/blog/${post.id}`}>
-                <Card className="group h-full cursor-pointer hover:border-2 transition-all duration-300 hover:-translate-y-1 hover:border-primary/20 hover:shadow-xl dark:hover:border-primary/10">
+                <Card className="group h-full cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-2 hover:border-primary/20 hover:shadow-xl dark:hover:border-primary/10">
                   <div className="relative aspect-video overflow-hidden rounded-t-lg">
                     <Image
                       src={post.image}
                       alt={post.title}
                       width={500}
                       height={500}
-                      className="object-cover group-hover:scale-105 transition-all duration-300"
+                      className="object-cover transition-all duration-300 group-hover:scale-105"
                     />
                   </div>
                   <CardHeader>

@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
 }
 
 // Validate the state during callback
-export async function validateState(userId: string, returnedState: string) {
+async function validateState(userId: string, returnedState: string) {
   const { prisma } = await import("@/lib/prisma");
 
   const user = await prisma.user.findUnique({

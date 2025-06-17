@@ -24,17 +24,18 @@ export function StatCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
+      className="group rounded-3xl border bg-primary/5 p-2 backdrop-blur-md"
     >
-      <Card className="transition-all duration-200 hover:shadow-lg dark:hover:shadow-purple-500/5">
+      <Card className="h-full rounded-2xl transition-all duration-200">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-neutral-600 dark:text-neutral-400">
+          <CardTitle className="text-sm font-medium text-neutral-600 transition-all duration-300 group-hover:text-primary dark:text-neutral-400">
             {title}
           </CardTitle>
-          <Icon className="h-4 w-4 text-purple-500 dark:text-purple-400" />
+          <Icon className="h-6 w-6 rounded-full bg-primary/10 p-1 backdrop-blur-md" />
         </CardHeader>
         <CardContent>
           <div className="flex flex-col">
-            <div className="text-2xl font-bold text-neutral-900 dark:text-white">
+            <div className="text-xl font-bold text-neutral-900 transition-all duration-300 group-hover:translate-y-1 dark:text-white lg:text-2xl">
               {value}
             </div>
             {description && (

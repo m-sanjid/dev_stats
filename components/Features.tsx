@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { BarChart, GithubIcon, Share2, Code2, Zap, Trophy } from "lucide-react";
-import { motion, LayoutGroup } from "framer-motion";
+import { motion, LayoutGroup } from "motion/react";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import SectionHeader from "./SectionHeader";
 
@@ -93,7 +93,7 @@ function Features() {
                     aria-hidden="true"
                   >
                     <motion.div
-                      className={`absolute inset-1 z-10 rounded-2xl border-2 bg-white dark:bg-black opacity-0 transition-opacity duration-300 group-hover:opacity-100`}
+                      className={`absolute inset-1 z-10 rounded-2xl border-2 bg-white opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:bg-black`}
                       aria-hidden="true"
                     />
                   </motion.div>

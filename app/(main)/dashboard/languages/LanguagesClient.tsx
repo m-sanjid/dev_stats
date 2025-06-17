@@ -1,136 +1,79 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
-import { motion } from "motion/react";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/PageHeader";
+import { useEffect, useState } from "react";
+import { getGithubMetrics } from "@/actions/get-github-metrics";
 import { LanguageAnalytics } from "@/components/LanguageAnalytics";
-import { fetchGitHubMetrics } from "@/lib/github";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2,
-    },
-  },
-};
+interface GitHubMetrics {
+  language: Record<string, number>;
+}
 
-const item = {
-  hidden: { opacity: 0, y: 10 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      type: "spring",
-      stiffness: 300,
-      damping: 20,
-    },
-  },
-};
-
-export function LanguagesClient({ initialMetrics }: { initialMetrics: any }) {
-  const { data: session, status } = useSession({
-    required: true,
-    onUnauthenticated() {
-      redirect("/signup");
-    },
-  });
-
-  const [githubToken, setGithubToken] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [metrics, setMetrics] = useState(initialMetrics);
+export default function LanguagesClient() {
+  const [data, setData] = useState<GitHubMetrics | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchData() {
-      if (session?.user?.id) {
-        try {
-          // Fetch the GitHub token
-          const tokenResponse = await fetch(
-            `/api/github-token?userId=${session.user.id}`,
+    const fetchData = async () => {
+      try {
+        const metrics = await getGithubMetrics();
+        if (metrics) {
+          setData(metrics);
+        } else {
+          setError(
+            "Could not retrieve language data. Please ensure your GitHub account is connected.",
           );
-          const tokenData = await tokenResponse.json();
-          const token = tokenData.token || null;
-          setGithubToken(token);
-
-          // Fetch metrics with the token
-          if (token) {
-            const metricsData = await fetchGitHubMetrics(token);
-            setMetrics(metricsData);
-          }
-        } catch (error) {
-          console.error("Failed to fetch data:", error);
-        } finally {
-          setIsLoading(false);
         }
+      } catch (e) {
+        console.error(e);
+        setError(
+          "An unexpected error occurred while fetching your language data.",
+        );
+      } finally {
+        setLoading(false);
       }
-    }
+    };
 
-    if (session) {
-      fetchData();
-    }
-  }, [session]);
+    fetchData();
+  }, []);
 
-  // Show loading state while checking authentication
-  if (status === "loading" || isLoading) {
+  if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
-      </div>
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-8 w-48" />
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+          <div className="flex items-center justify-center">
+            <Skeleton className="h-80 w-80 rounded-full" />
+          </div>
+          <div className="flex flex-col justify-center space-y-4">
+            <Skeleton className="h-6 w-3/4" />
+            <Skeleton className="h-6 w-1/2" />
+            <Skeleton className="h-6 w-2/3" />
+            <Skeleton className="h-6 w-5/6" />
+            <Skeleton className="h-6 w-3/4" />
+            <Skeleton className="h-6 w-1/2" />
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-background">
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="container mx-auto max-w-7xl px-4 py-8"
-      >
-        <motion.div
-          className="space-y-8"
-          variants={container}
-          initial="hidden"
-          animate="show"
-        >
-          <motion.div variants={item} className="flex items-center gap-4">
-            <Button variant="ghost" asChild className="group">
-              <Link
-                href="/dashboard"
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
-              >
-                <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-                Back to Dashboard
-              </Link>
-            </Button>
-            <PageHeader
-              title="Language Analytics"
-              description="Detailed analysis of your programming language usage across repositories"
-            />
-          </motion.div>
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Error</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-destructive">{error}</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
-          <motion.div
-            variants={item}
-            className="rounded-lg bg-card/50 p-6 backdrop-blur-sm"
-          >
-            {metrics ? (
-              <LanguageAnalytics metrics={metrics} />
-            ) : (
-              <div className="py-8 text-center text-muted-foreground">
-                No GitHub data available. Please ensure your GitHub account is
-                connected.
-              </div>
-            )}
-          </motion.div>
-        </motion.div>
-      </motion.div>
-    </div>
-  );
+  return <LanguageAnalytics language={data?.language ?? {}} />;
 }

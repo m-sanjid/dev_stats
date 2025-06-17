@@ -1,18 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import {
-  Book,
-  Check,
   ChevronRight,
   Clock,
   Code,
   GitCommit,
   Github,
-  Activity,
   Folder,
 } from "lucide-react";
 import BorderDiv from "@/components/BorderDiv";
@@ -53,7 +49,7 @@ const StatCard = ({
   icon: React.ComponentType<{ className?: string }>;
 }) => (
   <BorderDiv>
-    <div className="group relative overflow-hidden rounded-2xl border bg-white p-6 dark:bg-black">
+    <div className="group relative h-full w-full overflow-hidden rounded-2xl border bg-white p-6 dark:bg-black">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-muted-foreground">{title}</p>
@@ -253,7 +249,7 @@ export default function AppleDeveloperDashboard() {
               <div className="space-y-4">
                 {repos.map((repo, index) => (
                   <div
-                    key={repo.value}
+                    key={index}
                     className="group flex items-center justify-between rounded-2xl bg-neutral-50/50 p-4 transition-all duration-200 hover:bg-neutral-100/50 hover:shadow-sm dark:bg-neutral-700/30 dark:hover:bg-neutral-700/50"
                   >
                     <div className="flex items-center space-x-4">

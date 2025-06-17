@@ -1,7 +1,14 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { GitCommit, Code, Clock, Github, Boxes, ArrowRight } from "lucide-react";
+import {
+  GitCommit,
+  Code,
+  Clock,
+  Github,
+  Boxes,
+  ArrowRight,
+} from "lucide-react";
 import CommitChart from "./Github/CommitsChart";
 import { StatCard } from "./ui/stat-card";
 import { motion, AnimatePresence } from "motion/react";
@@ -120,7 +127,7 @@ export const GithubDashboard: React.FC = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.15, duration: 0.7 }}
-            className="md:mr-4 lg:col-span-1 border p-2 rounded-3xl bg-primary/5 backdrop-blur-md group"
+            className="group rounded-3xl border bg-primary/5 p-2 backdrop-blur-md md:mr-4 lg:col-span-1"
           >
             <Card className="rounded-2xl border">
               <CardContent className="flex items-center gap-4 p-6">
@@ -132,7 +139,7 @@ export const GithubDashboard: React.FC = () => {
                     alt="GitHub Avatar"
                     className="h-16 w-16 rounded-full ring-2 ring-indigo-400/30"
                   />
-                  <Github className="absolute -bottom-2 -right-2 h-6 w-6 group-hover:translate-x-2 transition-all duration-300" />
+                  <Github className="absolute -bottom-2 -right-2 h-6 w-6 transition-all duration-300 group-hover:translate-x-2" />
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">
@@ -180,7 +187,7 @@ export const GithubDashboard: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.7 }}
-            className="lg:col-span-2 border p-2 rounded-3xl bg-primary/5 backdrop-blur-md"
+            className="rounded-3xl border bg-primary/5 p-2 backdrop-blur-md lg:col-span-2"
           >
             <Card className="h-full rounded-2xl border">
               <CardHeader>
@@ -198,12 +205,12 @@ export const GithubDashboard: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.7 }}
-            className="border p-2 rounded-3xl bg-primary/5 backdrop-blur-md"
+            className="rounded-3xl border bg-primary/5 p-2 backdrop-blur-md"
           >
             <Card className="h-full rounded-2xl border">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Languages</CardTitle>
-                <Boxes className="h-5 w-5 p-1 bg-primary/10 border" />
+                <Boxes className="h-5 w-5 border bg-primary/10 p-1" />
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -241,17 +248,17 @@ export const GithubDashboard: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 30 }}
             transition={{ delay: 0.35, duration: 0.7 }}
-            className="border p-2 rounded-3xl bg-primary/5 backdrop-blur-md"
+            className="rounded-3xl border bg-primary/5 p-2 backdrop-blur-md"
           >
             <Card className="rounded-2xl border">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Recent Repositories</CardTitle>
                 <Link
                   href="/dashboard/repos"
-                  className="text-sm group flex items-center gap-1 text-primary hover:text-primary/80 dark:text-primary/80 dark:hover:text-primary"
+                  className="group flex items-center gap-1 text-sm text-primary hover:text-primary/80 dark:text-primary/80 dark:hover:text-primary"
                 >
                   View All
-                  <span className="ml-1 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                  <span className="ml-1 opacity-0 transition-all duration-300 group-hover:opacity-100">
                     <ArrowRight className="h-4 w-4" />
                   </span>
                 </Link>
@@ -264,9 +271,9 @@ export const GithubDashboard: React.FC = () => {
                     .map((repo, index) => (
                       <motion.div
                         key={index}
-                        className="flex group items-center justify-between rounded-3xl border p-2 bg-card transition-colors hover:bg-primary/5"
+                        className="group flex items-center justify-between rounded-3xl border bg-card p-2 transition-colors hover:bg-primary/5"
                       >
-                        <div className="flex flex-col w-full border rounded-2xl p-2">
+                        <div className="flex w-full flex-col rounded-2xl border p-2">
                           <span className="font-medium text-zinc-900 dark:text-white">
                             {repo.name}
                           </span>
@@ -294,7 +301,7 @@ export const GithubDashboard: React.FC = () => {
 };
 
 const LoadingSkeleton = () => (
-  <div className="mx-auto mt-8 grid max-w-6xl w-full gap-6 p-4">
+  <div className="mx-auto mt-8 grid w-full max-w-6xl gap-6 p-4">
     <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
       {[1, 2, 3, 4].map((i) => (
         <Card

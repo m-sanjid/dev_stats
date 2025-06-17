@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import { motion } from "motion/react";
 import DeveloperDashboard from "./Github/Dashboard";
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
-import Link from "next/link";
+import { Link } from "next-view-transitions";
+import BorderDiv from "./BorderDiv";
 
 function Macbook() {
   const [isHovered, setIsHovered] = useState(true);
@@ -16,13 +17,13 @@ function Macbook() {
     >
       {" "}
       <motion.div
-        className={`flex justify-center text-3xl font-bold text-white`}
+        className={`flex justify-center text-3xl font-bold items-center`}
         animate={{ opacity: isHovered ? 0 : 1, y: isHovered ? 10 : 180 }}
         transition={{ duration: 0.4, ease: "easeInOut" }}
       >
-        <h1 className="rounded-full border border-purple-400 bg-purple-400/40 px-8 py-2 text-purple-800 backdrop-blur dark:bg-purple-400/20 dark:text-white">
-          Hover Me
-        </h1>
+        <BorderDiv className="rounded-full">
+        <h1 className="rounded-full border px-8 py-2 bg-white dark:bg-black">Hover Me</h1>
+        </BorderDiv>
       </motion.div>
       <motion.div className="mx-auto mt-5 flex h-[400px] w-full max-w-4xl flex-col items-center justify-center">
         <motion.div

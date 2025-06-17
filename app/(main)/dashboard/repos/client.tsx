@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { RepositoryList } from "@/components/RepositoryList";
 import { useState, useMemo } from "react";
-import { motion } from "motion/react";
+import { motion, Variants } from "motion/react";
 import LoginCTA from "@/components/LoginCTA";
 
 interface Repository {
@@ -48,7 +48,7 @@ interface RepoPageProps {
   metrics: GitHubMetrics | null;
 }
 
-const container = {
+const container: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -59,7 +59,7 @@ const container = {
   },
 };
 
-const item = {
+const item: Variants = {
   hidden: { opacity: 0, y: 20 },
   show: {
     opacity: 1,
@@ -106,7 +106,7 @@ export default function RepoPageClient({ metrics }: RepoPageProps) {
   }, [metrics?.repositories, searchQuery, sortBy]);
 
   if (!metrics) {
-    return <LoginCTA/>
+    return <LoginCTA />;
   }
 
   if (!metrics.repositories.length) {

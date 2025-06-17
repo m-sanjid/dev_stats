@@ -64,7 +64,6 @@ export function GithubConnect({ hasGithubToken }: GithubConnectProps) {
                 <Button
                   onClick={handleConnect}
                   disabled={isConnecting}
-                  className="bg-[#24292F] hover:bg-[#24292F]/90 dark:bg-[#24292F]/80 dark:hover:bg-[#24292F]/70"
                 >
                   {isConnecting ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

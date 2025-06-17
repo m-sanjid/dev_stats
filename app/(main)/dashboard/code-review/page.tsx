@@ -3,14 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import {
-  Loader2,
-  ArrowLeft,
-  GitPullRequest,
-  FileDiff,
-  Plus,
-  Minus,
-} from "lucide-react";
+import { Loader2, GitPullRequest, FileDiff, Plus, Minus } from "lucide-react";
 import { fetchGitHubMetrics } from "@/lib/github";
 import {
   Select,
@@ -21,10 +14,8 @@ import {
 } from "@/components/ui/select";
 import { PageHeader } from "@/components/PageHeader";
 import ProOnlyComponent from "@/components/ProOnlyComponent";
-import { motion } from "motion/react";
+import { motion, Variants } from "motion/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
 
 interface Repository {
   name: string;
@@ -54,7 +45,7 @@ interface PullRequest {
   };
 }
 
-const container = {
+const container: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -65,7 +56,7 @@ const container = {
   },
 };
 
-const item = {
+const item: Variants = {
   hidden: { opacity: 0, y: 10 },
   show: {
     opacity: 1,
@@ -182,15 +173,6 @@ export default function CodeReviewDashboard() {
           animate="show"
         >
           <motion.div variants={item} className="flex items-center gap-4">
-            <Button variant="ghost" asChild className="group">
-              <Link
-                href="/dashboard"
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
-              >
-                <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-                Back to Dashboard
-              </Link>
-            </Button>
             <PageHeader
               title="AI Code Review Dashboard"
               description="Review your pull requests with AI-powered analysis"

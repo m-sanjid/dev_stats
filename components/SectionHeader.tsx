@@ -14,9 +14,9 @@ const SectionHeader = ({
   tag?: string;
 }) => {
   return (
-    <div className="mb-16 text-center flex flex-col items-center justify-center">
+    <div className="mb-16 flex flex-col items-center justify-center text-center">
       {tag && (
-        <BorderDiv className="w-fit my-4">
+        <BorderDiv className="my-4 w-fit">
           <motion.div className="rounded-2xl bg-primary/10 px-2 py-1 text-xs">
             {tag}
           </motion.div>

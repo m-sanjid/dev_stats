@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   try {
     const session = await auth();
 
@@ -19,7 +19,8 @@ export async function POST(req: NextRequest) {
       .delete({
         where: { userId: session.user.id },
       })
-      .catch((error) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .catch((error: any) => {
         // If the token doesn't exist, that's fine
         if (error.code !== "P2025") {
           // Prisma "Record not found" error

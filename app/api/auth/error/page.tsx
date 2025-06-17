@@ -1,5 +1,5 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import Link from "next/link";
+import { Link } from "next-view-transitions";
 
 export default function AuthErrorPage() {
   return (

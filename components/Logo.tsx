@@ -1,5 +1,6 @@
 import { useSession } from "next-auth/react";
 import { Link } from "next-view-transitions";
+import Image from "next/image";
 import React from "react";
 
 const Logo = () => {
@@ -11,8 +12,15 @@ const Logo = () => {
       href={`${isAuthenticated ? "/home" : "/"}`}
       className="flex items-center gap-2 rounded-2xl border bg-primary/5 p-2 backdrop-blur-sm"
     >
-      <div className="relative flex h-6 w-6 items-center justify-center overflow-hidden rounded-lg border bg-black p-[1px] text-primary-foreground dark:bg-white">
-        <span className="text-lg font-bold">D</span>
+      <div className="relative flex h-6 w-6 items-center justify-center overflow-hidden">
+
+      <Image
+        src="/icon1.png"
+        alt="Logo"
+        width={24}
+        height={24}
+        className="z-10"
+      />
       </div>
       <span className="text-xs tracking-tighter">DevStats</span>
     </Link>

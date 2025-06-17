@@ -8,7 +8,7 @@ import { OAuthButton } from "./Buttons/OAuthButton";
 import { GitHubIcon, GoogleIcon } from "./icons";
 import { signUp } from "@/actions/auth";
 import { Button } from "./ui/button";
-import { motion } from "motion/react";
+import { motion, Variants } from "motion/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,7 +22,7 @@ const signUpSchema = z.object({
 
 type SignUpFormData = z.infer<typeof signUpSchema>;
 
-const container = {
+const container: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -32,7 +32,7 @@ const container = {
   },
 };
 
-const item = {
+const item: Variants = {
   hidden: { opacity: 0, y: 10 },
   show: {
     opacity: 1,
@@ -78,99 +78,99 @@ export function SignUpForm() {
       className="flex h-screen w-full items-center justify-center"
     >
       <BorderDiv className="w-full max-w-md">
-      <Card className="w-full rounded-2xl">
-        <CardHeader>
-          <CardTitle className="text-center">DevStats</CardTitle>
-          <p className="text-center text-sm text-muted-foreground">
-            Welcome! Please sign up to continue.
-          </p>
-        </CardHeader>
+        <Card className="w-full rounded-2xl">
+          <CardHeader>
+            <CardTitle className="text-center">DevStats</CardTitle>
+            <p className="text-center text-sm text-muted-foreground">
+              Welcome! Please sign up to continue.
+            </p>
+          </CardHeader>
 
-        <CardContent>
-          <motion.div variants={item} className="space-y-2">
-            <OAuthButton provider="google">
-              <GoogleIcon className="h-5 w-5" />
-              Sign up with Google
-            </OAuthButton>
+          <CardContent>
+            <motion.div variants={item} className="space-y-2">
+              <OAuthButton provider="google">
+                <GoogleIcon className="h-5 w-5" />
+                Sign up with Google
+              </OAuthButton>
 
-            <OAuthButton provider="github">
-              <GitHubIcon className="h-5 w-5" />
-              Sign up with GitHub
-            </OAuthButton>
-          </motion.div>
+              <OAuthButton provider="github">
+                <GitHubIcon className="h-5 w-5" />
+                Sign up with GitHub
+              </OAuthButton>
+            </motion.div>
 
-          <motion.div
-            variants={item}
-            className="my-3 text-center text-sm text-muted-foreground"
-          >
-            Or
-          </motion.div>
+            <motion.div
+              variants={item}
+              className="my-3 text-center text-sm text-muted-foreground"
+            >
+              Or
+            </motion.div>
 
-          <motion.form
-            variants={item}
-            onSubmit={handleSubmit(onSubmit)}
-            className="space-y-4"
-          >
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                type="text"
-                {...register("name")}
-                className={errors.name ? "border-destructive" : ""}
-              />
-              {errors.name && (
-                <p className="text-sm text-destructive">
-                  {errors.name.message}
+            <motion.form
+              variants={item}
+              onSubmit={handleSubmit(onSubmit)}
+              className="space-y-4"
+            >
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  {...register("name")}
+                  className={errors.name ? "border-destructive" : ""}
+                />
+                {errors.name && (
+                  <p className="text-sm text-destructive">
+                    {errors.name.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  {...register("email")}
+                  className={errors.email ? "border-destructive" : ""}
+                />
+                {errors.email && (
+                  <p className="text-sm text-destructive">
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  {...register("password")}
+                  className={errors.password ? "border-destructive" : ""}
+                />
+                {errors.password && (
+                  <p className="text-sm text-destructive">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+
+              {errors.root?.message && (
+                <p
+                  className="text-center text-sm text-destructive"
+                  aria-live="polite"
+                >
+                  {errors.root.message}
                 </p>
               )}
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                {...register("email")}
-                className={errors.email ? "border-destructive" : ""}
-              />
-              {errors.email && (
-                <p className="text-sm text-destructive">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                {...register("password")}
-                className={errors.password ? "border-destructive" : ""}
-              />
-              {errors.password && (
-                <p className="text-sm text-destructive">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-
-            {errors.root?.message && (
-              <p
-                className="text-center text-sm text-destructive"
-                aria-live="polite"
-              >
-                {errors.root.message}
-              </p>
-            )}
-
-            <Button type="submit" disabled={isSubmitting} className="w-full">
-              {isSubmitting ? "Creating account..." : "Sign Up"}
-            </Button>
-          </motion.form>
-        </CardContent>
-      </Card>
+              <Button type="submit" disabled={isSubmitting} className="w-full">
+                {isSubmitting ? "Creating account..." : "Sign Up"}
+              </Button>
+            </motion.form>
+          </CardContent>
+        </Card>
       </BorderDiv>
     </motion.main>
   );

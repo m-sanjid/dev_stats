@@ -1,8 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import Link from "next/link";
-import { Footer } from "@/components/Footer";
+import { Link } from "next-view-transitions";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,22 +10,66 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-import { ArrowRight, Layout, Lock, Sparkles } from "lucide-react";
-import { motion } from "motion/react";
+import {
+  ArrowRight,
+  BarChart3,
+  Code2,
+  FileText,
+  GitBranch,
+  Sparkles,
+  TrendingUp,
+  User,
+  Search,
+} from "lucide-react";
+import { animate, motion, useInView, Variants } from "motion/react";
+import React, { useEffect, useRef, useState } from "react";
+import { fetchGitHubMetrics } from "@/lib/github";
+
+interface GitHubRepository {
+  name: string;
+  stars: number;
+}
+
+interface GitHubStats {
+  repositories: GitHubRepository[];
+  totalCommits: number;
+  languages: Record<string, number>;
+  totalStars: number;
+}
 
 const container = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
     },
   },
 };
 
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 },
+const item: Variants = {
+  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+      damping: 15,
+    },
+  },
+};
+
+const iconMap = {
+  dashboard: BarChart3,
+  portfolio: User,
+  repositories: GitBranch,
+  readme: FileText,
+  languages: Code2,
+  analytics: TrendingUp,
+  review: Search,
 };
 
 interface HomeItem {
@@ -35,173 +78,334 @@ interface HomeItem {
   href: string;
   button: string;
   label?: string;
+  icon: keyof typeof iconMap;
+  category: "core" | "pro" | "tools";
 }
 
 const homeItems: HomeItem[] = [
   {
     title: "Dashboard",
-    desc: "View your portfolio overview and analytics",
+    desc: "Comprehensive overview of your development activity and key metrics",
     href: "/dashboard",
-    button: "Go to Dashboard",
+    button: "View Dashboard",
+    icon: "dashboard",
+    category: "core",
   },
   {
-    title: "AI Portfolio",
+    title: "Developer Portfolio",
     label: "pro",
-    desc: "Create AI portfolio based on your work",
-    href: "port",
-    button: "Portfolio",
+    desc: "AI-powered portfolio showcasing your best work and achievements",
+    href: "/portfolio",
+    button: "Create Portfolio",
+    icon: "portfolio",
+    category: "pro",
   },
   {
-    title: "Repository Metrics",
+    title: "Repository Analytics",
     label: "pro",
-    desc: "Deep dive into your repositories performance, Track stars, forks...",
+    desc: "Deep insights into repository performance, growth trends, and engagement",
     href: "/dashboard/repos",
-    button: "Repositories",
+    button: "View Analytics",
+    icon: "repositories",
+    category: "pro",
   },
   {
-    title: "AI README",
+    title: "Smart README",
     label: "pro",
-    desc: "Generate AI README for your repos",
+    desc: "Generate professional documentation with AI-powered suggestions",
     href: "/dashboard/readme",
-    button: "AI README",
+    button: "Generate README",
+    icon: "readme",
+    category: "pro",
   },
   {
-    title: "Languages",
-    desc: "view your programming languages",
+    title: "Language Insights",
+    desc: "Analyze your programming language usage and proficiency trends",
     href: "/dashboard/languages",
-    button: "Languages",
+    button: "View Languages",
+    icon: "languages",
+    category: "core",
   },
   {
-    title: "Smart Analytics",
+    title: "Advanced Analytics",
     label: "pro",
-    desc: "View detailed Analytics",
+    desc: "Detailed performance metrics with predictive insights and recommendations",
     href: "/dashboard/analytics",
-    button: "Analytics",
+    button: "View Analytics",
+    icon: "analytics",
+    category: "pro",
   },
   {
-    title: "Code Review",
+    title: "Code Review AI",
     label: "pro",
-    desc: "AI powered code review for PRs",
+    desc: "Intelligent code review assistance with quality and security insights",
     href: "/dashboard/code-review",
-    button: "Code Review",
+    button: "Start Review",
+    icon: "review",
+    category: "pro",
   },
 ];
 
 export default function HomePage() {
   const { data: session, status } = useSession();
+  const [stats, setStats] = useState<GitHubStats>({
+    repositories: [],
+    totalCommits: 0,
+    languages: {},
+    totalStars: 0,
+  });
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<
+    "all" | "core" | "pro" | "tools" | string
+  >("all");
   const isAuthenticated = status === "authenticated";
+  const user = session?.user;
+
+  useEffect(() => {
+    async function getStats() {
+      if (user?.id) {
+        const metrics = await fetchGitHubMetrics(user.id);
+        const totalStars = metrics.repositories.reduce(
+          (acc: number, repo: GitHubRepository) => acc + repo.stars,
+          0,
+        );
+        setStats({
+          repositories: metrics.repositories,
+          totalCommits: metrics.totalCommits,
+          languages: metrics.language,
+          totalStars: totalStars,
+        });
+      }
+    }
+    getStats();
+  }, [user?.id]);
+
+  const heroRef = useRef(null);
+  const cardsRef = useRef(null);
+  const isHeroInView = useInView(heroRef, { once: true });
+  const isCardsInView = useInView(cardsRef, { once: true });
+
+  const filteredItems =
+    activeCategory === "all"
+      ? homeItems
+      : homeItems.filter((item) => item.category === activeCategory);
+
+  const statsCards = [
+    {
+      title: "Active Repos",
+      value: stats.repositories.length,
+      icon: GitBranch,
+    },
+    {
+      title: "Languages",
+      value: Object.keys(stats.languages).length,
+      icon: Code2,
+    },
+    { title: "Total Stars", value: stats.totalStars, icon: Sparkles },
+    { title: "Commits", value: stats.totalCommits, icon: TrendingUp },
+  ];
+
+  const AnimatedCounter = ({
+    value,
+    duration = 2,
+  }: {
+    value: number;
+    duration?: number;
+  }) => {
+    const [displayValue, setDisplayValue] = useState("0");
+    const nodeRef = useRef(null);
+    const isInView = useInView(nodeRef, { once: true });
+
+    useEffect(() => {
+      if (!isInView) return;
+
+      const controls = animate(0, value, {
+        duration,
+        ease: "easeOut",
+        onUpdate: (latest) => {
+          setDisplayValue(Math.floor(latest).toString());
+        },
+      });
+
+      return () => controls.stop();
+    }, [isInView, value, duration]);
+
+    return (
+      <motion.div
+        ref={nodeRef}
+        className="text-2xl font-bold text-neutral-900 dark:text-white"
+        initial={{ opacity: 0, y: 20 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        {displayValue}
+      </motion.div>
+    );
+  };
 
   return (
-    <div>
-      <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-100 via-background to-background dark:from-purple-900/20">
-        <main className="container mx-auto max-w-5xl px-4 py-16">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 dark:from-neutral-950 dark:via-black dark:to-neutral-900">
+      <main className="container mx-auto max-w-7xl px-4 py-12 sm:py-16 lg:py-20">
+        <motion.div
+          ref={heroRef}
+          className="flex flex-col items-center justify-center space-y-8 text-center"
+          initial="hidden"
+          animate={isHeroInView ? "show" : "hidden"}
+          variants={container}
+        >
+          <motion.div className="max-w-4xl space-y-6" variants={item}>
+            <motion.div
+              className="inline-flex items-center gap-2 rounded-full bg-neutral-100 px-4 py-2 text-sm font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Sparkles className="h-4 w-4" />
+              Developer Analytics Platform
+            </motion.div>
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+              <span className="bg-gradient-to-r from-neutral-900 via-neutral-700 to-neutral-600 bg-clip-text text-transparent dark:from-white dark:via-neutral-200 dark:to-neutral-400">
+                Your Development
+              </span>
+              <br />
+              <span className="bg-gradient-to-r from-neutral-600 via-neutral-800 to-black bg-clip-text text-transparent dark:from-neutral-400 dark:via-neutral-200 dark:to-white">
+                Command Center
+              </span>
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-neutral-600 dark:text-neutral-300 sm:text-xl">
+              Comprehensive analytics, AI-powered insights, and professional
+              tools to elevate your development workflow and showcase your
+              expertise.
+            </p>
+          </motion.div>
+
+          {!isAuthenticated && (
+            <motion.div
+              className="grid w-full max-w-2xl grid-cols-2 gap-4 md:grid-cols-4"
+              variants={item}
+            >
+              {statsCards.map((stat, index) => (
+                <motion.div
+                  key={stat.title}
+                  className="rounded-xl border border-neutral-200 bg-white p-4 transition-all duration-300 hover:shadow-lg dark:border-neutral-800 dark:bg-neutral-900"
+                  whileHover={{ y: -2, scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={
+                    isHeroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }
+                  }
+                  transition={{
+                    duration: 0.6,
+                    delay: 0.4 + index * 0.1,
+                    type: "spring",
+                    stiffness: 100,
+                    damping: 15,
+                  }}
+                >
+                  <motion.div
+                    initial={{ scale: 0, rotate: -180 }}
+                    animate={
+                      isHeroInView
+                        ? { scale: 1, rotate: 0 }
+                        : { scale: 0, rotate: -180 }
+                    }
+                    transition={{ duration: 0.6, delay: 0.6 + index * 0.1 }}
+                  >
+                    <stat.icon className="mx-auto mb-2 h-5 w-5 text-neutral-600 dark:text-neutral-400" />
+                  </motion.div>
+                  <AnimatedCounter
+                    value={stat.value}
+                    duration={2 + index * 0.2}
+                  />
+                  <motion.div
+                    className="text-xs text-neutral-500 dark:text-neutral-400"
+                    initial={{ opacity: 0 }}
+                    animate={isHeroInView ? { opacity: 1 } : { opacity: 0 }}
+                    transition={{ duration: 0.4, delay: 1.2 + index * 0.1 }}
+                  >
+                    {stat.title}
+                  </motion.div>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+        </motion.div>
+
+        <motion.div
+          ref={cardsRef}
+          className="mt-16 space-y-8"
+          initial="hidden"
+          animate={isCardsInView ? "show" : "hidden"}
+          variants={container}
+        >
+          <motion.div className="flex justify-center" variants={item}>
+            <div className="inline-flex rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800">
+              {["all", "core", "pro", "tools"].map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setActiveCategory(category)}
+                  className={`px-4 py-2 text-sm font-medium capitalize transition-colors ${
+                    activeCategory === category
+                      ? "rounded-md bg-white text-neutral-900 shadow dark:bg-neutral-700 dark:text-white"
+                      : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+
           <motion.div
-            className="flex flex-col items-center justify-center space-y-8 text-center"
-            initial="hidden"
-            animate="show"
+            className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
             variants={container}
           >
-            <motion.div className="space-y-4" variants={item}>
-              <h1 className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text py-10 text-4xl font-bold tracking-tighter text-transparent dark:from-purple-400 dark:to-blue-400 sm:text-5xl md:text-6xl lg:text-7xl">
-                Welcome to Your DevStats
-              </h1>
-              <p className="mx-auto max-w-[700px] pb-8 text-muted-foreground md:text-xl">
-                Manage your portfolios, track performance, and get actionable
-                insights all in one place.
-              </p>
-            </motion.div>
-
-            {isAuthenticated ? (
+            {filteredItems.map((card, index) => (
               <motion.div
-                className="grid w-full max-w-5xl grid-cols-1 gap-6 lg:grid-cols-3"
-                variants={container}
-              >
-                {homeItems.map((homeItem, index) => (
-                  <motion.div
-                    key={homeItem.title}
-                    variants={item}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Card className="group overflow-hidden border-2 border-transparent transition-all duration-300 hover:border-purple-500/20 hover:shadow-lg dark:hover:shadow-purple-500/5">
-                      <CardHeader>
-                        <div className="flex justify-between py-2">
-                          <Layout className="h-8 w-8 text-purple-600 transition-transform duration-300 group-hover:scale-110" />
-                          {homeItem.label && (
-                            <div className="flex items-center gap-1 rounded-lg bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-600">
-                              <Sparkles className="h-3 w-3" />
-                              {homeItem.label}
-                            </div>
-                          )}
-                        </div>
-                        <CardTitle className="transition-colors group-hover:text-purple-600">
-                          {homeItem.title}
-                        </CardTitle>
-                        <CardDescription className="transition-colors group-hover:text-muted-foreground/80">
-                          {homeItem.desc}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <Link
-                          href={
-                            homeItem.href === "port"
-                              ? `/profile/${session.user.username || session.user.id}`
-                              : homeItem.href
-                          }
-                        >
-                          <Button className="w-full transform bg-gradient-to-r from-purple-600 to-blue-600 transition-all duration-300 hover:translate-y-[-2px] hover:from-purple-700 hover:to-blue-700">
-                            {homeItem.button}
-                            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                          </Button>
-                        </Link>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </motion.div>
-            ) : (
-              <motion.div
+                key={index}
                 variants={item}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                onMouseEnter={() => setHoveredCard(card.title)}
+                onMouseLeave={() => setHoveredCard(null)}
               >
-                <Card className="w-full max-w-md border-2 border-transparent transition-all duration-300 hover:border-purple-500/20 hover:shadow-lg">
+                <Card className="h-full overflow-hidden rounded-xl border border-neutral-200 bg-white transition-all duration-300 hover:shadow-lg dark:border-neutral-800 dark:bg-neutral-900">
                   <CardHeader>
-                    <motion.div
-                      animate={{
-                        scale: [1, 1.1, 1],
-                        rotate: [0, 5, -5, 0],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        repeatDelay: 3,
-                      }}
-                      className="mx-auto"
-                    >
-                      <Lock className="h-8 w-8 text-purple-600" />
-                    </motion.div>
-                    <CardTitle className="mt-4">Access Required</CardTitle>
-                    <CardDescription>
-                      Please sign in to access your personalized dashboard and
-                      features.
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        {React.createElement(iconMap[card.icon], {
+                          className: "h-6 w-6 text-neutral-500",
+                        })}
+                        <CardTitle className="text-lg font-semibold">
+                          {card.title}
+                        </CardTitle>
+                      </div>
+                      {card.label && (
+                        <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                          {card.label}
+                        </span>
+                      )}
+                    </div>
+                    <CardDescription className="pt-2">
+                      {card.desc}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="flex justify-center">
-                    <Link href="/signup">
-                      <Button className="transform bg-gradient-to-r from-purple-600 to-blue-600 transition-all duration-300 hover:translate-y-[-2px] hover:from-purple-700 hover:to-blue-700">
-                        Sign In
-                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  <CardContent>
+                    <Link href={card.href}>
+                      <Button
+                        variant={
+                          hoveredCard === card.title ? "default" : "outline"
+                        }
+                        className="w-full transition-all duration-300"
+                      >
+                        {card.button}
+                        <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
                     </Link>
                   </CardContent>
                 </Card>
               </motion.div>
-            )}
+            ))}
           </motion.div>
-        </main>
-      </div>
-
+        </motion.div>
+      </main>
     </div>
   );
 }

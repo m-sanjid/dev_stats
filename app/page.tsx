@@ -1,5 +1,4 @@
 import Dashboard from "@/components/Dashboard";
-import { Footer } from "@/components/Footer";
 import Features from "@/components/Features";
 import Hero from "@/components/Hero";
 import Pricing from "@/components/Pricing";
@@ -14,7 +13,10 @@ export default function Home() {
         </div>
 
         {/* Add background variations and spacing between sections */}
-        <section id="dashboard" className="bg-gradient-to-b from-white to-neutral-50 py-20 dark:from-neutral-950 dark:to-neutral-900">
+        <section
+          id="dashboard"
+          className="bg-gradient-to-b from-white to-neutral-50 py-20 dark:from-neutral-950 dark:to-neutral-900"
+        >
           <Dashboard />
         </section>
 
@@ -22,7 +24,10 @@ export default function Home() {
           <Features />
         </section>
 
-        <section id="testimonials" className="bg-neutral-50 py-20 dark:bg-neutral-950">
+        <section
+          id="testimonials"
+          className="bg-neutral-50 py-20 dark:bg-neutral-950"
+        >
           <Testimonials />
         </section>
 

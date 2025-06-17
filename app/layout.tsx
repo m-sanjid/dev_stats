@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { Footer } from "@/components/Footer";
 import { Inter } from "next/font/google";
 import { ViewTransitions } from "next-view-transitions";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "DevStats",
@@ -29,6 +30,7 @@ export default function RootLayout({
               <div className="mx-auto max-w-6xl">{children}</div>
               <Footer />
             </Providers>
+            <Toaster />
           </ThemeProvider>
         </body>
       </html>

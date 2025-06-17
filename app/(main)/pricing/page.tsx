@@ -5,8 +5,8 @@ import { Check } from "lucide-react";
 export default function PricingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/80">
-      <div className="container mx-auto max-w-7xl px-4 py-12">
-        <div className="mx-auto max-w-6xl space-y-12">
+      <div className="mx-auto max-w-5xl px-4 py-12">
+        <div className="space-y-12">
           <div className="p-4">
             <Pricing />
           </div>

@@ -88,9 +88,9 @@ const MetricCard = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay }}
-      className="bg-primary/5 backdrop-blur-md border rounded-3xl p-2"
+      className="rounded-3xl border bg-primary/5 p-2 backdrop-blur-md"
     >
-      <Card className="transform overflow-hidden h-full rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+      <Card className="h-full transform overflow-hidden rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
         <CardContent className="relative p-6">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -258,9 +258,9 @@ export default function AnalyticsPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
-                className="rounded-3xl border p-2 bg-primary/5 backdrop-blur-md"
+                className="rounded-3xl border bg-primary/5 p-2 backdrop-blur-md"
               >
-                <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg rounded-2xl">
+                <Card className="overflow-hidden rounded-2xl transition-all duration-300 hover:shadow-lg">
                   <CardContent className="p-6">
                     <h3 className="mb-4 text-lg font-semibold">
                       Weekly Commit Activity

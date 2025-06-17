@@ -6,7 +6,7 @@ import { Calendar, Clock, GitCommit, GitPullRequest } from "lucide-react";
 import { StatCard } from "@/components/ui/stat-card";
 import { ActivityHeatmap } from "@/components/Github/ActivityHeatmap";
 import { DailyActivityChart } from "@/components/Github/DailyActivityChart";
-import { GitHubMetrics } from "@/app/(main)/dashboard/activity/page";
+import { GitHubMetrics } from "@/components/GitHubMetricsPage";
 import BorderDiv from "./BorderDiv";
 
 interface ActivityAnalyticsProps {
@@ -52,26 +52,26 @@ export function ActivityAnalytics({ metrics }: ActivityAnalyticsProps) {
 
       {/* Activity Heatmap */}
       <BorderDiv>
-      <Card className="rounded-2xl">
-        <CardHeader>
-          <CardTitle>Contribution Activity</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ActivityHeatmap data={metrics.weeklyCommits} />
-        </CardContent>
-      </Card>
+        <Card className="rounded-2xl">
+          <CardHeader>
+            <CardTitle>Contribution Activity</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ActivityHeatmap data={metrics.weeklyCommits} />
+          </CardContent>
+        </Card>
       </BorderDiv>
 
       {/* Daily Activity Pattern */}
       <BorderDiv>
-      <Card className="rounded-2xl">
-        <CardHeader>
-          <CardTitle>Daily Activity Pattern</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <DailyActivityChart data={metrics.dailyActivity} />
-        </CardContent>
-      </Card>
+        <Card className="rounded-2xl">
+          <CardHeader>
+            <CardTitle>Daily Activity Pattern</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <DailyActivityChart data={metrics.dailyActivity} />
+          </CardContent>
+        </Card>
       </BorderDiv>
     </motion.div>
   );

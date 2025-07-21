@@ -10,8 +10,8 @@ import {
 
 const footerLinks = {
   product: [
-    { name: "Features", href: "#features" },
-    { name: "Pricing", href: "#pricing" },
+    { name: "Features", href: "/#features" },
+    { name: "Pricing", href: "/#pricing" },
     { name: "Preview", href: "/preview" },
   ],
   resources: [

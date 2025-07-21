@@ -303,15 +303,15 @@ export const GithubDashboard: React.FC = () => {
 const LoadingSkeleton = () => (
   <div className="mx-auto mt-8 grid w-full max-w-6xl gap-6 p-4">
     <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
-      {[1, 2, 3, 4].map((i) => (
+      {[1, 2, 3].map((i) => (
         <Card
           key={i}
           className="rounded-2xl border border-white/30 bg-white/70 shadow-xl backdrop-blur-lg dark:border-zinc-700/40 dark:bg-zinc-900/70"
         >
-          <CardContent className="p-6">
+          <CardContent className="p-6 overflow-hidden">
             <Skeleton className="mb-4 h-4 w-24" />
             <Skeleton className="mb-2 h-8 w-32" />
-            <Skeleton className="h-4 w-40" />
+            <Skeleton className="h-4 w-32" />
           </CardContent>
         </Card>
       ))}

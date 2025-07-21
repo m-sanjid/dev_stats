@@ -1,6 +1,6 @@
 "use client";
 import { Line, ResponsiveContainer, XAxis, YAxis, LineChart } from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const language = [
   { id: "C++", width: "w-[30px]", percentage: "10%" },
@@ -63,17 +63,17 @@ function PreviewImg({ skew }: { skew: string }) {
               {language.map((lang) => (
                 <div
                   key={lang.id}
-                  className="flex justify-between items-center"
+                  className="flex items-center justify-between"
                 >
                   <div>
-                    <p className="text-xs font-medium text-gray-700 dark:text-gray-200">
+                    <p className="text-xs font-medium text-neutral-700 dark:text-neutral-200">
                       {lang.id}
                     </p>
                     <div
-                      className={`bg-purple-400 ${lang.width} h-1 mt-2 dark:bg-purple-500 `}
+                      className={`bg-purple-400 ${lang.width} mt-2 h-1 dark:bg-purple-500`}
                     ></div>
                   </div>
-                  <span className="text-xs text-gray-800 dark:text-gray-200">
+                  <span className="text-xs text-neutral-800 dark:text-neutral-200">
                     {lang.percentage}
                   </span>
                 </div>

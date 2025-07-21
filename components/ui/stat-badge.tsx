@@ -19,7 +19,7 @@ export function StatBadge({ icon: Icon, value, label }: StatBadgeProps) {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="flex items-center gap-1 hover:text-purple-500 transition-colors cursor-help">
+          <div className="flex cursor-help items-center gap-1 transition-colors hover:text-purple-500">
             <Icon className="h-4 w-4" />
             <span>{value.toLocaleString()}</span>
           </div>
@@ -30,4 +30,4 @@ export function StatBadge({ icon: Icon, value, label }: StatBadgeProps) {
       </Tooltip>
     </TooltipProvider>
   );
-} 
+}

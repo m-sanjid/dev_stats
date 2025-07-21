@@ -15,7 +15,7 @@ export function OAuthButton({
   return (
     <Button
       variant="outline"
-      className="w-full flex items-center justify-center gap-2"
+      className="flex w-full items-center justify-center gap-2"
       onClick={handleSignIn}
       aria-label={`Sign in with ${provider}`}
     >

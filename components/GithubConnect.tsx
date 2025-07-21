@@ -46,7 +46,7 @@ export function GithubConnect({ hasGithubToken }: GithubConnectProps) {
             <TooltipTrigger asChild>
               <Button
                 variant="outline"
-                className="bg-green-50 border-green-200 text-green-700 hover:bg-green-100 dark:bg-green-900/20 dark:border-green-700 dark:text-green-400"
+                className="border-green-200 bg-green-50 text-green-700 hover:bg-green-100 dark:border-green-700 dark:bg-green-900/20 dark:text-green-400"
                 disabled
               >
                 <Check className="mr-2 h-4 w-4" />
@@ -64,7 +64,6 @@ export function GithubConnect({ hasGithubToken }: GithubConnectProps) {
                 <Button
                   onClick={handleConnect}
                   disabled={isConnecting}
-                  className="bg-[#24292F] hover:bg-[#24292F]/90 dark:bg-[#24292F]/80 dark:hover:bg-[#24292F]/70"
                 >
                   {isConnecting ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -74,7 +73,10 @@ export function GithubConnect({ hasGithubToken }: GithubConnectProps) {
                   {isConnecting ? "Connecting..." : "Connect GitHub"}
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="bottom" className="bg-red-50 border-red-200">
+              <TooltipContent
+                side="bottom"
+                className="border-red-200 bg-red-50"
+              >
                 <div className="flex items-center gap-2 text-red-700">
                   <AlertCircle className="h-4 w-4" />
                   <p>Failed to connect. Please try again.</p>
@@ -88,7 +90,7 @@ export function GithubConnect({ hasGithubToken }: GithubConnectProps) {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="absolute top-full left-0 right-0 mt-2 text-xs text-gray-600 dark:text-gray-400"
+                  className="absolute left-0 right-0 top-full mt-2 text-xs text-neutral-600 dark:text-neutral-400"
                 >
                   Connect to see your GitHub stats
                 </motion.div>

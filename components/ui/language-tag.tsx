@@ -20,11 +20,11 @@ export function LanguageTag({ language }: LanguageTagProps) {
 
   return (
     <span
-      className={`px-2 py-1 text-xs rounded-full whitespace-nowrap ${
+      className={`whitespace-nowrap rounded-full px-2 py-1 text-xs ${
         colorMap[language] || colorMap.default
       }`}
     >
       {language}
     </span>
   );
-} 
+}

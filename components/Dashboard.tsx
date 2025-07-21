@@ -1,21 +1,80 @@
 "use client";
 import Macbook from "./Macbook";
+import { motion, Variants } from "motion/react";
+
+const container: Variants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+const item: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 20,
+    },
+  },
+};
+
+const macbookAnimation: Variants = {
+  hidden: { opacity: 0, scale: 0.9 },
+  show: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 200,
+      damping: 20,
+      delay: 0.5,
+    },
+  },
+};
 
 function Dashboard() {
   return (
-    <section className="container max-w-7xl mx-auto px-4 py-20">
-      <div className="text-center mb-16">
-        <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+    <motion.section
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className="container mx-auto max-w-7xl px-4 py-20"
+    >
+      <motion.div variants={item} className="mb-16 text-center">
+        <motion.h2
+          className="mb-4 text-4xl font-bold"
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+        >
           Live Dashboard Preview
-        </h2>
-        <p className="text-lg text-gray-600 mb-8">
+        </motion.h2>
+        <motion.p
+          className="text-lg text-muted-foreground"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
           Get real-time insights into your development activity
-        </p>
-      </div>
-      <div className="mt-5">
+        </motion.p>
+      </motion.div>
+
+      <motion.div
+        variants={macbookAnimation}
+        className="mt-5"
+        whileHover={{ scale: 1.02 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      >
         <Macbook />
-      </div>
-    </section>
+      </motion.div>
+    </motion.section>
   );
 }
 

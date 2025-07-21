@@ -13,7 +13,10 @@ async function hashPassword(password: string): Promise<string> {
   return Buffer.from(hashBuffer).toString("hex");
 }
 
-async function verifyPassword(inputPassword: string, hashedPassword: string): Promise<boolean> {
+async function verifyPassword(
+  inputPassword: string,
+  hashedPassword: string,
+): Promise<boolean> {
   const hashedInput = await hashPassword(inputPassword);
   return hashedInput === hashedPassword;
 }
@@ -47,14 +50,17 @@ const authConfig: NextAuthConfig = {
 
         if (!user || !user.password) return null;
 
-        const isValid = await verifyPassword(credentials.password as string, user.password);
+        const isValid = await verifyPassword(
+          credentials.password as string,
+          user.password,
+        );
 
         return isValid
           ? {
               id: user.id.toString(),
-              email: user.email,
+              email: user.email!,
               role: user.role ?? "user",
-              name: user.name,
+              name: user.name!,
             }
           : null;
       },
@@ -80,13 +86,17 @@ const authConfig: NextAuthConfig = {
         token.subscription = dbUser?.subscription ?? "free";
         token.useWebhook = dbUser?.useWebhook ?? false;
 
-        if (account?.provider === "github") {
+        // Store GitHub token if present
+        if (account?.provider === "github" && account.access_token) {
           try {
             await prisma.githubToken.upsert({
               where: { userId: token.sub },
-              create: { userId: token.sub, accessToken: account.access_token! },
-              update: { accessToken: account.access_token! },
+              create: { userId: token.sub, accessToken: account.access_token },
+              update: { accessToken: account.access_token },
             });
+
+            // Store in JWT token for easy access
+            token.githubAccessToken = account.access_token;
           } catch (error) {
             console.error("Error storing GitHub token:", error);
           }

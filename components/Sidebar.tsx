@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "next-view-transitions";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,12 @@ import {
   BookOpenText,
   File,
 } from "lucide-react";
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -42,8 +47,11 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
       {/* Mobile Sidebar */}
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="ghost" className="md:hidden fixed left-4 top-16 z-40">
-            <Menu className="h-4 w-4" />
+          <Button
+            variant="ghost"
+            className="fixed left-4 top-28 z-40 bg-primary/10 backdrop-blur-md md:hidden"
+          >
+            <Menu className="h-6 w-6" />
           </Button>
         </SheetTrigger>
         <SheetTitle className="hidden">Dev Stats</SheetTitle>
@@ -55,8 +63,8 @@ export function Sidebar({ isCollapsed, setIsCollapsed }: SidebarProps) {
       {/* Desktop Sidebar */}
       <div
         className={cn(
-          "hidden md:flex h-screen fixed left-0 pt-14 top-0 z-40 flex-col border-r bg-background transition-all duration-300",
-          isCollapsed ? "w-16" : "w-64",
+          "sticky left-0 top-0 z-40 hidden h-screen flex-col border-r pt-14 transition-all duration-300 md:flex",
+          isCollapsed ? "w-16" : "w-[16rem]",
         )}
       >
         <SidebarContent pathname={pathname ?? ""} isCollapsed={isCollapsed} />
@@ -96,10 +104,10 @@ function SidebarContent({
             <span>Dev Stats</span>
           </Link>
         ) : (
-          <GitFork className="h-6 w-6 mx-auto" />
+          <GitFork className="mx-auto h-6 w-6" />
         )}
       </div>
-      <ScrollArea className="flex-1 p-3 space-y-1">
+      <ScrollArea className="flex-1 space-y-1 p-3">
         {sidebarLinks.map((link) => {
           const Icon = link.icon;
           return (
@@ -108,8 +116,8 @@ function SidebarContent({
               variant="ghost"
               asChild
               className={cn(
-                "w-full justify-start gap-2",
-                pathname === link.href && "bg-accent",
+                "relative w-full justify-start gap-2",
+                pathname === link.href && "rounded-2xl border-2 bg-primary/5",
               )}
             >
               <Link href={link.href}>

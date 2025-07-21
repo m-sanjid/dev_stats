@@ -135,13 +135,13 @@ const ReadmeGenerator = () => {
         }
 
         const formattedRepos: Repository[] = metricsData.repositories.map(
-          (repo, index) => ({
+          (repo:Repository, index:number) => ({
             id: index,
             name: repo.name,
             description: repo.description || "",
-            html_url: repo.url,
-            stargazers_count: repo.stars || 0,
-            forks_count: repo.forks || 0,
+            html_url: repo.html_url,
+            stargazers_count: repo.stargazers_count || 0,
+            forks_count: repo.forks_count || 0,
             branches: repo.branches || 0,
             lastUpdated: repo.lastUpdated || new Date().toISOString(),
             commits: repo.commits || 0,

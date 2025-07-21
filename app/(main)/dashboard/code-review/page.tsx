@@ -84,7 +84,7 @@ export default function CodeReviewDashboard() {
       if (!session?.user?.id) return;
       try {
         const metrics = await fetchGitHubMetrics(session.user.id);
-        const formattedRepositories = metrics.repositories.map((repo) => ({
+        const formattedRepositories = metrics.repositories.map((repo:Repository) => ({
           name: repo.name,
           full_name: repo.name,
           owner: { login: "unknown" },
@@ -107,7 +107,7 @@ export default function CodeReviewDashboard() {
       setLoading(true);
       try {
         const metrics = await fetchGitHubMetrics(session.user.id);
-        const repo = metrics.repositories.find((r) => r.name === selectedRepo);
+        const repo = metrics.repositories.find((repo:Repository) => repo.name === selectedRepo);
         setPullRequests(
           (repo && "pullRequests" in repo
             ? repo.pullRequests || []

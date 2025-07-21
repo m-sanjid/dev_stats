@@ -1,6 +1,6 @@
 import { fetchGitHubMetrics } from "@/lib/github";
 import { NextResponse } from "next/server";
-import { executeGraphQLQuery, validateToken } from "@/lib/github";
+import { validateToken } from "@/lib/github";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);

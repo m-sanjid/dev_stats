@@ -1,5 +1,18 @@
 import SectionHeader from "@/components/SectionHeader";
 import React from "react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy | DevStats",
+  description: "Learn how DevStats collects, uses, and protects your data. Read our privacy policy for more information.",
+  openGraph: {
+    title: "Privacy Policy | DevStats",
+    description: "Learn how DevStats collects, uses, and protects your data. Read our privacy policy for more information.",
+    url: "https://devstats.com/privacy",
+    siteName: "DevStats",
+    type: "website",
+  },
+};
 
 const privacyItems = [
   {

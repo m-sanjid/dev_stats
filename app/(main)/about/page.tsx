@@ -8,6 +8,19 @@ import {
   GitPullRequest,
   Star,
 } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About DevStats | Developer Analytics Platform",
+  description: "Learn about DevStats, your personal GitHub analytics and productivity dashboard. Discover our mission and features.",
+  openGraph: {
+    title: "About DevStats",
+    description: "Learn about DevStats, your personal GitHub analytics and productivity dashboard.",
+    url: "https://devstats.com/about",
+    siteName: "DevStats",
+    type: "website",
+  },
+};
 
 export default function AboutPage() {
   return (

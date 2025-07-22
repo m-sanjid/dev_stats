@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import BorderDiv from "./BorderDiv";
+import { useMutation } from "@tanstack/react-query";
 
 const signUpSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -51,23 +52,29 @@ export function SignUpForm() {
     register,
     handleSubmit,
     setError,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
   });
 
-  const onSubmit = async (data: SignUpFormData) => {
-    try {
+  const signUpMutation = useMutation({
+    mutationFn: async (data: SignUpFormData) => {
       const result = await signUp(data);
-      if (result?.error) {
-        setError("root", { message: result.error });
-      } else {
-        router.push("/home");
-      }
-    } catch (error) {
-      console.error("Sign-up error:", error);
-      setError("root", { message: "Something went wrong. Please try again." });
-    }
+      if (result?.error) throw new Error(result.error);
+      return result;
+    },
+    onSuccess: () => {
+      router.push("/home");
+    },
+    onError: (error: any) => {
+      setError("root", {
+        message: error.message || "Something went wrong. Please try again.",
+      });
+    },
+  });
+
+  const onSubmit = (data: SignUpFormData) => {
+    signUpMutation.mutate(data);
   };
 
   return (
@@ -75,9 +82,9 @@ export function SignUpForm() {
       variants={container}
       initial="hidden"
       animate="show"
-      className="flex h-screen w-full items-center justify-center"
+      className="flex h-full w-full items-center justify-center"
     >
-      <BorderDiv className="w-full max-w-md">
+      <BorderDiv className="my-10 w-full max-w-md">
         <Card className="w-full rounded-2xl">
           <CardHeader>
             <CardTitle className="text-center">DevStats</CardTitle>
@@ -165,8 +172,12 @@ export function SignUpForm() {
                 </p>
               )}
 
-              <Button type="submit" disabled={isSubmitting} className="w-full">
-                {isSubmitting ? "Creating account..." : "Sign Up"}
+              <Button
+                type="submit"
+                disabled={signUpMutation.isPending}
+                className="w-full"
+              >
+                {signUpMutation.isPending ? "Signing up..." : "Sign Up"}
               </Button>
             </motion.form>
           </CardContent>

@@ -1,27 +1,41 @@
-"use client";
-
+import { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
+import MotionDiv from "@/components/MotionDiv";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CalendarDays, Clock, User, Tag } from "lucide-react";
 import { Link } from "next-view-transitions";
-import { motion } from "motion/react";
 import { blogPosts } from "@/constant/blog";
 import Image from "next/image";
+
+export const metadata: Metadata = {
+  title: "DevStats Blog | Insights, Tutorials, and Updates",
+  description:
+    "Read the latest insights, tutorials, and updates from the DevStats team. Stay informed about developer analytics and productivity.",
+  openGraph: {
+    title: "DevStats Blog",
+    description:
+      "Read the latest insights, tutorials, and updates from the DevStats team.",
+    url: "https://devstats.com/blog",
+    siteName: "DevStats",
+    type: "website",
+  },
+};
 
 export default function BlogPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/80">
       <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <PageHeader
+          backUrl="/"
           title="DevStats Blog"
           description="Insights, tutorials, and updates from the DevStats team"
         />
       </div>
 
       <div className="mx-auto max-w-4xl px-4 py-20">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           {blogPosts.map((post, idx) => (
-            <motion.div
+            <MotionDiv
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: idx * 0.2 }}
@@ -33,8 +47,7 @@ export default function BlogPage() {
                     <Image
                       src={post.image}
                       alt={post.title}
-                      width={500}
-                      height={500}
+fill
                       className="object-cover transition-all duration-300 group-hover:scale-105"
                     />
                   </div>
@@ -74,7 +87,7 @@ export default function BlogPage() {
                   </CardContent>
                 </Card>
               </Link>
-            </motion.div>
+            </MotionDiv>
           ))}
         </div>
       </div>

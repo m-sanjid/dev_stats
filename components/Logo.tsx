@@ -1,3 +1,5 @@
+"use client";
+
 import { useSession } from "next-auth/react";
 import { Link } from "next-view-transitions";
 import Image from "next/image";
@@ -22,7 +24,7 @@ const Logo = () => {
         className="z-10"
       />
       </div>
-      <span className="text-xs tracking-tighter">DevStats</span>
+      <span className="text-xs hidden md:block tracking-tighter">DevStats</span>
     </Link>
   );
 };

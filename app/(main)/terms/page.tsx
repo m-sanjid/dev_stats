@@ -1,5 +1,18 @@
 import SectionHeader from "@/components/SectionHeader";
 import React from "react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Terms of Service | DevStats",
+  description: "Read the terms of service for using DevStats. Understand your rights and responsibilities as a user.",
+  openGraph: {
+    title: "Terms of Service | DevStats",
+    description: "Read the terms of service for using DevStats. Understand your rights and responsibilities as a user.",
+    url: "https://devstats.com/terms",
+    siteName: "DevStats",
+    type: "website",
+  },
+};
 
 const termsItems = [
   {

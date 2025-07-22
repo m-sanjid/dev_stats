@@ -46,7 +46,7 @@ export function CommandMenu() {
   return (
     <>
       <div
-        className="flex cursor-pointer items-center gap-2 rounded-2xl border-2 border-muted px-2 py-2 text-sm text-muted-foreground md:px-4"
+        className="flex cursor-pointer items-center gap-2 rounded-xl border-2 px-2 py-2 text-sm text-muted-foreground md:px-4"
         onClick={() => {
           setOpen(true);
         }}

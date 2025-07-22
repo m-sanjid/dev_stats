@@ -40,7 +40,7 @@ const outNavItems = [
   { title: "Pricing", href: "/pricing" },
   { title: "Preview", href: "/preview" },
   { title: "Contact", href: "/contact" },
-  { title: "About Us", href: "/about" },
+  { title: "About", href: "/about" },
   { title: "Blog", href: "/blog" },
 ];
 
@@ -91,11 +91,11 @@ export default function Navbar() {
       className={cn(
         "duration-400 sticky z-50 w-full text-sm transition-all ease-in-out",
         isScrolled
-          ? "top-6 mx-auto max-w-5xl rounded-3xl border bg-primary/5 p-2 backdrop-blur-[2.5px]"
-          : "top-0 mx-auto max-w-6xl px-4",
+          ? "top-0 mx-auto border backdrop-blur-xl md:top-2 md:max-w-5xl md:rounded-3xl md:bg-primary/5 md:p-2"
+          : "top-0 mx-auto max-w-6xl md:px-4",
       )}
     >
-      <div className={isScrolled ? "rounded-2xl border px-2" : ""}>
+      <div className={isScrolled ? "md:rounded-2xl md:border md:px-2" : ""}>
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-8">
           <Logo />
           {/* Desktop Navigation */}

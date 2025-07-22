@@ -1,6 +1,23 @@
+import BorderDiv from "@/components/BorderDiv";
 import Pricing from "@/components/Pricing";
+import SectionHeader from "@/components/SectionHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Pricing | DevStats",
+  description:
+    "Choose the right DevStats plan for your needs. Compare features and pricing for Free and Pro plans.",
+  openGraph: {
+    title: "Pricing | DevStats",
+    description:
+      "Choose the right DevStats plan for your needs. Compare features and pricing for Free and Pro plans.",
+    url: "https://devstats.com/pricing",
+    siteName: "DevStats",
+    type: "website",
+  },
+};
 
 export default function PricingPage() {
   return (
@@ -10,32 +27,31 @@ export default function PricingPage() {
           <div className="p-4">
             <Pricing />
           </div>
-
-          <Card className="bg-gradient-to-br from-neutral-900 to-neutral-800 text-white">
-            <CardContent className="p-8">
-              <h3 className="mb-6 text-2xl font-bold">Enterprise Features</h3>
-              <div className="grid gap-8 md:grid-cols-2">
-                <div className="space-y-4">
-                  <FeatureItem text="Dedicated Account Manager" />
-                  <FeatureItem text="Custom Integration Support" />
-                  <FeatureItem text="Priority 24/7 Support" />
-                  <FeatureItem text="Advanced Security Features" />
+          <BorderDiv>
+            <Card className="rounded-2xl">
+              <CardContent className="p-8">
+                <h3 className="mb-6 text-2xl font-bold">Enterprise Features</h3>
+                <div className="grid gap-4 md:gap-8 md:grid-cols-2">
+                  <div className="space-y-4">
+                    <FeatureItem text="Dedicated Account Manager" />
+                    <FeatureItem text="Custom Integration Support" />
+                    <FeatureItem text="Priority 24/7 Support" />
+                    <FeatureItem text="Advanced Security Features" />
+                  </div>
+                  <div className="space-y-4">
+                    <FeatureItem text="Custom Analytics Dashboard" />
+                    <FeatureItem text="SLA Guarantees" />
+                    <FeatureItem text="Team Training Sessions" />
+                    <FeatureItem text="Custom API Access" />
+                  </div>
                 </div>
-                <div className="space-y-4">
-                  <FeatureItem text="Custom Analytics Dashboard" />
-                  <FeatureItem text="SLA Guarantees" />
-                  <FeatureItem text="Team Training Sessions" />
-                  <FeatureItem text="Custom API Access" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </BorderDiv>
 
           {/* FAQ Section */}
           <div className="space-y-8">
-            <h3 className="text-center text-2xl font-bold">
-              Frequently Asked Questions
-            </h3>
+            <SectionHeader title="Frequently Asked Questions" subtitle=""/>
             <div className="grid gap-6 md:grid-cols-2">
               <FaqItem
                 question="How does the pricing work?"
@@ -63,8 +79,8 @@ export default function PricingPage() {
 
 const FeatureItem = ({ text }: { text: string }) => (
   <div className="flex items-center gap-3">
-    <Check className="h-5 w-5 text-green-400" />
-    <span className="text-muted-foreground">{text}</span>
+    <Check className="md:h-5 md:w-5 h-4 w-4 text-green-400" />
+    <span className="text-muted-foreground text-sm md:text-base">{text}</span>
   </div>
 );
 
@@ -75,10 +91,12 @@ const FaqItem = ({
   question: string;
   answer: string;
 }) => (
-  <Card className="border-2 border-transparent transition-all duration-300 ease-in-out hover:border-primary">
-    <CardContent className="p-6">
-      <h4 className="mb-3 text-lg font-semibold">{question}</h4>
-      <p className="text-muted-foreground">{answer}</p>
-    </CardContent>
-  </Card>
+  <BorderDiv>
+    <Card className="transition-color h-full rounded-2xl border duration-200 ease-in-out hover:border-primary">
+      <CardContent className="p-6">
+        <h4 className="mb-3 text-base md:text-lg font-medium">{question}</h4>
+        <p className="text-muted-foreground text-sm md:text-base">{answer}</p>
+      </CardContent>
+    </Card>
+  </BorderDiv>
 );

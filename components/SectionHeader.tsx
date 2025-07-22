@@ -10,7 +10,7 @@ const SectionHeader = ({
   tag,
 }: {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   tag?: string;
 }) => {
   return (
@@ -27,19 +27,21 @@ const SectionHeader = ({
         whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         viewport={{ once: true }}
         transition={{ delay: 0.2, duration: 0.3 }}
-        className="text-3xl font-bold md:text-4xl lg:text-5xl"
+        className="text-2xl font-bold md:text-3xl lg:text-4xl"
       >
         {title}
       </motion.h2>
-      <motion.p
-        initial={{ opacity: 0, y: 20, filter: "blur(5px)" }}
-        whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        transition={{ delay: 0.3, duration: 0.3 }}
-        viewport={{ once: true }}
-        className="mt-3 text-muted-foreground"
-      >
-        {subtitle}
-      </motion.p>
+      {subtitle && (
+        <motion.p
+          initial={{ opacity: 0, y: 20, filter: "blur(5px)" }}
+          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{ delay: 0.3, duration: 0.3 }}
+          viewport={{ once: true }}
+          className="mt-3 text-sm text-muted-foreground md:text-base"
+        >
+          {subtitle}
+        </motion.p>
+      )}
     </div>
   );
 };

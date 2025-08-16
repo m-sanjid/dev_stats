@@ -47,7 +47,7 @@ export default function BlogPage() {
                     <Image
                       src={post.image}
                       alt={post.title}
-fill
+                      fill
                       className="object-cover transition-all duration-300 group-hover:scale-105"
                     />
                   </div>

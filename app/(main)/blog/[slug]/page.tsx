@@ -1,6 +1,4 @@
 import { Metadata } from "next";
-import { useParams } from "next/navigation";
-import { useMemo } from "react";
 import { CalendarDays, Clock, User, Tag, ArrowLeft } from "lucide-react";
 import { Link } from "next-view-transitions";
 import { blogPosts } from "@/constant/blog";
@@ -33,15 +31,14 @@ export async function generateMetadata({
   };
 }
 
-export default function BlogDetailsPage() {
-  const params = useParams();
-  const slug = params?.slug;
+export default function BlogDetailsPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
 
-  const post = useMemo(() => {
-    if (!slug) return null;
-    const id = Array.isArray(slug) ? slug[0] : slug;
-    return blogPosts.find((p) => String(p.id) === id);
-  }, [slug]);
+  const post = blogPosts.find((p) => String(p.id) === slug);
 
   if (!post) {
     return (

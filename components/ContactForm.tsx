@@ -1,16 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Send,
-  CheckCircle,
-  User,
-  AtSign,
-  FileText,
-  MessageCircle,
-} from "lucide-react";
+import { User, AtSign, FileText, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import BorderDiv from "./BorderDiv";
+import { useMutation } from "@tanstack/react-query";
 
 const ContactForm = () => {
   const [formData, setFormData] = useState<{
@@ -25,35 +19,33 @@ const ContactForm = () => {
     message: "",
   });
 
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
   const [focusedField, setFocusedField] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
+  const mutation = useMutation({
+    mutationFn: async () => {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
       const data = await res.json();
-      if (res.ok) {
-        toast.success("Message sent successfully");
-        setFormData({ name: "", email: "", subject: "", message: "" });
-        setSuccess(true);
-      } else {
-        toast.error(data.message || "Failed to send message");
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to send message");
       }
-    } catch (err) {
-      console.log(err);
-      toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
-      setTimeout(() => setSuccess(false), 3000);
-    }
+      return data;
+    },
+    onSuccess: () => {
+      toast.success("Message sent successfully");
+      setFormData({ name: "", email: "", subject: "", message: "" });
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || "Failed to send message");
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    mutation.mutate();
   };
 
   const formFields = [
@@ -74,7 +66,7 @@ const ContactForm = () => {
   ];
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="mx-auto w-full max-w-lg space-y-6">
       <div className="px-4">
         <BorderDiv>
           <div className="overflow-hidden rounded-2xl border shadow-sm">
@@ -147,38 +139,19 @@ const ContactForm = () => {
               })}
             </div>
           </div>
-          <div className="px-4 pt-6">
+          <BorderDiv className="mt-2 rounded-2xl">
             <button
               type="submit"
-              disabled={loading || success}
-              className={`w-full rounded-2xl px-6 py-4 text-base font-semibold transition-all duration-200 active:scale-95 ${
-                success
-                  ? "bg-green-500 text-white shadow-lg shadow-green-500/30"
-                  : loading
-                    ? "bg-muted text-muted-foreground"
-                    : "bg-primary text-primary-foreground shadow-lg shadow-primary/30 active:bg-primary/80"
-              }`}
+              className="w-full rounded-[8px] bg-primary px-4 py-2 text-white hover:bg-primary/90 disabled:opacity-50"
+              disabled={mutation.isPending}
             >
-              <div className="flex items-center justify-center gap-2">
-                {success ? (
-                  <>
-                    <CheckCircle className="h-5 w-5" />
-                    <span>Message Sent</span>
-                  </>
-                ) : loading ? (
-                  <>
-                    <div className="h-5 w-5 animate-spin rounded-full border-2 border-muted border-t-transparent"></div>
-                    <span>Sending...</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="h-5 w-5" />
-                    <span>Send Message</span>
-                  </>
-                )}
-              </div>
+              {mutation.isPending
+                ? "Sending..."
+                : mutation.isSuccess
+                  ? "Sent!"
+                  : "Send Message"}
             </button>
-          </div>
+          </BorderDiv>
         </BorderDiv>
       </div>
     </form>

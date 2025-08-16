@@ -111,7 +111,7 @@ export default function DashboardPage() {
         {githubToken && (
           <motion.div
             variants={fadeInUp}
-            className="rounded-lg border-2 border-transparent bg-card p-6 shadow-lg transition-all duration-300 hover:border-purple-500/20 hover:shadow-xl dark:hover:border-purple-500/10"
+            className="rounded-lg border-2 border-transparent bg-card p-6 shadow-lg transition-all duration-300 hover:border-primary/20 hover:shadow-xl dark:hover:border-primary-500/10"
           >
             <GithubDashboard />
           </motion.div>

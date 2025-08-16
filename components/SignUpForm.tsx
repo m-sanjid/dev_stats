@@ -66,7 +66,7 @@ export function SignUpForm() {
     onSuccess: () => {
       router.push("/home");
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       setError("root", {
         message: error.message || "Something went wrong. Please try again.",
       });

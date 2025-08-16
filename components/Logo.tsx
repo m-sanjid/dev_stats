@@ -12,7 +12,7 @@ const Logo = () => {
   return (
     <Link
       href={`${isAuthenticated ? "/home" : "/"}`}
-      className="flex items-center gap-2 rounded-2xl border bg-primary/5 p-2 backdrop-blur-sm"
+      className="flex items-center gap-2 rounded-xl border bg-primary/5 p-2 backdrop-blur-sm"
     >
       <div className="relative flex h-6 w-6 items-center justify-center overflow-hidden">
 

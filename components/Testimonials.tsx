@@ -27,9 +27,11 @@ export default function Testimonials() {
                 {t.content}
               </div>
               <div>
-                <h4 className="font-semibold">{t.name}</h4>
+                <h4 className="mb-1 text-sm font-semibold md:text-base">
+                  {t.name}
+                </h4>
                 <div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs text-muted-foreground md:text-sm">
                     {t.role}
                     <span className="text-xs font-light text-primary">
                       {" "}

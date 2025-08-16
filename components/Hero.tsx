@@ -27,7 +27,7 @@ function Hero() {
   ];
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-neutral-50 via-white to-neutral-100 dark:from-neutral-950 dark:via-black dark:to-neutral-900">
+    <div className="relative mx-auto flex min-h-screen items-center justify-center bg-gradient-to-br from-neutral-50 via-white to-neutral-100 dark:from-neutral-950 dark:via-black dark:to-neutral-900">
       {/* Interactive Background Elements */}
 
       <div className="container relative z-10 mx-auto flex flex-col items-center px-4 py-16 text-center">
@@ -55,17 +55,10 @@ function Hero() {
               }}
               className="mb-8 flex flex-wrap items-center justify-center gap-3"
             >
-              <BorderDiv className="rounded-full">
-                <motion.div
-                  className="group relative overflow-hidden rounded-full border border-neutral-200 bg-white/90 px-4 py-2 shadow-sm backdrop-blur-sm dark:border-neutral-800 dark:bg-neutral-900/90"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 }}
-                >
+              <BorderDiv>
+                <div className="group relative overflow-hidden rounded-2xl border border-neutral-200 bg-white/90 px-4 py-2 shadow-sm backdrop-blur-sm dark:border-neutral-800 dark:bg-neutral-900/90">
                   <FlipWords words={features} />
-                </motion.div>
+                </div>
               </BorderDiv>
             </motion.div>
 
@@ -122,7 +115,7 @@ function Hero() {
                   size="lg"
                   variant="outline"
                   asChild
-                  className="rounded-2xl"
+                  className="w-full rounded-2xl"
                 >
                   <Link href="https://github.com/your-repo" target="_blank">
                     <motion.span className="flex items-center gap-2">
@@ -140,7 +133,7 @@ function Hero() {
               </BorderDiv>
 
               <BorderDiv className="group">
-                <Button size="lg" className="rounded-2xl" asChild>
+                <Button size="lg" className="w-full rounded-2xl" asChild>
                   <Link href={isAuthenticated ? "/dashboard" : "/signup"}>
                     <motion.span className="flex items-center gap-2">
                       Get Started Free

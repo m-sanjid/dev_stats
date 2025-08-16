@@ -19,7 +19,7 @@ export default function SignoutButton() {
     <div className="rounded-2xl border border-muted bg-primary/5 p-1 backdrop-blur-md">
       <Button
         onClick={handleAuthAction}
-        className="rounded-xl border border-muted px-4 py-1 text-xs sm:text-sm md:px-8 md:text-base"
+        className="rounded-xl border border-muted px-4 py-1 text-xs sm:text-sm"
       >
         {isAuthenticated ? "Log Out" : "Log In"}
       </Button>

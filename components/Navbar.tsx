@@ -91,27 +91,27 @@ export default function Navbar() {
       className={cn(
         "duration-400 sticky z-50 w-full text-sm transition-all ease-in-out",
         isScrolled
-          ? "top-0 mx-auto border backdrop-blur-xl md:top-2 md:max-w-5xl md:rounded-3xl md:bg-primary/5 md:p-2"
+          ? "top-0 mx-auto border backdrop-blur-md md:top-2 md:max-w-5xl md:rounded-3xl md:bg-white/40 dark:md:bg-black/40 md:p-2"
           : "top-0 mx-auto max-w-6xl md:px-4",
       )}
     >
       <div className={isScrolled ? "md:rounded-2xl md:border md:px-2" : ""}>
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-8">
+        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 md:px-8">
           <Logo />
           {/* Desktop Navigation */}
           <div className="hidden items-center space-x-1 md:flex">
             {(isAuthenticated ? navItems : outNavItems).map(
               ({ title, href }) => (
                 <div key={href} className="relative">
-                  <Link className="relative z-10 p-2" href={href}>
+                  <Link className={cn("relative z-10 p-2",pathname !== href ?"text-muted-foreground font-normal":"font-medium text-primary")} href={href}>
                     {title}
                   </Link>
                   {pathname === href && (
                     <motion.div
-                      layoutId="active-link"
+                      layoutId="active-link-id"
                       className="absolute -inset-2 rounded-2xl border bg-primary/5 p-1 backdrop-blur-sm"
                     >
-                      <motion.div className="h-full w-full rounded-xl border bg-white p-2 dark:bg-black" />
+                      <motion.div className="h-full w-full rounded-xl border bg-white p-1 dark:bg-black" />
                     </motion.div>
                   )}
                 </div>

@@ -7,7 +7,7 @@ import Testimonials from "@/components/Testimonials";
 export default function Home() {
   return (
     <>
-      <main className="flex min-h-screen flex-col">
+      <main className="px-2">
         <div>
           <Hero />
         </div>
